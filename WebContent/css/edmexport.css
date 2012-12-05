@@ -1,0 +1,12 @@
+@CHARSET "UTF-8";
+
+#loading-image {
+    background-color: white;
+    border-radius: 10px 10px 10px 10px;
+    height: 800px;
+    left: 5px;
+    position: fixed;
+    top: 180px;
+    width: 800px;
+    z-index: 1;
+}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+
+
+<tiles-definitions>
+    <definition name="template" template="/WEB-INF/jsp/main.jsp">
+	    <put-attribute name="title" value=""/>
+	    <put-attribute name="header" value="/WEB-INF/jsp/header.jsp"/>
+	    <put-attribute name="tabs" value="" />
+	    <put-attribute name="body" value="" />
+	    <put-attribute name="footer" value="/WEB-INF/jsp/footer.jsp"/>
+    </definition>
+    
+    <definition name="home" extends="template">
+        <put-attribute name="title" value="EDMExport" type="string"/>
+        <put-attribute name="tabs" value="/WEB-INF/jsp/homeTabs.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/home.jsp" />
+    </definition>
+    
+    <definition name="login" extends="template">
+        <put-attribute name="title" value="EDMExport Login" type="string"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/login.jsp" />
+    </definition>
+</tiles-definitions>

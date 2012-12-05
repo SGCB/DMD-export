@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:security="http://www.springframework.org/schema/security" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+    
+    
+    <security:http pattern="/css/**" security="none"/>
+    <security:http pattern="/js/**" security="none"/>
+    <security:http pattern="/img/**" security="none"/>
+    <security:http pattern="/auth/login.htm*" security="none"/>
+ 
+    <security:http auto-config="false" use-expressions="true" create-session="always" access-denied-page="/auth/login.htm?denied=true"
+          entry-point-ref="authenticationEntryPoint">
+        <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+        <security:logout invalidate-session="true" logout-success-url="/auth/login.htm" />
+        <security:session-management session-fixation-protection="newSession">
+            <security:concurrency-control max-sessions="1" error-if-maximum-exceeded="true"/>
+        </security:session-management>
+        <security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER"/>
+    </security:http>
+    
+    <bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"
+        p:authenticationManager-ref="EDMExportAuthenticationManager"
+        p:authenticationFailureHandler-ref="EDMExportAuthenticationFailureHandler"
+        p:authenticationSuccessHandler-ref="EDMExportAuthenticationSuccessHandler" />
+        
+        
+    <bean id="EDMExportAuthenticationManager" class="org.dspace.EDMExport.service.EDMExportAuthenticationManager" p:edmExportDAOEperson-ref="edmExportDAOEperson" />
+    
+   
+    <bean id="EDMExportAuthenticationFailureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler"
+        p:defaultFailureUrl="/auth/login.htm?error=true" />
+    
+    <bean id="EDMExportAuthenticationSuccessHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler"
+        p:defaultTargetUrl="/home.htm" />
+        
+    <bean id="authenticationEntryPoint"  class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint"
+        p:loginFormUrl="/auth/login.htm"/>
+  
+    <security:authentication-manager/>
+</beans>

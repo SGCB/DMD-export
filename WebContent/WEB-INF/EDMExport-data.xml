@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:security="http://www.springframework.org/schema/security" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:c="http://www.springframework.org/schema/c"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    
+    <bean id="edmExportDAOBase" class="org.dspace.EDMExport.dao.EDMExportDAOBase" init-method="init" depends-on="edmExportServiceBase"/>
+    
+    <bean id="edmExportDAOEperson" class="org.dspace.EDMExport.dao.EDMExportDAODspaceEPerson" c:edmExportDAOBase-ref="edmExportDAOBase"/>
+    
+    <bean id="edmExportDAOListCollections" class="org.dspace.EDMExport.dao.EDMExportDAODspaceListCollections" c:edmExportDAOBase-ref="edmExportDAOBase"/>
+    
+</beans>

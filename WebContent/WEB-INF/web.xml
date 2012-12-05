@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>EDMExport</display-name>
+  
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/EDMExport-service.xml
+            /WEB-INF/EDMExport-data.xml
+            /WEB-INF/EDMExport-security.xml
+        </param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>dspace-config</param-name>
+        <param-value>/home/dspace/config/dspace.cfg</param-value>
+        <!--  <param-value>/home/salzaru/Download/dspace/config/dspace.cfg</param-value> -->
+    </context-param>
+
+    <servlet>
+        <servlet-name>EDMExport</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>EDMExport</servlet-name>
+        <url-pattern>*.htm</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.js</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.css</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.gif</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.png</url-pattern>
+    </servlet-mapping>
+    
+    <welcome-file-list>
+        <welcome-file>login.htm</welcome-file>
+    </welcome-file-list>
+    
+    <context-param>
+        <param-name>log4jConfigLocation</param-name>
+        <param-value>/WEB-INF/log4j.properties</param-value>
+    </context-param>
+    <context-param>
+        <param-name>log4jExposeWebAppRoot</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+    
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    
+    <listener>
+         <listener-class>org.dspace.servicemanager.servlet.DSpaceKernelServletContextListener</listener-class>
+    </listener>
+    <!-- 
+    <listener>
+        <listener-class>org.dspace.app.util.DSpaceContextListener</listener-class>
+    </listener>
+     -->
+</web-app>
