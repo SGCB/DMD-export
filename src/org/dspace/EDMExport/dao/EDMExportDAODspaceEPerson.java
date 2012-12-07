@@ -22,28 +22,40 @@ public class EDMExportDAODspaceEPerson implements EDMExportDAOEperson
 		logger.debug("Init EDMExportDAODspaceEPerson");
 		this.edmExportDAOBase = edmExportDAOBase;
 		context = edmExportDAOBase.getContext();
-		boUser = new EDMExportBOUser();
 	}
 		
-	public EDMExportBOUser getEperson(String username)
+	public EDMExportBOUser getEperson(String username) throws SQLException, AuthorizeException
 	{
-		try {
 			logger.debug("Looking for user " + username.toLowerCase());
+		boUser = null;
+		try {
+			boUser = new EDMExportBOUser();
 			eperson = EPerson.findByEmail(context, username.toLowerCase());
+		} catch (SQLException se) {
+			logger.debug(se.getMessage());
+			throw new SQLException(se.getMessage());
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			throw new AuthorizeException(e.getMessage());
+		}
 			if (eperson != null && eperson.canLogIn() && !eperson.getRequireCertificate()) {
 				boUser.setUsername(eperson.getEmail());
 				boUser.setPassword(eperson.getPasswordHash());
 				boUser.setAccess(1);
 			} else {
-				if (eperson == null) logger.debug("User unexistent");
-				else if (!eperson.canLogIn()) logger.debug("User can't login");
-				else if (eperson.getRequireCertificate()) logger.debug("User require certificate");
-				boUser = null;
+			String mess = "";
+			if (eperson == null) {
+				mess = "User unexistent";
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (AuthorizeException e) {
-			e.printStackTrace();
+			else if (!eperson.canLogIn()) {
+				mess = "User can't login";
+			}
+			else if (eperson.getRequireCertificate()) {
+				mess = "User require certificate";
+			} else mess = "Unknown error";
+			logger.debug(mess);
+			boUser = null;
+			throw new AuthorizeException(mess);
 		}
 		return boUser;
 	}

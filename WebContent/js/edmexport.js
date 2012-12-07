@@ -1,4 +1,26 @@
 
+function Hash()
+{
+    var length = 0;
+    
+    this.add = function(key, val) {
+         if(this[key] == undefined) {
+        	 length++;
+         }
+         this[key] = val;
+    };
+    this.remove = function(key) { 
+    	if (this.hasOwnProperty(key)) {
+    		delete this[key];
+    		length--;
+		}
+	};
+    this.length = function() {
+        return length;
+    };
+}
+
+
 (function()
 {
 	ListCollectionsJS = function()
@@ -7,7 +29,7 @@
         if (arguments[1]) this.pagecount = arguments[1];
         this.list_collections = new Array();
         this.list_collections_dict = new Array();
-        this.list_collections_submit = new Array();
+        this.list_collections_submit = new Hash();
     };//ListCollectionsJS
 
 	
@@ -68,6 +90,7 @@
 		    	if (this.list_num_collections > 0) {
 		    		this.renderPage(1);
 		    	}
+		    	jQuery("#div_list_collec_nosc").remove();
 			},
 			
 			renderPage: function(page)
@@ -131,7 +154,8 @@
 			renderListCollHeader: function(page)
 			{
 				var div_list_collec_header = jQuery("#div_list_collec_header");
-				var str = "Pag: " + page + "/" + this.numPages + ". Col: " + this.itemspage + "/" + this.list_num_collections;
+				var num_coll = (this.list_num_collections < this.itemspage)?this.list_num_collections:this.itemspage;
+				var str = "Pag: " + page + "/" + this.numPages + ". Col: " + num_coll + "/" + this.list_num_collections;
 				div_list_collec_header.empty();
 				div_list_collec_header.html(str);
 			},
@@ -143,23 +167,23 @@
 				var pageIni = (page % this.pagecount > 0)?page - (page % this.pagecount) + 1:page - this.pagecount + 1;
 				var pageAux = pageIni;
 				if (page > this.pagecount) {
-					pageAux = page - (page % this.pagecount) - this.pagecount + 1;
+					pageAux = pageIni - 1;
 					str += '<a href="javascript://void();"  onclick="objListCollectionsJS.renderPage(' + pageAux + ')" title="Pag ' + pageAux + '">&lt;&lt;</a> ';
 				}
 				if (page > 1) {
 					pageAux = page - 1;
 					str += '<a href="javascript://void();" onclick="objListCollectionsJS.renderPage(' + pageAux + ')" title="Pag ' + pageAux + '">&lt;</a> ';
 				}
-				var pageEnd = (pageIni + this.pagecount > this.nmPages)?this.numPages:pageIni + this.pagecount;
-				for (var i = pageIni; i < pageEnd; i++) {
+				var pageEnd = (pageIni + this.pagecount > this.numPages)?this.numPages:pageIni + this.pagecount - 1;
+				for (var i = pageIni; i <= pageEnd; i++) {
 					str += (i != page)?' <a href="javascript://void();" onclick="objListCollectionsJS.renderPage(' + i + ')" title="Pag ' + i + '">' + i + '</a> ':" " + i + " ";
 				}
 				if (page < this.numPages) {
 					pageAux = page + 1;
 					str += '<a href="javascript://void();"  onclick="objListCollectionsJS.renderPage(' + pageAux + ')" title="Pag ' + pageAux + '">&gt;</a> ';
 				}
-				if (page < (this.numPages - Math.floor(this.numPages % this.pagecount))) {
-					pageAux = page + (this.pagecount - (Math.floor(page % this.pagecount))) + 1;
+				if (pageEnd < this.numPages) {
+					pageAux = pageEnd + 1;
 					str += '<a href="javascript://void();" onclick="objListCollectionsJS.renderPage(' + pageAux + ')" title="Pag ' + pageAux + '">&gt;&gt;</a> ';
 				}
 				div_list_collec_footer.empty();
@@ -169,6 +193,7 @@
 			renderListCollBody: function(offset)
 			{
 				var div_list_collec_body = jQuery("#div_list_collec_body");
+				this.checkCollections();
 				div_list_collec_body.empty();
 				var limit = ((offset + this.itemspage) > this.list_num_collections)?this.list_num_collections:offset + this.itemspage;
 				var ul = jQuery('<ul id="ul_list_collec" />');
@@ -176,13 +201,52 @@
 					var li = jQuery('<li id="li_' + i + '" />');
 					var obj_collec = this.list_collections[i];
 					li.append(i + ": " + obj_collec.name + " (" + obj_collec.handle + ")");
-					var checkbox = jQuery('<input type="checkbox" id="listCollections' + i + '.id" name="listCollections[' + i + '].id" value="' + obj_collec.id + '" />');
+					var checked = (this.list_collections_submit[obj_collec.id] != undefined)?"checked='checked'":"";
+					var checkbox = jQuery('<input type="checkbox" id="listCollections' + i + '.id" name="listCollections[' + i + '].id" value="' + obj_collec.id + '" ' + checked + ' />');
+					li.append(checkbox);
+					ul.append(li);
+				}
+				div_list_collec_body.append(ul);
+			},
+			
+			checkCollections: function()
+			{
+				var list_collections_jq = jQuery("#div_list_collec_body li");
+				var objListColl = this;
+		    	list_collections_jq.each(function() {
+		    		if (jQuery(this).find('input[type="checkbox"]').length > 0) {
+		    			var li_id = jQuery(this).attr("id");
+		    			var pos = li_id.substring(li_id.indexOf("_") + 1, li_id.length);
+		    			var chk = jQuery(this).find('input[type="checkbox"]');
+		    			var id = chk.val();
+		    			if (chk.attr("checked") == "checked") {
+		    				objListColl.list_collections_submit.add(id ,pos);
+		    			} else if (objListColl.list_collections_submit[id] != undefined) {
+		    				objListColl.list_collections_submit.remove(id);
+		    			}
+		    		}
+		    	});
+			},
+			
+			submit: function()
+			{
+				var div_list_collec_body = jQuery("#div_list_collec_body");
+				this.checkCollections();
+				div_list_collec_body.empty();
+				var ul = jQuery('<ul id="ul_list_collec" />');
+				var i = 0;
+				for (var id in this.list_collections_submit) {
+					var li = jQuery('<li id="li_' + i + '" />');
+					var obj_collec = this.list_collections[this.list_collections_submit[id]];
+					li.append(i + ": " + obj_collec.name + " (" + obj_collec.handle + ")");
+					var checkbox = jQuery('<input type="checkbox" id="listCollections' + i + '.id" name="listCollections[' + i + '].id" value="' + obj_collec.id + '" checked="checked" />');
 					li.append(checkbox);
 					var hidden_name = jQuery('<input type="hidden" id="listCollections' + i + '.id" name="listCollections[' + i + '].name" value="' + obj_collec.name + '" />');
 					li.append(hidden_name);
 					var hidden_handle = jQuery('<input type="hidden" id="listCollections' + i + '.id" name="listCollections[' + i + '].handle" value="' + obj_collec.handle + '" />');
 					li.append(hidden_handle);
 					ul.append(li);
+					i++;
 				}
 				div_list_collec_body.append(ul);
 			},

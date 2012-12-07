@@ -25,6 +25,17 @@
         jQuery(window).load(function() {
             jQuery('#loading-image').hide();
         });
+        
+        function valid_list_coll(form)
+        {
+        	if (objListCollectionsJS.list_collections_submit.length() > 0) {
+        		objListCollectionsJS.submit();
+        		return true;
+        	} else {
+        		alert("<spring:message code='edmexport.home.list.no_check_coll' />");
+        		return false;
+        	}
+        }
         //-->
         </script>
         <h2><spring:message code="edmexport.home.list.title" /></h2>
@@ -34,7 +45,7 @@
                 <spring:url value="/img/lb-loading.gif" var="edmexport_loading_url" htmlEscape="true" />
                  <img id="loading-image-img" src="${edmexport_loading_url}" alt="Loading..." />
             </div>
-            <form:form action="home.htm" method="post" name="list_collections" commandName="listCollections" >
+            <form:form action="home.htm" method="post" name="list_collections" commandName="listCollections" onsubmit="return valid_list_coll(this);" >
             <div id="div_list_collec">
                 <div id="div_list_collec_dict">
                 </div>
@@ -42,6 +53,10 @@
                 </div>
                 <div id="div_list_collec_body">
                 </div>
+                <div id="div_list_collec_submit">
+                    <input  type="submit" name="go_list_collections" value="<spring:message code="edmexport.home.list.save_reg" />" />
+                </div>
+                
                 <div id="div_list_collec_footer">
                 </div>
             </div>

@@ -67,7 +67,7 @@ public class homeController
 	public String post(@ModelAttribute(value="listCollections") EDMExportBOListCollections listCollectionsBO, BindingResult result)
 	{
 		if (result.hasErrors()) {
-			return "registration";
+			return "home";
 		} else {
 			return "success";
 		}

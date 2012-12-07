@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 
 import org.dspace.EDMExport.bo.EDMExportBOUser;
@@ -39,7 +40,8 @@ public class EDMExportAuthenticationManager implements AuthenticationManager
 		try {
 			eperson = daoEperson.getEperson(auth.getName());
 		} catch (Exception e) {
-			logger.error("User "+ auth.getName() + " does not exists!");
+			logger.error("User "+ auth.getName() + " does not exists! " + e.getMessage() + "," + e.toString(), e);
+			//SecurityContextHolder.getContext().setAuthentication(null);
 			throw new BadCredentialsException("User does not exists!");
 		}
 		
