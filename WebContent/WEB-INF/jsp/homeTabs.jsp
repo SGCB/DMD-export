@@ -3,7 +3,7 @@
     
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
-<div id="edmexport_hometabs">
+<div id="edmexport_hometabs" class="edmexport_hometabs">
 <table border="0" cellspacing="0" width="100%"> 
     <tr> 
         <td align="center"><a href="home.htm?tab=list"><spring:message code="edmexport.tab.list_collections" /></a></td>

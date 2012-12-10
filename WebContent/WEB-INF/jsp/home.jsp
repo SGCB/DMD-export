@@ -10,6 +10,7 @@
         <script>
         <!--
         var objListCollectionsJS;
+        document.body.style.overflow = 'hidden';
         
         jQuery(document).ready(function () {
         	objListCollectionsJS = new ListCollectionsJS();
@@ -24,12 +25,16 @@
         
         jQuery(window).load(function() {
             jQuery('#loading-image').hide();
+            document.body.style.overflow = 'show';
+        });
+        
+        jQuery(window).unload(function() {
         });
         
         function valid_list_coll(form)
         {
-        	if (objListCollectionsJS.list_collections_submit.length() > 0) {
         		objListCollectionsJS.submit();
+        	if (objListCollectionsJS.list_collections_submit.length() > 0) {
         		return true;
         	} else {
         		alert("<spring:message code='edmexport.home.list.no_check_coll' />");
@@ -46,21 +51,22 @@
                  <img id="loading-image-img" src="${edmexport_loading_url}" alt="Loading..." />
             </div>
             <form:form action="home.htm" method="post" name="list_collections" commandName="listCollections" onsubmit="return valid_list_coll(this);" >
-            <div id="div_list_collec">
-                <div id="div_list_collec_dict">
+            <input type="hidden" name="pageAction" value="listColls" />
+            <div id="div_list_collec" class="div_list_collec">
+                <div id="div_list_collec_dict" class="div_list_collec_dict">
                 </div>
-                <div id="div_list_collec_header">
+                <div id="div_list_collec_header" class="div_list_collec_header">
                 </div>
-                <div id="div_list_collec_body">
+                <div id="div_list_collec_body" class="div_list_collec_body">
                 </div>
-                <div id="div_list_collec_submit">
+                <div id="div_list_collec_submit" class="div_list_collec_submit">
                     <input  type="submit" name="go_list_collections" value="<spring:message code="edmexport.home.list.save_reg" />" />
                 </div>
                 
-                <div id="div_list_collec_footer">
+                <div id="div_list_collec_footer" class="div_list_collec_footer">
                 </div>
             </div>
-            <div id="div_list_collec_nosc">
+            <div id="div_list_collec_nosc" class="div_list_collec_nosc">
 	            <ul id="ul_list_collec_nosc">
 		            <c:set var="i" value="0"/>
 		            <c:forEach items="${listCollections.listCollections}" var="collection">

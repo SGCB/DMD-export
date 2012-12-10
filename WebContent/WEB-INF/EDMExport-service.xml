@@ -2,9 +2,17 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:security="http://www.springframework.org/schema/security" 
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
     xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+    http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+    
+    
+    <context:property-placeholder location="classpath:edmexport.properties"/>
+    
+    <context:component-scan base-package="org.dspace.EDMExport.service"/>
     
     <bean class="org.springframework.web.context.support.ServletContextPropertyPlaceholderConfigurer"/>
     
@@ -12,4 +20,7 @@
     
     <bean id="edmExportServiceListCollections" class="org.dspace.EDMExport.service.EDMExportServiceListCollections" 
         p:edmExportDAOListCollections-ref="edmExportDAOListCollections" />
+        
+    <bean id="edmExportServiceSearch" class="org.dspace.EDMExport.service.EDMExportServiceSearch" 
+        p:edmExportDAOSearch-ref="edmExportDAOSearch" />
 </beans>

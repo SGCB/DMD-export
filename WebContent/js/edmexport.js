@@ -83,6 +83,7 @@ function Hash()
 		    			i++;
 		    		}
 		    	});
+		    	jQuery("#div_list_collec_nosc").remove();
 		    	if (char_ant != "") this.list_collections_dict[char_ant]["offset_end"] = i - 1;
 		    	this.list_num_collections = this.list_collections.length;
 		    	this.numPages = Math.floor(this.list_num_collections / this.itemspage);
@@ -90,7 +91,6 @@ function Hash()
 		    	if (this.list_num_collections > 0) {
 		    		this.renderPage(1);
 		    	}
-		    	jQuery("#div_list_collec_nosc").remove();
 			},
 			
 			renderPage: function(page)
@@ -232,10 +232,12 @@ function Hash()
 			{
 				var div_list_collec_body = jQuery("#div_list_collec_body");
 				this.checkCollections();
+				if (this.list_collections_submit.length() > 0) {
 				div_list_collec_body.empty();
 				var ul = jQuery('<ul id="ul_list_collec" />');
 				var i = 0;
 				for (var id in this.list_collections_submit) {
+						if (isNaN(id)) continue;
 					var li = jQuery('<li id="li_' + i + '" />');
 					var obj_collec = this.list_collections[this.list_collections_submit[id]];
 					li.append(i + ": " + obj_collec.name + " (" + obj_collec.handle + ")");
@@ -249,6 +251,7 @@ function Hash()
 					i++;
 				}
 				div_list_collec_body.append(ul);
+				}
 			},
 	};
 })();

@@ -9,7 +9,7 @@
 
         <h1><spring:message code="edmexport.login.title" /></h1>
         <c:if test="${not empty error}">
-        <div id="login-error"><spring:message code="edmexport.login.error" /></div>
+        <div id="login-error" class="login-error"><spring:message code="edmexport.login.error" /></div>
         </c:if>
         <form action="../j_spring_security_check" method="post" >
             <label for="j_username"><spring:message code="edmexport.login.username" /></label>

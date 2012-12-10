@@ -3,6 +3,6 @@
     
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
-<div id="edmexport_footer">
+<div id="edmexport_footer" class="edmexport_footer">
     <h2><spring:message code="edmexport.footer" /></h2>
 </div>
