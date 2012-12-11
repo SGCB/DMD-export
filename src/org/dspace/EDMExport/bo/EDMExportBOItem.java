@@ -23,6 +23,7 @@ public class EDMExportBOItem
 		this.author = author;
 		this.subject = subject;
 		this.type = type;
+		this.handle = handle;
 		this.id = id;
 		this.index = index;
 	}

@@ -4,5 +4,5 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <div id="edmexport_header" class="edmexport_header">
-    <h2><spring:message code="edmexport.title" /></h2>
+    <h2><a href="home.htm"><spring:message code="edmexport.title" /></a></h2>
 </div>

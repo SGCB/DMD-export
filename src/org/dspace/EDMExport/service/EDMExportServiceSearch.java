@@ -22,8 +22,19 @@ public class EDMExportServiceSearch
 	@Value("${search.title.index.solr}")
     private String searchTitle;
 		
+	@Value("${list_items.itemspage}")
+    private String searchItemsPage;
+	
+	@Value("${search.sortby}")
+    private String searchSortBy;
+	
+	@Value("${search.sortorder}")
+    private String searchOrder;
+	
+		
 	private EDMExportBOListItems boListIems;
 	private EDMExportDAOSearch daoSearch;
+	private int hitCount = 0;
 	
 	public EDMExportServiceSearch()
 	{
@@ -32,17 +43,18 @@ public class EDMExportServiceSearch
 	}
 	
 	
-	public EDMExportBOListItems getListItems(EDMExportBOSearch searchBO)
+	public EDMExportBOListItems getListItems(EDMExportBOSearch searchBO, int offset)
 	{
-		Item[] listItems = daoSearch.getListItems(searchBO, searchSubject, searchAuthor, searchTitle);
+		Item[] listItems = daoSearch.getListItems(searchBO, searchSubject, searchAuthor, searchTitle, searchSortBy, searchOrder, offset, Integer.parseInt(searchItemsPage));
+		this.hitCount = daoSearch.getHitCount();
 		if (listItems != null && listItems.length > 0) {
 			logger.debug("Num items: " + listItems.length);
 			EDMExportBOItem[] listArrayItems = new EDMExportBOItem[listItems.length];
 			int i = 0;
 			for (Item itemDS : listItems) {
 				try {
-					EDMExportBOItem col = EDMExportServiceItemDS2ItemBO.itemDS2ItemBO(itemDS, i);
-					listArrayItems[i] = col;
+					EDMExportBOItem it = EDMExportServiceItemDS2ItemBO.itemDS2ItemBO(itemDS, i);
+					listArrayItems[i] = it;
 					i++;
 				} catch (Exception e) {
 					logger.debug("item fail " + i, e);
@@ -50,10 +62,16 @@ public class EDMExportServiceSearch
 			}
 			boListIems.setListItems(listArrayItems);
 		} else {
+			this.hitCount = 0;
 			logger.debug("No items");
 			boListIems.setListItems(null);
 		}
 		return boListIems;
+	}
+	
+	public int getHitCount()
+	{
+		return hitCount;
 	}
 	
 	

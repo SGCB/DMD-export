@@ -228,12 +228,21 @@ function Hash()
 		    	});
 			},
 			
-			submit: function()
+			submit: function(message)
 			{
 				var div_list_collec_body = jQuery("#div_list_collec_body");
 				this.checkCollections();
 				if (this.list_collections_submit.length() > 0) {
 				div_list_collec_body.empty();
+					var div_list_collec_header = jQuery("#div_list_collec_header");
+					div_list_collec_header.empty();
+					div_list_collec_header.html("<h3>" + message + "</h3>");
+					var div_list_collec_dict = jQuery("#div_list_collec_dict");
+					div_list_collec_dict.empty();
+					var div_list_collec_submit = jQuery("#div_list_collec_submit");
+					div_list_collec_submit.empty();
+					var div_list_collec_footer = jQuery("#div_list_collec_footer");
+					div_list_collec_footer.empty();
 				var ul = jQuery('<ul id="ul_list_collec" />');
 				var i = 0;
 				for (var id in this.list_collections_submit) {
@@ -241,7 +250,7 @@ function Hash()
 					var li = jQuery('<li id="li_' + i + '" />');
 					var obj_collec = this.list_collections[this.list_collections_submit[id]];
 					li.append(i + ": " + obj_collec.name + " (" + obj_collec.handle + ")");
-					var checkbox = jQuery('<input type="checkbox" id="listCollections' + i + '.id" name="listCollections[' + i + '].id" value="' + obj_collec.id + '" checked="checked" />');
+						var checkbox = jQuery('<input type="hidden" id="listCollections' + i + '.id" name="listCollections[' + i + '].id" value="' + obj_collec.id + '" />');
 					li.append(checkbox);
 					var hidden_name = jQuery('<input type="hidden" id="listCollections' + i + '.id" name="listCollections[' + i + '].name" value="' + obj_collec.name + '" />');
 					li.append(hidden_name);

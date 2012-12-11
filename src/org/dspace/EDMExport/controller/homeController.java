@@ -70,13 +70,21 @@ public class homeController
 	}
 	 
 	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="pageAction=listColls")
-	public String post(@ModelAttribute(value="listCollections") EDMExportBOListCollections listCollectionsBO, BindingResult result)
+	public String post(@ModelAttribute(value="listCollections") EDMExportBOListCollections listCollectionsBO, BindingResult result, Model model)
 	{
 		if (result.hasErrors()) {
 			return "home";
 		} else {
+			edmExportServiceListCollections.setBoListCollections(listCollectionsBO);
+			EDMExportBOListItems boListIems = edmExportServiceListCollections.getListItems();
+			if (boListIems.getListItems() == null || boListIems.getListItems().length == 0) {
+				return "home";
+			} else {
+				model.addAttribute("listItems", boListIems);
+				model.addAttribute("hitCount", edmExportServiceListCollections.getHitCount());
 			return "listItems";
 		}
+	}
 	}
 	
 	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="pageAction=searchItems")
@@ -85,12 +93,13 @@ public class homeController
 		if (result.hasErrors()) {
 			return "home";
 		} else {
-			EDMExportBOListItems boListIems = edmExportServiceSearch.getListItems(searchBO);
+			EDMExportBOListItems boListIems = edmExportServiceSearch.getListItems(searchBO, 0);
 			if (boListIems.getListItems() == null || boListIems.getListItems().length == 0) {
 				model.addAttribute("error", 1);
 				return "redirect:home.htm";
 			} else {
 				model.addAttribute("listItems", boListIems);
+				model.addAttribute("hitCount", edmExportServiceSearch.getHitCount());
 				return "listItems";
 			}
 		}

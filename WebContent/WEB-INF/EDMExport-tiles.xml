@@ -25,6 +25,11 @@
         <put-attribute name="body" value="/WEB-INF/jsp/search.jsp" />
     </definition>
     
+    <definition name="listItems" extends="template">
+        <put-attribute name="title" value="EDMExport" type="string"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/listItems.jsp" />
+    </definition>
+    
     <definition name="login" extends="template">
         <put-attribute name="title" value="EDMExport Login" type="string"/>
         <put-attribute name="body" value="/WEB-INF/jsp/login.jsp" />

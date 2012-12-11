@@ -33,7 +33,7 @@
         
         function valid_list_coll(form)
         {
-        		objListCollectionsJS.submit();
+        	objListCollectionsJS.submit("<spring:message code='edmexport.home.list.recov_items' />");
         	if (objListCollectionsJS.list_collections_submit.length() > 0) {
         		return true;
         	} else {

@@ -8,7 +8,10 @@ import org.dspace.content.Collection;
 import org.dspace.content.Item;
 import org.dspace.content.DCValue;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+
+@Service
 public class EDMExportServiceItemDS2ItemBO
 {
 	
@@ -51,7 +54,7 @@ public class EDMExportServiceItemDS2ItemBO
 			}
 			EDMExportBOListCollections listCollectionsBO = new EDMExportBOListCollections(collectionsBOArr);
 			
-			DCValue[] authors = itemDS.getMetadata(searchAuthor);
+			DCValue[] authors = itemDS.getMetadata(EDMExportServiceItemDS2ItemBO.searchAuthor);
 			String[] authorsStr = new String[authors.length];
 			j = 0;
 			for (DCValue authDCV : authors) {
@@ -59,7 +62,7 @@ public class EDMExportServiceItemDS2ItemBO
 				j++;
 			}
 			
-			DCValue[] subjects = itemDS.getMetadata(searchSubject);
+			DCValue[] subjects = itemDS.getMetadata(EDMExportServiceItemDS2ItemBO.searchSubject);
 			String[] subjectsStr = new String[subjects.length];
 			j = 0;
 			for (DCValue subjectDCV : subjects) {
@@ -67,7 +70,7 @@ public class EDMExportServiceItemDS2ItemBO
 				j++;
 			}
 			
-			DCValue[] types = itemDS.getMetadata(searchType);
+			DCValue[] types = itemDS.getMetadata(EDMExportServiceItemDS2ItemBO.searchType);
 			String[] typesStr = new String[types.length];
 			j = 0;
 			for (DCValue typeDCV : types) {

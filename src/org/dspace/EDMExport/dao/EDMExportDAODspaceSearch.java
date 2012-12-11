@@ -11,6 +11,7 @@ import org.dspace.handle.HandleManager;
 import org.dspace.search.DSQuery;
 import org.dspace.search.QueryArgs;
 import org.dspace.search.QueryResults;
+import org.dspace.sort.SortOption;
 
 public class EDMExportDAODspaceSearch implements EDMExportDAOSearch
 {
@@ -20,6 +21,7 @@ public class EDMExportDAODspaceSearch implements EDMExportDAOSearch
 	protected static Logger logger = Logger.getLogger("edmexport");
 	
 	private Item[] listItems;
+	private int hitCount;
 	
 	public EDMExportDAODspaceSearch(EDMExportDAOBase edmExportDAOBase)
 	{
@@ -28,29 +30,40 @@ public class EDMExportDAODspaceSearch implements EDMExportDAOSearch
 		context = edmExportDAOBase.getContext();
 	}
 		
-	public Item[] getListItems(EDMExportBOSearch searchBO, String searchSubject, String searchAuthor, String searchTitle)
+	public Item[] getListItems(EDMExportBOSearch searchBO, String searchSubject, String searchAuthor, String searchTitle, String searchSortBy, String searchOrder, int offset, int searchItemsPage)
 	{
 		try {
 			logger.debug("Looking for list of items ");
 			QueryArgs qArgs = new QueryArgs();
-			
+			qArgs.setStart(offset);
+			qArgs.setPageSize(searchItemsPage);
+			qArgs.setSortOption(new SortOption(1, searchSortBy));
+			if ("ASC".equalsIgnoreCase(searchOrder)) {
+		        qArgs.setSortOrder("ASC");
+		    } else {
+		        qArgs.setSortOrder("DESC");
+		    }
+			String query = "";
 			String option = searchBO.getOption();
 			if (option != null && !option.isEmpty()) {
 				if (option.equals("title")) {
-					qArgs.setQuery(searchTitle + ":" + searchBO.getTerm());
+					query = searchTitle + ":" + searchBO.getTerm();
 				} else if (option.equals("subject")) {
-					qArgs.setQuery(searchSubject + ":" + searchBO.getTerm());
+					query = searchSubject + ":" + searchBO.getTerm();
 				} else if (option.equals("author")) {
-					qArgs.setQuery(searchAuthor + ":" + searchBO.getTerm());
+					query = searchAuthor + ":" + searchBO.getTerm();
 				}
 			} else {
-				qArgs.setQuery(searchBO.getTerm());
+				query = searchBO.getTerm();
 			}
+			query += " AND search.resourcetype:2";
+			qArgs.setQuery(query);
 			logger.debug("Query " + qArgs.getQuery());
 			listItems = null;
 			ArrayList<Item> listArrayItems = new ArrayList<Item>();
 			QueryResults qResults = null;
 			qResults = DSQuery.doQuery(context, qArgs);
+			this.hitCount = qResults.getHitCount();
 			logger.debug("List of dspaceobjects " + qResults.getHitHandles().size());
 		    for (int i = 0; i < qResults.getHitHandles().size(); i++) {
 		    	String myHandle = (String)qResults.getHitHandles().get(i);
@@ -66,6 +79,11 @@ public class EDMExportDAODspaceSearch implements EDMExportDAOSearch
 			logger.debug("Exception in getListItems" , e);
 		}
 		return listItems;
+	}
+
+	public int getHitCount()
+	{
+		return hitCount;
 	}
 
 }
