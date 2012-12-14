@@ -14,7 +14,7 @@
             jQuery('#loading-image').hide();
         });
         
-        $(document).ready(function() {
+        jQuery(document).ready(function() {
 	        jQuery("#chk_all").click(function() {
 	        	if (jQuery(this).is(':checked')) {
 	        		jQuery("#un_chk_all").attr("checked", false);
@@ -28,6 +28,47 @@
 	                jQuery("#list_items input[type=checkbox]").attr("checked", false);
 	            }
 	        });
+	        
+	        jQuery("#next_page").attr('href', '#');
+	        jQuery("#prev_page").attr('href', '#');
+	        
+	        jQuery("#next_page").click(function() {
+	        	var arr_checked = new Array();
+	        	var arr_nochecked = new Array();
+	        	jQuery("#list_items input[type=checkbox]").each(function() {
+	        		if (jQuery(this).is(':checked')) {
+	        			arr_checked.push(jQuery(this).val());
+	        		} else {
+	        			arr_nochecked.push(jQuery(this).val());
+	        		}
+	        	});
+	        	var str_checked = (arr_checked.length > 0)?arr_checked.join():"0";
+	        	var str_nochecked = (arr_nochecked.length > 0)?arr_nochecked.join():"0";
+	        	jQuery.getJSON('home.htm', { checked: str_checked, nochecked: str_nochecked }, function(data) {
+	        		if (data == "1") window.location = "home.htm?referer=${referer}&page=${next_page}";
+	        		else alert("<spring:message code='edmexport.listItems.json.error' />");
+	        	});
+	        	
+	        });
+	        		
+       		jQuery("#prev_page").click(function() {
+                   var arr_checked = new Array();
+                   var arr_nochecked = new Array();
+                   jQuery("#list_items input[type=checkbox]").each(function() {
+                       if (jQuery(this).is(':checked')) {
+                           arr_checked.push(jQuery(this).val());
+                       } else {
+                           arr_nochecked.push(jQuery(this).val());
+                       }
+                   });
+                   var str_checked = (arr_checked.length > 0)?arr_checked.join():"0";
+                   var str_nochecked = (arr_nochecked.length > 0)?arr_nochecked.join():"0";
+                   jQuery.getJSON('home.htm', { checked: str_checked, nochecked: str_nochecked }, function(data) {
+                	   if (data == "1") window.location = "home.htm?referer=${referer}&page=${prev_page}";
+                       else alert("<spring:message code='edmexport.listItems.json.error' />");
+                   });
+               });
+
         });
         //-->
         </script>
@@ -60,9 +101,14 @@
                 </form>
             </div>
             <form:form action="listItems.htm" method="post" name="list_items" id="list_items" commandName="listItems" onsubmit="return valid_list_items(this);" >
+            <input type="hidden" name="referer" value="${referer}" />
             <div id="div_list_items" class="div_list_items">
                 <div id="div_list_items_header" class="div_list_items_header">
-                    <spring:message code="edmexport.listItems.header.item.label" /> ${hitCount}
+                    <spring:message code="edmexport.listItems.header.item.label" /> ${listItemsPage} / ${hitCount}.
+                     <c:if test="${!empty page}">Pag: ${page}/${pageTotal}</c:if>
+                     <c:if test="${listItemsPage <= hitCount}">
+                    <span id="show_all"><a href="home.htm?referer=${referer}"><spring:message code="edmexport.listItems.show_all.label" /></a></span>
+                    </c:if>
                 </div>
                 <div id="div_list_items_body" class="div_list_items_body">
                     <ul id="ul_list_items">
@@ -150,6 +196,8 @@
                 </div>
                 
                 <div id="div_list_items_footer" class="div_list_items_footer">
+                    <c:if test="${!empty next_page}"><a href="home.htm?referer=${referer}&page=${next_page}" id="next_page" class="next_page"><spring:message code="edmexport.listItems.next_page.label" /></a></c:if>
+                    <c:if test="${!empty prev_page}"><a href="home.htm?referer=${referer}&page=${prev_page}" id="prev_page" class="prev_page"><spring:message code="edmexport.listItems.previous_page.label" /></a></c:if>
                 </div>
             </div>
             </form:form>

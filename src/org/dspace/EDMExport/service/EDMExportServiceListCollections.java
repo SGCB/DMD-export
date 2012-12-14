@@ -12,13 +12,20 @@ import org.dspace.EDMExport.bo.EDMExportBOListItems;
 import org.dspace.EDMExport.dao.EDMExportDAOListCollections;
 import org.dspace.content.Collection;
 import org.dspace.content.Item;
+import org.springframework.beans.factory.annotation.Value;
 
 public class EDMExportServiceListCollections
 {
 	protected static Logger logger = Logger.getLogger("edmexport");
 	
+	
+	@Value("${list_items.itemspage}")
+    private String listItemsPage;
+	private int listItemsPageInt;
+	
 	private EDMExportBOListCollections boListCollections;
 	private EDMExportDAOListCollections daoListCollections;
+	private EDMExportBOListItems boListIems;
 	
 	private int hitCount = 0;
 	
@@ -26,6 +33,7 @@ public class EDMExportServiceListCollections
 	{
 		logger.debug("Init EDMExportServiceListCollections");
 		boListCollections = new EDMExportBOListCollections();
+		boListIems = new EDMExportBOListItems();
 	}
 	
 	public void setBoListCollections(EDMExportBOListCollections boListCollections)
@@ -56,9 +64,10 @@ public class EDMExportServiceListCollections
 	}
 	
 	
-	public EDMExportBOListItems getListItems()
+	public EDMExportBOListItems getListItems(int offset)
 	{
-		EDMExportBOListItems boListIems = new EDMExportBOListItems();
+		listItemsPageInt = Integer.parseInt(listItemsPage);
+		if (boListIems.getListItems() == null || boListIems.getListItems().length == 0) {
 		Set<Item> setItems = new HashSet<Item>();
 		
 		logger.debug("Num selected coll: " + this.boListCollections.getListCollections().length);
@@ -94,7 +103,16 @@ public class EDMExportServiceListCollections
 			logger.debug("No items");
 			boListIems.setListItems(null);
 		}
-		return boListIems;
+		}
+		if (hitCount <= listItemsPageInt) return boListIems;
+		EDMExportBOListItems boListIemsPage = new EDMExportBOListItems();
+		int limit = (hitCount < listItemsPageInt)?hitCount:listItemsPageInt;
+		EDMExportBOItem[] listItemsPage = new EDMExportBOItem[limit];
+		for (int i = 0; i < limit; i++) {
+			listItemsPage[i] = boListIems.getListItems()[offset++];
+		}
+		boListIemsPage.setListItems(listItemsPage);
+		return boListIemsPage;
 	}
 	
 	public int getHitCount()

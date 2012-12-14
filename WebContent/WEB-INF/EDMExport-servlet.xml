@@ -66,17 +66,43 @@
     </bean>
     
     
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="mediaTypes">
+	       <map>
+		      <entry key="html" value="text/html"/>
+		      <entry key="json" value="application/json"/>
+		    </map>
+		</property>
+		<property name="viewResolvers">
+		    <list>
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <!--  <property name="viewClass" value="org.springframework.web.servlet.view.tiles.TilesJstlView"></property> -->
         <property name="prefix" value="/WEB-INF/jsp/"></property>
         <property name="suffix" value=".jsp"></property>
         <property name="order" value="2"/> 
     </bean>
-    
     <bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"> 
         <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/> 
         <property name="order" value="1"/> 
     </bean>
+            </list>
+		</property>
+		<property name="defaultViews">
+            <list>
+                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+            </list>
+        </property>
+	</bean>
+    
+    <!-- <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>
+        <property name="order" value="2"/> 
+    </bean>  -->
+    
+    <!-- <bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"> 
+        <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/> 
+        <property name="order" value="1"/> 
+    </bean>  -->
     
     
     <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">

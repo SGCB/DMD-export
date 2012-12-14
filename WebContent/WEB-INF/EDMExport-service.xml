@@ -23,4 +23,6 @@
         
     <bean id="edmExportServiceSearch" class="org.dspace.EDMExport.service.EDMExportServiceSearch" 
         p:edmExportDAOSearch-ref="edmExportDAOSearch" />
+        
+    <bean id="edmExportServiceListItems" class="org.dspace.EDMExport.service.EDMExportServiceListItems" />
 </beans>

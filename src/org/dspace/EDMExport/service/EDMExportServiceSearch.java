@@ -33,6 +33,7 @@ public class EDMExportServiceSearch
 	
 		
 	private EDMExportBOListItems boListIems;
+	private EDMExportBOSearch searchBO;
 	private EDMExportDAOSearch daoSearch;
 	private int hitCount = 0;
 	
@@ -42,8 +43,13 @@ public class EDMExportServiceSearch
 		boListIems = new EDMExportBOListItems();
 	}
 	
+	public void setSearchBO(EDMExportBOSearch searchBO)
+	{
+		this.searchBO = searchBO;
+	}
 	
-	public EDMExportBOListItems getListItems(EDMExportBOSearch searchBO, int offset)
+	
+	public EDMExportBOListItems getListItems(int offset)
 	{
 		Item[] listItems = daoSearch.getListItems(searchBO, searchSubject, searchAuthor, searchTitle, searchSortBy, searchOrder, offset, Integer.parseInt(searchItemsPage));
 		this.hitCount = daoSearch.getHitCount();
