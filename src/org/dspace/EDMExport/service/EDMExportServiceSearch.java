@@ -48,10 +48,19 @@ public class EDMExportServiceSearch
 		this.searchBO = searchBO;
 	}
 	
-	
 	public EDMExportBOListItems getListItems(int offset)
 	{
-		Item[] listItems = daoSearch.getListItems(searchBO, searchSubject, searchAuthor, searchTitle, searchSortBy, searchOrder, offset, Integer.parseInt(searchItemsPage));
+		if (hitCount > 0) {
+			int searchItemsPageInt = Integer.parseInt(searchItemsPage);
+			int limit = (hitCount < searchItemsPageInt)?hitCount:searchItemsPageInt;
+			return getListItems(offset, limit);
+		} else return getListItems(offset, 0);
+	}
+	
+	public EDMExportBOListItems getListItems(int offset, int limit)
+	{
+		if (limit == 0) limit = Integer.parseInt(searchItemsPage);
+		Item[] listItems = daoSearch.getListItems(searchBO, searchSubject, searchAuthor, searchTitle, searchSortBy, searchOrder, offset, limit);
 		this.hitCount = daoSearch.getHitCount();
 		if (listItems != null && listItems.length > 0) {
 			logger.debug("Num items: " + listItems.length);
@@ -78,6 +87,21 @@ public class EDMExportServiceSearch
 	public int getHitCount()
 	{
 		return hitCount;
+	}
+	
+	public void setBoListIems(EDMExportBOListItems boListItems)
+	{
+		this.boListIems = boListItems;
+	}
+	
+	public EDMExportBOListItems getBoListItems()
+	{
+		return boListIems;
+	}
+	
+	public void clearBoListItems()
+	{
+		boListIems.setListItems(null);
 	}
 	
 	

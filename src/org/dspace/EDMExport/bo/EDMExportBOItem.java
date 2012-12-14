@@ -11,6 +11,7 @@ public class EDMExportBOItem
 	private String handle;
 	private int id;
 	private int index;
+	private boolean checked;
 	
 	public EDMExportBOItem()
 	{
@@ -26,6 +27,7 @@ public class EDMExportBOItem
 		this.handle = handle;
 		this.id = id;
 		this.index = index;
+		this.checked = false;
 	}
 	
 	public String getTitle()
@@ -68,6 +70,11 @@ public class EDMExportBOItem
 		return index;
 	}
 	
+	public boolean getChecked()
+	{
+		return checked;
+	}
+	
 	public void setTitle(String title)
 	{
 		this.title = title;
@@ -78,7 +85,7 @@ public class EDMExportBOItem
 		this.author = author;
 	}
 	
-	public void setCollection(EDMExportBOListCollections listCollections)
+	public void setListCollection(EDMExportBOListCollections listCollections)
 	{
 		this.listCollections = listCollections;
 	}
@@ -106,6 +113,11 @@ public class EDMExportBOItem
 	public void setIndex(int index)
 	{
 		this.index = index;
+	}
+	
+	public void setChecked(boolean checked)
+	{
+		this.checked = checked;
 	}
 
 }

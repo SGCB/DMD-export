@@ -42,7 +42,7 @@
     
     <bean id="dspace.eventService" factory-bean="dspace" factory-method="getEventService"/>
     
-    
+    <!-- 
     <bean id="beanValidator" class="org.springmodules.validation.commons.DefaultBeanValidator">
         <property name="validatorFactory" ref="validatorFactory" />
     </bean>
@@ -55,7 +55,7 @@
             </list>
         </property>
     </bean>
-    
+     -->
     
     <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
         <property name="definitions">
@@ -75,23 +75,28 @@
 		</property>
 		<property name="viewResolvers">
 		    <list>
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/jsp/"></property>
-        <property name="suffix" value=".jsp"></property>
-        <property name="order" value="2"/> 
-    </bean>
-    <bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"> 
-        <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/> 
-        <property name="order" value="1"/> 
-    </bean>
+			    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			        <property name="prefix" value="/WEB-INF/jsp/"></property>
+			        <property name="suffix" value=".jsp"></property>
+			        <property name="order" value="2"/> 
+			    </bean>
+			    <bean id="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"> 
+			        <property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/> 
+			        <property name="order" value="1"/> 
+			    </bean>
             </list>
 		</property>
 		<property name="defaultViews">
             <list>
-                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+                <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+                    <property name="extractValueFromSingleKeyModel" value="true" />
+                </bean>
             </list>
         </property>
 	</bean>
+	
+	
+	<mvc:annotation-driven />
     
     <!-- <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"></property>

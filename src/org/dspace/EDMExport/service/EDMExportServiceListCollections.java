@@ -63,56 +63,83 @@ public class EDMExportServiceListCollections
 		return boListCollections;
 	}
 	
-	
 	public EDMExportBOListItems getListItems(int offset)
+	{
+		if (hitCount > 0) {
+			listItemsPageInt = Integer.parseInt(listItemsPage);
+			int limit = (hitCount < listItemsPageInt)?hitCount:listItemsPageInt;
+			return getListItems(offset, limit);
+		} else return getListItems(offset, listItemsPageInt);
+	}
+	
+	public EDMExportBOListItems getListItems(int offset, int limit)
 	{
 		listItemsPageInt = Integer.parseInt(listItemsPage);
 		if (boListIems.getListItems() == null || boListIems.getListItems().length == 0) {
-		Set<Item> setItems = new HashSet<Item>();
-		
-		logger.debug("Num selected coll: " + this.boListCollections.getListCollections().length);
-		for (EDMExportBOCollection boColl : this.boListCollections.getListCollections()) {
-			Item[] listItemsCol = daoListCollections.getItems(boColl.getId());
-			if (listItemsCol != null) {
-				for (Item it : listItemsCol) {
-					if (!setItems.contains(it)) {
-						setItems.add(it);
+			Set<Item> setItems = new HashSet<Item>();
+			
+			logger.debug("Num selected coll: " + this.boListCollections.getListCollections().length);
+			for (EDMExportBOCollection boColl : this.boListCollections.getListCollections()) {
+				Item[] listItemsCol = daoListCollections.getItems(boColl.getId());
+				if (listItemsCol != null) {
+					for (Item it : listItemsCol) {
+						if (!setItems.contains(it)) {
+							setItems.add(it);
+						}
 					}
 				}
 			}
-		}
 		
-		Item[] listItems = setItems.toArray(new Item[0]);
-		if (listItems != null && listItems.length > 0) {
-			logger.debug("Num items: " + listItems.length);
-			EDMExportBOItem[] listArrayItems = new EDMExportBOItem[listItems.length];
-			int i = 0;
-			for (Item itemDS : listItems) {
-				try {
-					EDMExportBOItem col = EDMExportServiceItemDS2ItemBO.itemDS2ItemBO(itemDS, i);
-					listArrayItems[i] = col;
-					i++;
-				} catch (Exception e) {
-					logger.debug("item fail " + i, e);
+			Item[] listItems = setItems.toArray(new Item[0]);
+			if (listItems != null && listItems.length > 0) {
+				logger.debug("Num items: " + listItems.length);
+				EDMExportBOItem[] listArrayItems = new EDMExportBOItem[listItems.length];
+				int i = 0;
+				for (Item itemDS : listItems) {
+					try {
+						EDMExportBOItem col = EDMExportServiceItemDS2ItemBO.itemDS2ItemBO(itemDS, i);
+						listArrayItems[i] = col;
+						i++;
+					} catch (Exception e) {
+						logger.debug("item fail " + i, e);
+					}
 				}
+				hitCount = listArrayItems.length;
+				logger.debug("Num final items: " + hitCount);
+				boListIems.setListItems(listArrayItems);
+			} else {
+				hitCount = 0;
+				logger.debug("No items");
+				boListIems.setListItems(null);
 			}
-			hitCount = listArrayItems.length;
-			boListIems.setListItems(listArrayItems);
-		} else {
-			hitCount = 0;
-			logger.debug("No items");
-			boListIems.setListItems(null);
-		}
 		}
 		if (hitCount <= listItemsPageInt) return boListIems;
+		if (offset > hitCount) offset = 0;
 		EDMExportBOListItems boListIemsPage = new EDMExportBOListItems();
-		int limit = (hitCount < listItemsPageInt)?hitCount:listItemsPageInt;
+		if (limit > hitCount) limit = hitCount;
+		logger.debug("EDMExportServiceListCollections.getListItems Items from "+ offset + " qty " + limit);
 		EDMExportBOItem[] listItemsPage = new EDMExportBOItem[limit];
 		for (int i = 0; i < limit; i++) {
-			listItemsPage[i] = boListIems.getListItems()[offset++];
+			listItemsPage[i] = boListIems.getListItems()[offset + i];
 		}
 		boListIemsPage.setListItems(listItemsPage);
 		return boListIemsPage;
+	}
+	
+	
+	public EDMExportBOListItems getBoListItems()
+	{
+		return boListIems;
+	}
+	
+	public void setBoListIems(EDMExportBOListItems boListItems)
+	{
+		this.boListIems = boListItems;
+	}
+	
+	public void clearBoListItems()
+	{
+		boListIems.setListItems(null);
 	}
 	
 	public int getHitCount()
