@@ -1,11 +1,13 @@
 package org.dspace.EDMExport.bo;
 
+import org.dspace.EDMExport.controller.FilterSearch;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class EDMExportBOSearch
 {
 	@NotEmpty
 	private String term;
+	@FilterSearch
 	private String option;
 	
 	
