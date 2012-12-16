@@ -64,6 +64,17 @@ public class EDMExportServiceListItems
 		}
 	}
 	
+	public synchronized void processEDMExportBOListItems(EDMExportBOListItems boListItems)
+	{
+		for (EDMExportBOItem item : boListItems.getListItems()) {
+			if (mapItemsSubmit.containsKey(item.getId())) {
+				item.setChecked(true);
+			} else {
+				item.setChecked(false);
+			}
+		}
+	}
+	
 	
 	public synchronized boolean containsEDMExportBOItem(int id)
 	{

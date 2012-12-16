@@ -115,13 +115,14 @@ public class homeController
 		int pageInt = Integer.parseInt(page);
 		if (pageInt < 0 || pageInt > pageTotal) return "redirect:home.htm";
 		if (referer.equals("listCollections")) {
-			EDMExportBOListItems boListIems = edmExportServiceListCollections.getListItems((pageInt - 1) * listItemsPageInt);
-			if (boListIems.getListItems() == null || boListIems.getListItems().length == 0) {
+			EDMExportBOListItems boListItems = edmExportServiceListCollections.getListItems((pageInt - 1) * listItemsPageInt);
+			if (boListItems.getListItems() == null || boListItems.getListItems().length == 0) {
 				return "home";
 			} else {
-				logger.debug("Showing items " + boListIems.getListItems().length);
+				edmExportServiceListItems.processEDMExportBOListItems(boListItems);
+				logger.debug("Showing items " + boListItems.getListItems().length);
 				model.addAttribute("referer", "listCollections");
-				model.addAttribute("listItems", boListIems);
+				model.addAttribute("listItems", boListItems);
 				model.addAttribute("hitCount", hitCount);
 				model.addAttribute("listItemsPage", (hitCount < listItemsPageInt)?hitCount:listItemsPage);
 				model.addAttribute("page", page);
@@ -131,13 +132,15 @@ public class homeController
 				return "listItems";
 			}
 		} else {
-			EDMExportBOListItems boListIems = edmExportServiceSearch.getListItems((pageInt - 1) * listItemsPageInt);
-			if (boListIems.getListItems() == null || boListIems.getListItems().length == 0) {
+			EDMExportBOListItems boListItems = edmExportServiceSearch.getListItems((pageInt - 1) * listItemsPageInt);
+			if (boListItems.getListItems() == null || boListItems.getListItems().length == 0) {
 				model.addAttribute("error", 1);
 				return "redirect:home.htm";
 			} else {
+				edmExportServiceListItems.processEDMExportBOListItems(boListItems);
+				logger.debug("Showing items " + boListItems.getListItems().length);
 				model.addAttribute("referer", "search");
-				model.addAttribute("listItems", boListIems);
+				model.addAttribute("listItems", boListItems);
 				model.addAttribute("hitCount", hitCount);
 				model.addAttribute("listItemsPage", (hitCount < listItemsPageInt)?hitCount:listItemsPage);
 				model.addAttribute("page", page);
@@ -154,24 +157,26 @@ public class homeController
 	{
 		logger.debug("homeController.getShowAll");
 		if (referer.equals("listCollections")) {
-			EDMExportBOListItems boListIems = edmExportServiceListCollections.getListItems(0, hitCount);
-			if (boListIems.getListItems() == null || boListIems.getListItems().length == 0) {
+			EDMExportBOListItems boListItems = edmExportServiceListCollections.getListItems(0, hitCount);
+			if (boListItems.getListItems() == null || boListItems.getListItems().length == 0) {
 				return "redirect:home.htm";
 			} else {
+				edmExportServiceListItems.processEDMExportBOListItems(boListItems);
 				model.addAttribute("referer", "listCollections");
-				model.addAttribute("listItems", boListIems);
+				model.addAttribute("listItems", boListItems);
 				model.addAttribute("hitCount", hitCount);
 				model.addAttribute("listItemsPage", hitCount);
 				return "listItems";
 			}
 		} else {
-			EDMExportBOListItems boListIems = edmExportServiceSearch.getListItems(0, hitCount);
-			if (boListIems.getListItems() == null || boListIems.getListItems().length == 0) {
+			EDMExportBOListItems boListItems = edmExportServiceSearch.getListItems(0, hitCount);
+			if (boListItems.getListItems() == null || boListItems.getListItems().length == 0) {
 				model.addAttribute("error", 1);
 				return "redirect:home.htm";
 			} else {
+				edmExportServiceListItems.processEDMExportBOListItems(boListItems);
 				model.addAttribute("referer", "search");
-				model.addAttribute("listItems", boListIems);
+				model.addAttribute("listItems", boListItems);
 				model.addAttribute("hitCount", hitCount);
 				model.addAttribute("listItemsPage", hitCount);
 				return "listItems";
