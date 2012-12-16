@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -71,7 +72,7 @@ public class homeController
 	}
 
 	
-	@RequestMapping(value = "/home.htm", method = RequestMethod.GET, params="error")
+	@RequestMapping(value = "/home.htm", method = RequestMethod.GET, params="error=search")
 	public String getError(@RequestParam(value="error", required=true) String error, Model model)
 	{
 		logger.debug("homeController.getError");
@@ -206,6 +207,7 @@ public class homeController
 	{
 		logger.debug("homeController.post");
 		if (result.hasErrors()) {
+			logErrorValid(result);
 			return "home";
 		} else {
 			listItemsPageInt = Integer.parseInt(listItemsPage);
@@ -235,7 +237,8 @@ public class homeController
 	{
 		logger.debug("homeController.postSearch");
 		if (result.hasErrors()) {
-			return "home";
+			logErrorValid(result);
+			return "search";
 		} else {
 			listItemsPageInt = Integer.parseInt(listItemsPage);
 			edmExportServiceSearch.setSearchBO(searchBO);
@@ -243,7 +246,7 @@ public class homeController
 			edmExportServiceListItems.clearMapItemsSubmit();
 			EDMExportBOListItems boListIems = edmExportServiceSearch.getListItems(0, listItemsPageInt);
 			if (boListIems.getListItems() == null || boListIems.getListItems().length == 0) {
-				model.addAttribute("error", 1);
+				model.addAttribute("error", "search");
 				return "redirect:home.htm";
 			} else {
 				model.addAttribute("referer", "search");
@@ -258,6 +261,17 @@ public class homeController
 				return "listItems";
 			}
 		}
+	}
+	
+	
+	private void logErrorValid(BindingResult result)
+	{
+		for (Object object : result.getAllErrors()) {
+            if (object instanceof FieldError) {
+                FieldError fieldError = (FieldError) object;
+                logger.debug( fieldError.toString() );
+            }
+        }
 	}
 	
 	private int getPageTotal(int hitCount, int listItemsPageInt)
