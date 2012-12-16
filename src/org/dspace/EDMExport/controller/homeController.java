@@ -3,6 +3,7 @@ package org.dspace.EDMExport.controller;
 
 import java.io.IOException;
 
+import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -225,7 +226,7 @@ public class homeController
 	}
 	
 	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="pageAction=searchItems")
-	public String postSearch(@ModelAttribute(value="search") EDMExportBOSearch searchBO, BindingResult result, Model model)
+	public String postSearch(@ModelAttribute(value="search") @Valid EDMExportBOSearch searchBO, BindingResult result, Model model)
 	{
 		logger.debug("homeController.postSearch");
 		if (result.hasErrors()) {

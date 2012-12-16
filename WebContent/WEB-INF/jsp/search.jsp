@@ -23,11 +23,13 @@
         </script>
         <h2><spring:message code="edmexport.search.title" /></h2>
         <form:form action="home.htm" method="post" name="search" commandName="search" onsubmit="return valid_search(this);" >
+            <form:errors path="*" cssClass="errorblock" element="div" />
             <input type="hidden" name="pageAction" value="searchItems" />
         <div id="div_search" class="div_search">
             <div id="div_search_text" class="div_search_text">
                 <label for="term"><spring:message code="edmexport.search.term" /></label>
                 <form:input path="term" size="50" required="required" />
+                <form:errors path="term" cssClass="error" />
             </div>
             <div id="div_search_options" class="div_search_options">
                 <label for="option"><spring:message code="edmexport.search.options" /></label>
