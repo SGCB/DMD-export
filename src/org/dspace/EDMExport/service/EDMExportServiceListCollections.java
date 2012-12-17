@@ -2,6 +2,7 @@ package org.dspace.EDMExport.service;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -75,7 +76,7 @@ public class EDMExportServiceListCollections
 	public EDMExportBOListItems getListItems(int offset, int limit)
 	{
 		listItemsPageInt = Integer.parseInt(listItemsPage);
-		if (boListIems.getListItems() == null || boListIems.getListItems().length == 0) {
+		if (boListIems.isEmpty()) {
 			Set<Item> setItems = new HashSet<Item>();
 			
 			logger.debug("Num selected coll: " + this.boListCollections.getListCollections().length);
@@ -110,7 +111,7 @@ public class EDMExportServiceListCollections
 			} else {
 				hitCount = 0;
 				logger.debug("No items");
-				boListIems.setListItems(null);
+				boListIems.setListItems((List<EDMExportBOItem>) null);
 			}
 		}
 		if (hitCount <= listItemsPageInt) return boListIems;
@@ -120,7 +121,7 @@ public class EDMExportServiceListCollections
 		logger.debug("EDMExportServiceListCollections.getListItems Items from "+ offset + " qty " + limit);
 		EDMExportBOItem[] listItemsPage = new EDMExportBOItem[limit];
 		for (int i = 0; i < limit; i++) {
-			listItemsPage[i] = boListIems.getListItems()[offset + i];
+			listItemsPage[i] = boListIems.getListItems().get(offset + i);
 		}
 		boListIemsPage.setListItems(listItemsPage);
 		return boListIemsPage;
@@ -139,7 +140,7 @@ public class EDMExportServiceListCollections
 	
 	public void clearBoListItems()
 	{
-		boListIems.setListItems(null);
+		boListIems.setListItems((List<EDMExportBOItem>) null);
 	}
 	
 	public int getHitCount()

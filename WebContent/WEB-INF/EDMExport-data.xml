@@ -15,4 +15,6 @@
     
     <bean id="edmExportDAOSearch" class="org.dspace.EDMExport.dao.EDMExportDAODspaceSearch" c:edmExportDAOBase-ref="edmExportDAOBase"/>
     
+    <bean id="edmExportDAOListItems" class="org.dspace.EDMExport.dao.EDMExportDAODspaceListItems" c:edmExportDAOBase-ref="edmExportDAOBase"/>
+    
 </beans>

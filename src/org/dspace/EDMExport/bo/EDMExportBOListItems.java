@@ -1,27 +1,49 @@
 package org.dspace.EDMExport.bo;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.dspace.EDMExport.bo.EDMExportBOItem;
 
 public class EDMExportBOListItems
 {
-	private EDMExportBOItem[] listItems;
+	private List<EDMExportBOItem> listItems;
 	
 	public EDMExportBOListItems()
 	{
 	}
 	
-	public EDMExportBOListItems(EDMExportBOItem[] listItems)
+	
+	public EDMExportBOListItems(List<EDMExportBOItem> listItems)
 	{
 		this.listItems = listItems;
+	}
+	
+	public EDMExportBOListItems(EDMExportBOItem[] listItems)
+	{
+		this.listItems = Arrays.asList(listItems);
 	}
 	
 	public void setListItems(EDMExportBOItem[] listItems)
 	{
+		this.listItems = Arrays.asList(listItems);
+	}
+	
+	public void setListItems(List<EDMExportBOItem> listItems)
+	{
 		this.listItems = listItems;
 	}
 	
-	public EDMExportBOItem[] getListItems()
+	
+	public List<EDMExportBOItem> getListItems()
 	{
 		return this.listItems;
 	}
+	
+	
+	public boolean isEmpty()
+	{
+		return (listItems == null || listItems.size() == 0);
+	}
+	
 }

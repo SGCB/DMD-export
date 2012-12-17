@@ -26,4 +26,9 @@ public class EDMExportBOListCollections
 		return this.listCollections;
 	}
 	
+	public boolean isEmpty()
+	{
+		return (listCollections == null || listCollections.length == 0);
+	}
+	
 }

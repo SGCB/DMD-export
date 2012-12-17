@@ -1,11 +1,20 @@
 package org.dspace.EDMExport.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
+import org.dspace.EDMExport.bo.EDMExportBOCollection;
 import org.dspace.EDMExport.bo.EDMExportBOItem;
+import org.dspace.EDMExport.bo.EDMExportBOListCollections;
 import org.dspace.EDMExport.bo.EDMExportBOListItems;
+import org.dspace.EDMExport.dao.EDMExportDAOListItems;
 
 
 public class EDMExportServiceListItems
@@ -13,6 +22,8 @@ public class EDMExportServiceListItems
 	protected static Logger logger = Logger.getLogger("edmexport");
 
 	private Map<Integer, EDMExportBOItem> mapItemsSubmit;
+	
+	private EDMExportDAOListItems daoListItems;
 	
 	public EDMExportServiceListItems()
 	{
@@ -103,5 +114,33 @@ public class EDMExportServiceListItems
 			item.setChecked(false);
 			logger.debug("Removed item " + id);
 		}
+	}
+	
+	public List<String> getListCollections()
+	{
+		List<String> listCollections = new ArrayList<String>();
+		Set<Integer> setIdCollections = new HashSet<Integer>();
+		Iterator<Integer> it1 = mapItemsSubmit.keySet().iterator();
+		while(it1.hasNext()) {
+			int id = it1.next();
+			EDMExportBOItem item = mapItemsSubmit.get(id);
+			EDMExportBOListCollections boListCollections = item.getListCollections(); 
+			if (boListCollections == null || boListCollections.isEmpty()) daoListItems.getListCollectionsItem(item.getId());
+			if (boListCollections != null) {
+				for (EDMExportBOCollection coll : boListCollections.getListCollections()) {
+					if (!setIdCollections.contains(coll.getId())) {
+						listCollections.add(coll.getName() + " (" + coll.getHandle() + ")");
+						setIdCollections.add(coll.getId());
+					}
+				}
+			}
+		}
+		Collections.sort(listCollections);
+		return listCollections;
+	}
+	
+	public void setEdmExportDAOListItems(EDMExportDAOListItems daoListItems)
+	{
+		this.daoListItems = daoListItems;
 	}
 }

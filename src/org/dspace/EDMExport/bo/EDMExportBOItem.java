@@ -1,13 +1,17 @@
 package org.dspace.EDMExport.bo;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class EDMExportBOItem
 {
 	
 	private String title;
 	private EDMExportBOListCollections listCollections;
-	private String[] author;
-	private String[] subject;
-	private String[] type;
+	private EDMExportBOListAuthors author;
+	private EDMExportBOListSubjects subject;
+	private EDMExportBOListTypes type;
 	private String handle;
 	private int id;
 	private int index;
@@ -21,9 +25,23 @@ public class EDMExportBOItem
 	{
 		this.title = title;
 		this.listCollections = listCollections;
-		this.author = author;
-		this.subject = subject;
-		this.type = type;
+		this.author = new EDMExportBOListAuthors(author);
+		this.subject = new EDMExportBOListSubjects(subject);
+		this.type = new EDMExportBOListTypes(type);
+		this.handle = handle;
+		this.id = id;
+		this.index = index;
+		this.checked = false;
+	}
+	
+	
+	public EDMExportBOItem(String title, EDMExportBOListCollections listCollections, List<String> author, List<String> subject, List<String> type, String handle, int id, int index)
+	{
+		this.title = title;
+		this.listCollections = listCollections;
+		this.author = new EDMExportBOListAuthors(author);
+		this.subject = new EDMExportBOListSubjects(subject);
+		this.type = new EDMExportBOListTypes(type);
 		this.handle = handle;
 		this.id = id;
 		this.index = index;
@@ -40,19 +58,34 @@ public class EDMExportBOItem
 		return listCollections;
 	}
 	
-	public String[] getAuthor()
+	public EDMExportBOListAuthors getAuthor()
 	{
 		return author;
 	}
 	
-	public String[] getSubject()
+	public List<String> getListAuthors()
+	{
+		return author.getListAuthors();
+	}
+	
+	public EDMExportBOListSubjects getSubject()
 	{
 		return subject;
 	}
 	
-	public String[] getType()
+	public List<String> getListSubjects()
+	{
+		return subject.getListSubjects();
+	}
+	
+	public EDMExportBOListTypes getType()
 	{
 		return type;
+	}
+	
+	public List<String> getListTypes()
+	{
+		return type.getListTypes();
 	}
 	
 	public String getHandle()
@@ -80,9 +113,14 @@ public class EDMExportBOItem
 		this.title = title;
 	}
 	
-	public void setAuthor(String[] author)
+	public void setAuthor(EDMExportBOListAuthors author)
 	{
 		this.author = author;
+	}
+	
+	public void setListAuthors(List<String> listAuthors)
+	{
+		this.author.setListAuthors(listAuthors);
 	}
 	
 	public void setListCollection(EDMExportBOListCollections listCollections)
@@ -90,14 +128,24 @@ public class EDMExportBOItem
 		this.listCollections = listCollections;
 	}
 	
-	public void setSubject(String[] subject)
+	public void setSubject(EDMExportBOListSubjects subject)
 	{
 		this.subject = subject;
 	}
 	
-	public void setType(String[] type)
+	public void setListSubjects(ArrayList<String> listSubjects)
+	{
+		this.subject.setListSubjects(listSubjects);
+	}
+	
+	public void setType(EDMExportBOListTypes type)
 	{
 		this.type = type;
+	}
+	
+	public void setListTypes(ArrayList<String> listTypes)
+	{
+		this.type.setListTypes(listTypes);
 	}
 	
 	public void setHandle(String handle)

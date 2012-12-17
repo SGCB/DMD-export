@@ -27,7 +27,14 @@
     
     <definition name="listItems" extends="template">
         <put-attribute name="title" value="EDMExport" type="string"/>
+        <put-attribute name="tabs" value="/WEB-INF/jsp/homeTabs.jsp" />
         <put-attribute name="body" value="/WEB-INF/jsp/listItems.jsp" />
+    </definition>
+    
+    <definition name="selectedItems" extends="template">
+        <put-attribute name="title" value="EDMExport" type="string"/>
+        <put-attribute name="tabs" value="/WEB-INF/jsp/homeTabs.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/selectedItems.jsp" />
     </definition>
     
     <definition name="login" extends="template">

@@ -1,5 +1,7 @@
 package org.dspace.EDMExport.service;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.dspace.EDMExport.bo.EDMExportBOListItems;
 import org.dspace.EDMExport.bo.EDMExportBOItem;
@@ -79,7 +81,7 @@ public class EDMExportServiceSearch
 		} else {
 			this.hitCount = 0;
 			logger.debug("No items");
-			boListIems.setListItems(null);
+			boListIems.setListItems((List<EDMExportBOItem>) null);
 		}
 		return boListIems;
 	}
@@ -101,7 +103,7 @@ public class EDMExportServiceSearch
 	
 	public void clearBoListItems()
 	{
-		boListIems.setListItems(null);
+		boListIems.setListItems((List<EDMExportBOItem>) null);
 	}
 	
 	
