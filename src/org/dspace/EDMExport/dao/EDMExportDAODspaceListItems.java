@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import org.apache.log4j.Logger;
 import org.dspace.EDMExport.bo.EDMExportBOCollection;
 import org.dspace.EDMExport.bo.EDMExportBOListCollections;
+import org.dspace.content.Bundle;
 import org.dspace.content.Collection;
 import org.dspace.content.Item;
 import org.dspace.core.Context;
@@ -40,6 +41,27 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 			logger.debug("EDMExportBOListCollections.getListCollectionsItem", e);
 		} catch (Exception e) {
 			logger.debug("EDMExportBOListCollections.getListCollectionsItem", e);
+		}
+		return null;
+	}
+
+	@Override
+	public Item getDSPaceItem(int id)
+	{
+		try {
+			return Item.find(context, id);
+		} catch (SQLException e) {
+			logger.debug("EDMExportBOListCollections.getDSPaceItem", e);
+		}
+		return null;
+	}
+	
+	public Bundle[] getDSPaceBundleItem(Item item, String type)
+	{
+		try {
+			return item.getBundles(type);
+		} catch (SQLException e) {
+			logger.debug("EDMExportBOListCollections.getDSPaceBundleItem", e);
 		}
 		return null;
 	}

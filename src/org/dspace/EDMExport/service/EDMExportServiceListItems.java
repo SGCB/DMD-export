@@ -15,6 +15,8 @@ import org.dspace.EDMExport.bo.EDMExportBOItem;
 import org.dspace.EDMExport.bo.EDMExportBOListCollections;
 import org.dspace.EDMExport.bo.EDMExportBOListItems;
 import org.dspace.EDMExport.dao.EDMExportDAOListItems;
+import org.dspace.content.Bundle;
+import org.dspace.content.Item;
 
 
 public class EDMExportServiceListItems
@@ -138,6 +140,18 @@ public class EDMExportServiceListItems
 		Collections.sort(listCollections);
 		return listCollections;
 	}
+	
+	
+	public Item getDSPaceItem(EDMExportBOItem boItem)
+	{
+		return daoListItems.getDSPaceItem(boItem.getId());
+	}
+	
+	public Bundle[] getDSPaceBundleItem(Item item, String type)
+	{
+		return daoListItems.getDSPaceBundleItem(item, type);
+	}
+	
 	
 	public void setEdmExportDAOListItems(EDMExportDAOListItems daoListItems)
 	{

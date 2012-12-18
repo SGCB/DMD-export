@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.dspace.EDMExport.bo.EDMExportBOFormEDMData;
 import org.dspace.EDMExport.bo.EDMExportBOListCollections;
 import org.dspace.EDMExport.bo.EDMExportBOListItems;
 import org.dspace.EDMExport.bo.EDMExportBOSearch;
@@ -43,6 +44,9 @@ public class homeController
 	@Value("${list_items.itemspage}")
     private String listItemsPage;
 	
+	@Value("${selectedItems.Edmtype}")
+	private String edmTypes;
+		
 	private EDMExportServiceListCollections edmExportServiceListCollections;
 	private EDMExportServiceSearch edmExportServiceSearch;
 	private EDMExportServiceListItems edmExportServiceListItems;
@@ -216,8 +220,11 @@ public class homeController
 			logErrorValid(result);
 			return "home";
 		} else {
+			String[] edmTypesArr = edmTypes.split(",");
+			EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, "");
 			edmExportServiceListItems.processEDMExportBOListItems(boListItems);
 			List<String> listCollections = edmExportServiceListItems.getListCollections();
+			model.addAttribute("FormEDMData", edmExportBOFormEDMData);
 			model.addAttribute("listCollections", listCollections);
 			model.addAttribute("listCollectionsCount", listCollections.size());
 			model.addAttribute("selectedItemsCount", edmExportServiceListItems.getMapItemsSubmit().size());

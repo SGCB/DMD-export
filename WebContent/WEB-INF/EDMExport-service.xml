@@ -26,4 +26,7 @@
         
     <bean id="edmExportServiceListItems" class="org.dspace.EDMExport.service.EDMExportServiceListItems"
         p:edmExportDAOListItems-ref="edmExportDAOListItems" />
+        
+    <bean id="edmExportXML" class="org.dspace.EDMExport.service.EDMExportXML"
+        p:edmExportServiceListItems-ref="edmExportServiceListItems" />
 </beans>

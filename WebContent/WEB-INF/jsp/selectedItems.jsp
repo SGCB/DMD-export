@@ -20,6 +20,26 @@
 	                </ul>
 	            </c:if>
             </div>
+            <div id="div_selecteditems_form" class="div_selecteditems_form">
+                <form:form action="home.htm" method="post" name="form_edm_data" commandName="FormEDMData">
+                    <ul id="ul_selecteditems_form" class="ul_selecteditems_form">
+                        <li>
+                            <form:input path="currentLocation" value="${FormEDMData.currentLocation}" />
+                        </li>
+	                    <li>
+	                    <c:if test="${!empty FormEDMData.listTypes}">
+	                       <c:forEach items="${FormEDMData.listTypes}" var="type" varStatus="typeStatus">
+		                    <div id="div_selecteditems_text" class="div_selecteditems_text">
+		                        <label for="term"><spring:message code="edmexport.selecteditems.types" /> ${type}</label>
+		                        <form:input path="listTypes[${typeStatus.index}]" size="80" required="required" />
+		                        <form:errors path="listTypes[${typeStatus.index}]" cssClass="error" />
+		                    </div>
+	                       </c:forEach>
+	                    </c:if>
+	                    </li>
+                    </ul>
+                </form:form>
+            </div>
             <div id="div_selecteditems_actions" class="div_selecteditems_actions">
                 <ul>
                     <li><a href="home.htm?referer=selectedItems&action=visualize"><spring:message code="edmexport.selecteditems.visualize" /></a></li>

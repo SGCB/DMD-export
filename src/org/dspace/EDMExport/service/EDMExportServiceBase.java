@@ -38,5 +38,10 @@ public class EDMExportServiceBase
 	    }
 	}
 	
+	public String getDspaceDir()
+	{
+		return ConfigurationManager.getProperty("dspace.dir");
+	}
+	
 
 }
