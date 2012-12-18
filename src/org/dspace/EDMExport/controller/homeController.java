@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,10 +211,29 @@ public class homeController
 			return "search";
 		}
 	}
-	 
+	
+	@RequestMapping(value = "/viewXml.htm", method = RequestMethod.GET, params="referer=xml")
+	public String getViewXML(@ModelAttribute(value="FormEDMData") EDMExportBOFormEDMData edmExportBOFormEDMData, Model model)
+	{
+		return "";
+	}
+	
+	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="referer=xml")
+	public String postXml(@ModelAttribute(value="FormEDMData") @Valid EDMExportBOFormEDMData boFormData, 
+			final RedirectAttributes redirectAttributes, BindingResult result, Model model)
+	{
+		logger.debug("homeController.postXml");
+		if (result.hasErrors()) {
+			logErrorValid(result);
+			return "home";
+		} else {
+			redirectAttributes.addFlashAttribute("FormEDMData", boFormData);
+			return "redirect:viewXml.htm";
+		}
+	}
 	
 	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="referer")
-	public String postItems(@ModelAttribute(value="listItems") EDMExportBOListItems boListItems, BindingResult result, Model model)
+	public String postListItems(@ModelAttribute(value="listItems") EDMExportBOListItems boListItems, BindingResult result, Model model)
 	{
 		logger.debug("homeController.postItems");
 		if (result.hasErrors()) {
@@ -221,7 +241,7 @@ public class homeController
 			return "home";
 		} else {
 			String[] edmTypesArr = edmTypes.split(",");
-			EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, "");
+			EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, edmExportServiceListItems.getEDMExportServiceBase().getDspaceDir());
 			edmExportServiceListItems.processEDMExportBOListItems(boListItems);
 			List<String> listCollections = edmExportServiceListItems.getListCollections();
 			model.addAttribute("FormEDMData", edmExportBOFormEDMData);
@@ -234,7 +254,7 @@ public class homeController
 	 
 	
 	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="pageAction=listColls")
-	public String post(@ModelAttribute(value="listCollections") EDMExportBOListCollections listCollectionsBO, BindingResult result, Model model)
+	public String postListCollections(@ModelAttribute(value="listCollections") EDMExportBOListCollections listCollectionsBO, BindingResult result, Model model)
 	{
 		logger.debug("homeController.post");
 		if (result.hasErrors()) {

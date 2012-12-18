@@ -3,10 +3,15 @@ package org.dspace.EDMExport.bo;
 import java.util.Arrays;
 import java.util.List;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class EDMExportBOFormEDMData
 {
-
+	@NotEmpty
 	private List<String> listTypes;
+	
+	@NotBlank
 	private String currentLocation;
 	
 	

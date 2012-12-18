@@ -25,11 +25,20 @@ public class EDMExportServiceListItems
 
 	private Map<Integer, EDMExportBOItem> mapItemsSubmit;
 	
+	private EDMExportServiceBase edmExportServiceBase;
 	private EDMExportDAOListItems daoListItems;
+	
 	
 	public EDMExportServiceListItems()
 	{
 		logger.debug("Init EDMExportServiceListItems");
+		this.mapItemsSubmit = new ConcurrentHashMap<Integer, EDMExportBOItem>();
+	}
+	
+	public EDMExportServiceListItems(EDMExportServiceBase edmExportServiceBase)
+	{
+		logger.debug("Init EDMExportServiceListItems");
+		this.edmExportServiceBase = edmExportServiceBase;
 		this.mapItemsSubmit = new ConcurrentHashMap<Integer, EDMExportBOItem>();
 	}
 	
@@ -156,5 +165,10 @@ public class EDMExportServiceListItems
 	public void setEdmExportDAOListItems(EDMExportDAOListItems daoListItems)
 	{
 		this.daoListItems = daoListItems;
+	}
+	
+	public EDMExportServiceBase getEDMExportServiceBase()
+	{
+		return edmExportServiceBase;
 	}
 }
