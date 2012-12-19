@@ -29,6 +29,7 @@ import org.dspace.EDMExport.bo.EDMExportBOSearch;
 import org.dspace.EDMExport.service.EDMExportServiceListCollections;
 import org.dspace.EDMExport.service.EDMExportServiceListItems;
 import org.dspace.EDMExport.service.EDMExportServiceSearch;
+import org.dspace.EDMExport.service.EDMExportXML;
 
 @Controller
 @RequestMapping("/")
@@ -51,6 +52,7 @@ public class homeController
 	private EDMExportServiceListCollections edmExportServiceListCollections;
 	private EDMExportServiceSearch edmExportServiceSearch;
 	private EDMExportServiceListItems edmExportServiceListItems;
+	private EDMExportXML edmExportXml;
 	
 	private int pageTotal = 0;
 	private int hitCount = 0;
@@ -74,6 +76,13 @@ public class homeController
 	public void setEdmExportServiceListItems(EDMExportServiceListItems edmExportServiceListItems)
 	{
 		this.edmExportServiceListItems = edmExportServiceListItems;
+
+	}
+	
+	@Autowired
+	public void setEDMExportXML(EDMExportXML edmExportXml)
+	{
+		this.edmExportXml = edmExportXml;
 
 	}
 
@@ -195,6 +204,16 @@ public class homeController
 		}
 	}
 	
+	@RequestMapping(value = "/viewXml.htm", method = RequestMethod.GET)
+	public String getViewXML(@ModelAttribute(value="FormEDMData") EDMExportBOFormEDMData edmExportBOFormEDMData, Model model)
+	{
+		logger.debug("homeController.getViewXML");
+		edmExportXml.setEdmExportServiceListItems(edmExportServiceListItems);
+		String edmXML = edmExportXml.showEDMXML(edmExportBOFormEDMData);
+		model.addAttribute("edmXml", edmXML);
+		return "viewXml";
+	}
+	
 	@RequestMapping(value = "/home.htm", method = RequestMethod.GET)
 	public String get(@RequestParam(value="tab", required=false) String tab, Model model)
 	{
@@ -212,22 +231,32 @@ public class homeController
 		}
 	}
 	
-	@RequestMapping(value = "/viewXml.htm", method = RequestMethod.GET, params="referer=xml")
-	public String getViewXML(@ModelAttribute(value="FormEDMData") EDMExportBOFormEDMData edmExportBOFormEDMData, Model model)
-	{
-		return "";
-	}
 	
-	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="referer=xml")
+	@RequestMapping(value = "/home.htm", method = RequestMethod.POST)
 	public String postXml(@ModelAttribute(value="FormEDMData") @Valid EDMExportBOFormEDMData boFormData, 
-			final RedirectAttributes redirectAttributes, BindingResult result, Model model)
+			BindingResult result, Model model, final RedirectAttributes redirectAttributes)
 	{
 		logger.debug("homeController.postXml");
 		if (result.hasErrors()) {
 			logErrorValid(result);
-			return "home";
+			List<String> listCollections = edmExportServiceListItems.getListCollections();
+			model.addAttribute("FormEDMData", boFormData);
+			model.addAttribute("listCollections", listCollections);
+			model.addAttribute("listCollectionsCount", listCollections.size());
+			model.addAttribute("selectedItemsCount", edmExportServiceListItems.getMapItemsSubmit().size());
+			return "selectedItems";
 		} else {
+			boFormData.paddingTypes(edmTypes.split(","));
 			redirectAttributes.addFlashAttribute("FormEDMData", boFormData);
+			if (result.hasErrors()) {
+				logErrorValid(result);
+				List<String> listCollections = edmExportServiceListItems.getListCollections();
+				model.addAttribute("FormEDMData", boFormData);
+				model.addAttribute("listCollections", listCollections);
+				model.addAttribute("listCollectionsCount", listCollections.size());
+				model.addAttribute("selectedItemsCount", edmExportServiceListItems.getMapItemsSubmit().size());
+				return "selectedItems";
+			}
 			return "redirect:viewXml.htm";
 		}
 	}
@@ -241,7 +270,7 @@ public class homeController
 			return "home";
 		} else {
 			String[] edmTypesArr = edmTypes.split(",");
-			EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, edmExportServiceListItems.getEDMExportServiceBase().getDspaceDir());
+			EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, edmExportServiceListItems.getEDMExportServiceBase().getDspaceName(), "xml");
 			edmExportServiceListItems.processEDMExportBOListItems(boListItems);
 			List<String> listCollections = edmExportServiceListItems.getListCollections();
 			model.addAttribute("FormEDMData", edmExportBOFormEDMData);

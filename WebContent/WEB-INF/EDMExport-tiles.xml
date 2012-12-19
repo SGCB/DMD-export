@@ -37,6 +37,12 @@
         <put-attribute name="body" value="/WEB-INF/jsp/selectedItems.jsp" />
     </definition>
     
+    <definition name="viewXml" extends="template">
+        <put-attribute name="title" value="EDMExport" type="string"/>
+        <put-attribute name="tabs" value="/WEB-INF/jsp/homeTabs.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/viewXml.jsp" />
+    </definition>
+    
     <definition name="login" extends="template">
         <put-attribute name="title" value="EDMExport Login" type="string"/>
         <put-attribute name="body" value="/WEB-INF/jsp/login.jsp" />
