@@ -129,6 +129,7 @@ public class EDMExportServiceListItems
 	
 	public List<String> getListCollections()
 	{
+		logger.debug("EDMExportServiceListItems.getListCollections");
 		List<String> listCollections = new ArrayList<String>();
 		Set<Integer> setIdCollections = new HashSet<Integer>();
 		Iterator<Integer> it1 = mapItemsSubmit.keySet().iterator();

@@ -44,6 +44,7 @@ public class EDMExportServiceListCollections
 	
 	public EDMExportBOListCollections getListCollection()
 	{
+		logger.debug("EDMExportServiceListCollections.getListCollection");
 		Collection[] listCol = daoListCollections.getListCollections();
 		if (listCol != null && listCol.length > 0) {
 			logger.debug("Num collections: " + listCol.length);
@@ -75,6 +76,7 @@ public class EDMExportServiceListCollections
 	
 	public EDMExportBOListItems getListItems(int offset, int limit)
 	{
+		logger.debug("EDMExportServiceListCollections.getListItems");
 		listItemsPageInt = Integer.parseInt(listItemsPage);
 		if (boListIems.isEmpty()) {
 			Set<Item> setItems = new HashSet<Item>();

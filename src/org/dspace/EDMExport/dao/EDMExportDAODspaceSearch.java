@@ -33,7 +33,7 @@ public class EDMExportDAODspaceSearch implements EDMExportDAOSearch
 	public Item[] getListItems(EDMExportBOSearch searchBO, String searchSubject, String searchAuthor, String searchTitle, String searchSortBy, String searchOrder, int offset, int searchItemsPage)
 	{
 		try {
-			logger.debug("Looking for list of items ");
+			logger.debug("EDMExportDAODspaceSearch.getListItems : Looking for list of items ");
 			QueryArgs qArgs = new QueryArgs();
 			qArgs.setStart(offset);
 			qArgs.setPageSize(searchItemsPage);

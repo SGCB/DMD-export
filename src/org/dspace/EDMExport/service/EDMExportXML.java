@@ -1,6 +1,7 @@
 package org.dspace.EDMExport.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,10 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.dspace.EDMExport.bo.EDMExportBOFormEDMData;
 import org.dspace.EDMExport.bo.EDMExportBOItem;
+import org.dspace.app.util.Util;
+import org.dspace.constants.Constants;
+import org.dspace.content.Bitstream;
+import org.dspace.content.Bundle;
 import org.dspace.content.DCValue;
 import org.dspace.content.Item;
 import org.jdom.Attribute;
@@ -92,7 +97,7 @@ public class EDMExportXML
 		rdf_RDF.addNamespaceDeclaration(DC);
 		
 		rdf_RDF.addNamespaceDeclaration(XSI);
-		rdf_RDF.setAttribute("schemaLocation", "NAMESPACE_URI_SCHEMALOCATION", XSI);
+		rdf_RDF.setAttribute("schemaLocation", NAMESPACE_URI_SCHEMALOCATION, XSI);
 		
 		Document doc = new Document(rdf_RDF);
 		
@@ -110,7 +115,7 @@ public class EDMExportXML
 		doc.setContent(rdf_RDF);
 		XMLOutputter xmlOutput = new XMLOutputter();
 		xmlOutput.setFormat(Format.getPrettyFormat());
-		logger.debug(xmlOutput.outputString(doc));
+		//logger.debug(xmlOutput.outputString(doc));
 		return xmlOutput.outputString(doc);
 	}
 	
@@ -121,22 +126,34 @@ public class EDMExportXML
 		Item item = edmExportServiceListItems.getDSPaceItem(boItem);
 		
 		DCValue[] itemDC = item.getDC(Item.ANY, Item.ANY, Item.ANY);
+		for (DCValue dcv : itemDC) {
+			logger.debug(dcv.schema+"."+dcv.element+"."+dcv.qualifier+" = "+dcv.value);
+		}
 		
 		Element ProviderCHO = processProviderCHO(item);
-		listElements.add(ProviderCHO);;
+		listElements.add(ProviderCHO);
+		
+		Bundle[] origBundles = edmExportServiceListItems.getDSPaceBundleItem(item, "ORIGINAL");
+		
+		if (origBundles.length > 0) {
+			Bitstream[] bitstreams = origBundles[0].getBitstreams();
+			if (bitstreams.length > 0) {
+				Element WebResource = processWebResource(item, bitstreams[0]); 
+				if (WebResource != null) listElements.add(WebResource);
+			}
+		}
 		
 		return listElements;
 	}
 	
-	public Element processProviderCHO(Item item)
+	private Element processProviderCHO(Item item)
 	{
 		Element ProviderCHO = new Element("ProviderCHO", "edm");
 		
 		DCValue[] identifiers = item.getDC("identifier", "uri", null);
 		if (identifiers.length > 0) ProviderCHO.setAttribute(new Attribute("about", identifiers[0].value, RDF));
 
-		createElementDC(item, "contributor", DC, "contributor", null, ProviderCHO, true);
-		createElementDC(item, "contributor", DC, "contributor", "*", ProviderCHO, true);
+		createElementDC(item, "contributor", DC, "contributor", Item.ANY, ProviderCHO, true);
 		
 		createElementDC(item, "coverage", DC, "coverage", null, ProviderCHO, true);
 		
@@ -144,14 +161,11 @@ public class EDMExportXML
 		
 		createElementDC(item, "date", DC, "date", null, ProviderCHO, true);
 		
-		createElementDC(item, "description", DC, "description", null, ProviderCHO, true);
-		createElementDC(item, "description", DC, "description", "*", ProviderCHO, true);
+		createElementDC(item, "description", DC, "description", Item.ANY, ProviderCHO, true);
 		
-		createElementDC(item, "format", DC, "format", null, ProviderCHO, true);
-		createElementDC(item, "format", DC, "format", "*", ProviderCHO, true);
+		createElementDC(item, "format", DC, "format", Item.ANY, ProviderCHO, true);
 		
-		createElementDC(item, "identifier", DC, "identifier", null, ProviderCHO, true);
-		createElementDC(item, "identifier", DC, "identifier", "*", ProviderCHO, true);
+		createElementDC(item, "identifier", DC, "identifier", Item.ANY, ProviderCHO, true);
 		
 		createElementDC(item, "language", DC, "language", "iso", ProviderCHO, true);
 		createElementDC(item, "language", DC, "language", null, ProviderCHO, true);
@@ -165,8 +179,7 @@ public class EDMExportXML
 		
 		createElementDC(item, "source", DC, "source", null, ProviderCHO, false);
 		
-		createElementDC(item, "subject", DC, "subject", "*", ProviderCHO, true);
-		createElementDC(item, "subject", DC, "subject", null, ProviderCHO, true);
+		createElementDC(item, "subject", DC, "subject", Item.ANY, ProviderCHO, true);
 		
 		createElementDC(item, "title", DC, "title", null, ProviderCHO, true);
 		
@@ -218,17 +231,41 @@ public class EDMExportXML
 		return ProviderCHO;
 	}
 	
+	
+	private Element processWebResource(Item item, Bitstream bitstream)
+	{
+		Element WebResource = null;
+		
+		try {
+			WebResource = new Element("WebResource", "edm");
+			
+			String url = this.edmExportBOFormEDMData.getCurrentLocation() + "/retrieve/" + bitstream.getID()
+					+ "/" + Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
+			
+			WebResource.setAttribute(new Attribute("about", url, RDF));
+			
+			createElementDC(item, "rights", DC, "rights", null, WebResource, true);
+		} catch (Exception e) {
+			logger.debug("EDMExportXML.processWebResource", e);
+		}
+		
+		return WebResource;
+	}
+	
+	
 	private String processEDMType(Item item)
 	{
 		StringBuilder edmType = new StringBuilder();
-		DCValue[] elements = item.getDC("type", null, null);
+		DCValue[] elements = item.getDC("type", null, Item.ANY);
 		if (elements.length > 0) {
 			for (DCValue element : elements) {
 				String value = element.value;
+				//logger.debug("dc.type: " + value);
 				for (String typeListPatterns : edmExportBOFormEDMData.getListTypes()) {
 					String[] typePatternArr = typeListPatterns.split(",");
+					logger.debug("dc.type patterns: " + Arrays.toString(typePatternArr));
 					for (int i=1; i < typePatternArr.length; i++) {
-						if (value.indexOf(typePatternArr[i]) >= 0 && edmType.indexOf(typePatternArr[i]) < 0) {
+						if (value.toLowerCase().indexOf(typePatternArr[i].toLowerCase()) >= 0 && edmType.toString().toLowerCase().indexOf(typePatternArr[i].toLowerCase()) < 0) {
 							edmType.append(typePatternArr[0]).append(',');
 						}
 					}
@@ -240,7 +277,7 @@ public class EDMExportXML
 	
 	private void createElementDC(Item item, String elementEDM, Namespace nameSpace, String elementDC, String qualifier, Element ProviderCHO, boolean repeat)
 	{
-		DCValue[] elements = item.getDC(elementDC, qualifier, null);
+		DCValue[] elements = item.getDC(elementDC, qualifier, Item.ANY);
 		if (elements.length > 0) {
 			for (DCValue element : elements) {
 				ProviderCHO.addContent(new Element(elementEDM, nameSpace).setText(element.value));

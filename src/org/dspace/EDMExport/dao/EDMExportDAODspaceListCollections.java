@@ -28,7 +28,7 @@ public class EDMExportDAODspaceListCollections implements EDMExportDAOListCollec
 	public Collection[] getListCollections()
 	{
 		try {
-			logger.debug("Looking for list of collections ");
+			logger.debug("EDMExportDAODspaceListCollections.getListCollections: Looking for list of collections ");
 			listCol = Collection.findAll(context);
 		} catch (SQLException e) {
 			logger.debug("getListCollections", e);
@@ -38,6 +38,7 @@ public class EDMExportDAODspaceListCollections implements EDMExportDAOListCollec
 	
 	public Item[] getItems(int id)
 	{
+		logger.debug("EDMExportDAODspaceListCollections.getItems");
 		try {
 			ArrayList<Item> listArrayItems = new ArrayList<Item>();
 			ItemIterator iter = Collection.find(context, id).getItems();

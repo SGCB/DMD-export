@@ -205,13 +205,19 @@ public class homeController
 	}
 	
 	@RequestMapping(value = "/viewXml.htm", method = RequestMethod.GET)
-	public String getViewXML(@ModelAttribute(value="FormEDMData") EDMExportBOFormEDMData edmExportBOFormEDMData, Model model)
+	public String getViewXML(@ModelAttribute(value="FormEDMData") EDMExportBOFormEDMData edmExportBOFormEDMData, BindingResult result, Model model)
 	{
 		logger.debug("homeController.getViewXML");
-		edmExportXml.setEdmExportServiceListItems(edmExportServiceListItems);
-		String edmXML = edmExportXml.showEDMXML(edmExportBOFormEDMData);
-		model.addAttribute("edmXml", edmXML);
-		return "viewXml";
+		if (result.hasErrors()) {
+			logErrorValid(result);
+			return "redirect:home.htm";
+		} else {
+			edmExportXml.setEdmExportServiceListItems(edmExportServiceListItems);
+			String edmXML = edmExportXml.showEDMXML(edmExportBOFormEDMData);
+			logger.debug(edmXML);
+			model.addAttribute("edmXML", edmXML);
+			return "viewXml";
+		}
 	}
 	
 	@RequestMapping(value = "/home.htm", method = RequestMethod.GET)

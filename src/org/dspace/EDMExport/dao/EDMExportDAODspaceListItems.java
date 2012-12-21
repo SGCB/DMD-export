@@ -26,6 +26,7 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 	@Override
 	public EDMExportBOListCollections getListCollectionsItem(int id)
 	{
+		logger.debug("EDMExportDAODspaceListItems.getListCollectionsItem");
 		try {
 			Item item = Item.find(context, id);
 			Collection[] listDspaceCollection = item.getCollections();
@@ -48,6 +49,7 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 	@Override
 	public Item getDSPaceItem(int id)
 	{
+		logger.debug("EDMExportDAODspaceListItems.getDSPaceItem");
 		try {
 			return Item.find(context, id);
 		} catch (SQLException e) {
@@ -58,6 +60,7 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 	
 	public Bundle[] getDSPaceBundleItem(Item item, String type)
 	{
+		logger.debug("EDMExportDAODspaceListItems.getDSPaceBundleItem");
 		try {
 			return item.getBundles(type);
 		} catch (SQLException e) {

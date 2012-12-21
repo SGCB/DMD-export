@@ -61,6 +61,7 @@ public class EDMExportServiceSearch
 	
 	public EDMExportBOListItems getListItems(int offset, int limit)
 	{
+		logger.debug("EDMExportServiceSearch.getListItems");
 		if (limit == 0) limit = Integer.parseInt(searchItemsPage);
 		Item[] listItems = daoSearch.getListItems(searchBO, searchSubject, searchAuthor, searchTitle, searchSortBy, searchOrder, offset, limit);
 		this.hitCount = daoSearch.getHitCount();
