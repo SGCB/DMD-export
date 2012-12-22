@@ -48,5 +48,10 @@ public class EDMExportServiceBase
 		return ConfigurationManager.getProperty("dspace.name");
 	}
 	
+	public String getDspaceBaseUrl()
+	{
+		return ConfigurationManager.getProperty("dspace.baseUrl");
+	}
+	
 
 }

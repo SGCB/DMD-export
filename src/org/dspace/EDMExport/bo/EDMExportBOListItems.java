@@ -3,10 +3,15 @@ package org.dspace.EDMExport.bo;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.dspace.EDMExport.bo.EDMExportBOItem;
 
 public class EDMExportBOListItems
 {
+	@NotNull
+	@Valid
 	private List<EDMExportBOItem> listItems;
 	
 	public EDMExportBOListItems()

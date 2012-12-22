@@ -2,9 +2,11 @@ package org.dspace.EDMExport.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.dspace.EDMExport.bo.EDMExportBOFormEDMData;
@@ -43,6 +45,9 @@ public class EDMExportXML
 	
 	private EDMExportServiceListItems edmExportServiceListItems;
 	private EDMExportBOFormEDMData edmExportBOFormEDMData;
+	
+	private List<String> listElementsFilled = new ArrayList<String>();
+	private Set<String> setElementsFilled = new HashSet<String>();
 	
 	private Namespace DCTERMS = Namespace.getNamespace("dcterms", NAMESPACE_URI_DCTERMS);
 	private Namespace EDM = Namespace.getNamespace("edm", NAMESPACE_URI_EDM);
@@ -136,10 +141,17 @@ public class EDMExportXML
 		Bundle[] origBundles = edmExportServiceListItems.getDSPaceBundleItem(item, "ORIGINAL");
 		
 		if (origBundles.length > 0) {
+			Bundle[] thumbBundles = edmExportServiceListItems.getDSPaceBundleItem(item, "THUMBNAIL");
 			Bitstream[] bitstreams = origBundles[0].getBitstreams();
 			if (bitstreams.length > 0) {
 				Element WebResource = processWebResource(item, bitstreams[0]); 
 				if (WebResource != null) listElements.add(WebResource);
+				
+				List<Element> listOreAgreggation = processOreAgreggation(item, origBundles, thumbBundles); 
+				if (listOreAgreggation != null && listOreAgreggation.size() > 0) {
+					for (Element oreAggElement : listOreAgreggation)
+					listElements.add(oreAggElement);
+				}
 			}
 		}
 		
@@ -225,6 +237,7 @@ public class EDMExportXML
 		createElementDC(item, "temporal", DCTERMS, "coverage", "temporal", ProviderCHO, true);
 		
 		ProviderCHO.addContent(new Element("currentLocation", EDM).setText(this.edmExportBOFormEDMData.getCurrentLocation()));
+		checkElementFilled("currentLocation", EDM);
 		
 		ProviderCHO.addContent(new Element("type", EDM).setText(processEDMType(item)));
 		
@@ -239,12 +252,15 @@ public class EDMExportXML
 		try {
 			WebResource = new Element("WebResource", "edm");
 			
-			String url = this.edmExportBOFormEDMData.getCurrentLocation() + "/retrieve/" + bitstream.getID()
-					+ "/" + Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
+			String url = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstreams/"
+			+ item.getHandle() + "/" + bitstream.getSequenceID() + "/" + Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
 			
 			WebResource.setAttribute(new Attribute("about", url, RDF));
 			
 			createElementDC(item, "rights", DC, "rights", null, WebResource, true);
+			
+			WebResource.addContent(new Element("rights", EDM).setText(this.edmExportBOFormEDMData.getEdmRights()));
+			checkElementFilled("rights", EDM);
 		} catch (Exception e) {
 			logger.debug("EDMExportXML.processWebResource", e);
 		}
@@ -253,11 +269,91 @@ public class EDMExportXML
 	}
 	
 	
+	private List<Element> processOreAgreggation(Item item, Bundle[] origBundles, Bundle[] thumbBundles)
+	{
+		List<Element> listElementsOreAggregation = new ArrayList<Element>();
+		
+		int i = 0;
+		for (Bundle bundle : origBundles) {
+			Bitstream[] bitstreamsOrig = bundle.getBitstreams();
+			Bitstream[] bitstreamsThumb = null;
+			if (thumbBundles.length > i && thumbBundles[i] != null) bitstreamsThumb = thumbBundles[i].getBitstreams();
+			int j = 0;
+			for (Bitstream bitstream : bitstreamsOrig) {
+				Element elementOreAggregation = null;
+				if ((elementOreAggregation = processElementOreAgreggation(item, bundle, bitstream, bitstreamsThumb, j)) != null)
+					listElementsOreAggregation.add(elementOreAggregation);
+				j++;
+			}
+			i++;
+		}
+		
+		return listElementsOreAggregation;
+	}
+	
+	private Element processElementOreAgreggation(Item item, Bundle origBundle, Bitstream bitstream,
+			Bitstream[] bitstreamsThumb, int index)
+	{
+		Element oreAggregation = null;
+		
+		try {
+			oreAggregation = new Element("Aggregation", "ore");
+			
+			String url = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/" + item.getHandle();
+			oreAggregation.setAttribute(new Attribute("about", url, RDF));
+			
+			createElementDC(item, "aggregatedCHO", EDM, "identifier", null, oreAggregation, false);
+			
+			oreAggregation.addContent(new Element("dataProvider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
+			
+			String urlObject = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstreams/"
+					+ item.getHandle() + "/" + bitstream.getSequenceID() + "/"
+					+ Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
+			
+			String urlThumb = urlObject;
+			if (bitstreamsThumb != null) {
+				for (Bitstream bitThumb : bitstreamsThumb) {
+					if (bitThumb.getSequenceID() == bitstream.getSequenceID()) {
+						urlThumb = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstreams/"
+								+ item.getHandle() + "/" + bitThumb.getSequenceID() + "/"
+								+ Util.encodeBitstreamName(bitThumb.getName(), Constants.DEFAULT_ENCODING);
+						break;
+					}
+				}
+			}
+			
+			oreAggregation.addContent(new Element("hasView", EDM).setText(urlThumb));
+			checkElementFilled("hasView", EDM);
+			
+			oreAggregation.addContent(new Element("isShownAt", EDM).setText(url));
+			checkElementFilled("isShownAt", EDM);
+			
+			oreAggregation.addContent(new Element("isShownBy", EDM).setText(urlObject));
+			checkElementFilled("isShownBy", EDM);
+			
+			oreAggregation.addContent(new Element("object", EDM).setText(urlObject));
+			checkElementFilled("object", EDM);
+			
+			oreAggregation.addContent(new Element("provider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
+			checkElementFilled("provider", EDM);
+			
+			createElementDC(item, "rights", DC, "rights", null, oreAggregation, true);
+			
+			oreAggregation.addContent(new Element("rights", EDM).setText(this.edmExportBOFormEDMData.getEdmRights()));
+			checkElementFilled("rights", EDM);
+		} catch (Exception e) {
+			logger.debug("EDMExportXML.processOreAgreggation", e);
+		}
+		
+		return oreAggregation;
+	}
+	
 	private String processEDMType(Item item)
 	{
 		StringBuilder edmType = new StringBuilder();
 		DCValue[] elements = item.getDC("type", null, Item.ANY);
 		if (elements.length > 0) {
+			checkElementFilled("type", EDM);
 			for (DCValue element : elements) {
 				String value = element.value;
 				//logger.debug("dc.type: " + value);
@@ -279,11 +375,37 @@ public class EDMExportXML
 	{
 		DCValue[] elements = item.getDC(elementDC, qualifier, Item.ANY);
 		if (elements.length > 0) {
+			checkElementFilled(elementEDM, nameSpace);
 			for (DCValue element : elements) {
 				ProviderCHO.addContent(new Element(elementEDM, nameSpace).setText(element.value));
 				if (!repeat) break;
 			}
 		}
+	}
+	
+	private void checkElementFilled(String elementEDM, Namespace nameSpace)
+	{
+		String elementName = nameSpace.getPrefix() + ":" + elementEDM;
+		if (!setElementsFilled.contains(elementName)) {
+			setElementsFilled.add(elementName);
+			listElementsFilled.add(elementName);
+		}
+	}
+	
+	public List<String> getListElementsFilled()
+	{
+		return listElementsFilled;
+	}
+	
+	public void setListElementsFilled(List<String> listElementsFilled)
+	{
+		this.listElementsFilled = listElementsFilled;
+	}
+	
+	public void clear()
+	{
+		listElementsFilled.clear();
+		setElementsFilled.clear();
 	}
 	
 }

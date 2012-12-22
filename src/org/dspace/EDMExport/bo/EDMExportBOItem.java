@@ -1,20 +1,45 @@
 package org.dspace.EDMExport.bo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class EDMExportBOItem
 {
-	
+	@NotEmpty
 	private String title;
+	
+	@NotNull
+	@Valid
 	private EDMExportBOListCollections listCollections;
+	
+	@NotNull
+	@Valid
 	private EDMExportBOListAuthors author;
+	
+	@NotNull
+	@Valid
 	private EDMExportBOListSubjects subject;
+	
+	@NotNull
+	@Valid
 	private EDMExportBOListTypes type;
+	
+	@NotEmpty
 	private String handle;
+	
+	@Min(1)
 	private int id;
+	
+	@Min(0)
 	private int index;
+	
+	
 	private boolean checked;
 	
 	public EDMExportBOItem()

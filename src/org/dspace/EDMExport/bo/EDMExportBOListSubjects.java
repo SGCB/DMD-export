@@ -3,8 +3,11 @@ package org.dspace.EDMExport.bo;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 public class EDMExportBOListSubjects
 {
+	@NotNull
 	private List<String> listSubjects;
 	
 	public EDMExportBOListSubjects()

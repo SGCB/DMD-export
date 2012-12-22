@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.URL;
 
 public class EDMExportBOFormEDMData
 {
@@ -16,23 +17,28 @@ public class EDMExportBOFormEDMData
 	@NotEmpty
 	private String currentLocation;
 	
+	@URL
+	private String edmRights;
+	
 	
 	public EDMExportBOFormEDMData()
 	{
 	}
 	
-	public EDMExportBOFormEDMData(String[] listTypes, String currentLocation, String pageAction)
+	public EDMExportBOFormEDMData(String[] listTypes, String currentLocation, String edmRights, String pageAction)
 	{
 		this.listTypes = Arrays.asList(listTypes);
 		this.currentLocation = currentLocation;
 		this.pageAction = pageAction;
+		this.edmRights = edmRights;
 	}
 	
-	public EDMExportBOFormEDMData(List<String> listTypes, String currentLocation, String pageAction)
+	public EDMExportBOFormEDMData(List<String> listTypes, String currentLocation, String edmRights, String pageAction)
 	{
 		this.listTypes = listTypes;
 		this.currentLocation = currentLocation;
 		this.pageAction = pageAction;
+		this.edmRights = edmRights;
 	}
 	
 	public List<String> getListTypes()
@@ -50,6 +56,11 @@ public class EDMExportBOFormEDMData
 		return this.pageAction;
 	}
 	
+	public String getEdmRights()
+	{
+		return this.edmRights;
+	}
+	
 	public void setListTypes(List<String> listTypes)
 	{
 		this.listTypes = listTypes;
@@ -63,6 +74,11 @@ public class EDMExportBOFormEDMData
 	public void setPageAction(String pageAction)
 	{
 		this.pageAction = pageAction;
+	}
+	
+	public void setEdmRights(String edmRights)
+	{
+		this.edmRights = edmRights;
 	}
 	
 	public void paddingTypes(String[] edmTypesArr)

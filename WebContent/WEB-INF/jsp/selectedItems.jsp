@@ -89,6 +89,12 @@
 	                       </div>
 	                    </c:if>
 	                    </li>
+                        <li>
+                            <form:label path="edmRights"><spring:message code="edmexport.selecteditems.edm_rights" /></form:label>
+
+                            <form:input path="edmRights" size="80" required="required" />
+                            <form:errors path="edmRights" cssClass="error" />
+                        </li>
                     </ul>
                     <div id="div_selecteditems_actions" class="div_selecteditems_actions">
                         <ul>

@@ -1,11 +1,21 @@
 package org.dspace.EDMExport.bo;
 
+import javax.validation.constraints.Min;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class EDMExportBOCollection
 {
-
+	@NotEmpty
 	private String name;
+	
+	@NotEmpty
 	private String handle;
+	
+	@Min(1)
 	private int id;
+	
+	@Min(0)
 	private int index;
 	
 	public EDMExportBOCollection()

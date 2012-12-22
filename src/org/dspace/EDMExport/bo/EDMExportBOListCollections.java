@@ -1,10 +1,14 @@
 package org.dspace.EDMExport.bo;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.dspace.EDMExport.bo.EDMExportBOCollection;
 
 public class EDMExportBOListCollections
 {
-
+	@NotNull
+	@Valid
 	private EDMExportBOCollection[] listCollections;
 	
 	public EDMExportBOListCollections()

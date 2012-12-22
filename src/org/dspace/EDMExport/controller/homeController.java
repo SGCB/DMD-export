@@ -216,6 +216,7 @@ public class homeController
 			String edmXML = edmExportXml.showEDMXML(edmExportBOFormEDMData);
 			logger.debug(edmXML);
 			model.addAttribute("edmXML", edmXML);
+			model.addAttribute("listElementsFilled", edmExportXml.getListElementsFilled());
 			return "viewXml";
 		}
 	}
@@ -263,6 +264,7 @@ public class homeController
 				model.addAttribute("selectedItemsCount", edmExportServiceListItems.getMapItemsSubmit().size());
 				return "selectedItems";
 			}
+			edmExportXml.clear();
 			return "redirect:viewXml.htm";
 		}
 	}
@@ -270,13 +272,13 @@ public class homeController
 	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="referer")
 	public String postListItems(@ModelAttribute(value="listItems") EDMExportBOListItems boListItems, BindingResult result, Model model)
 	{
-		logger.debug("homeController.postItems");
+		logger.debug("homeController.postListItems");
 		if (result.hasErrors()) {
 			logErrorValid(result);
-			return "home";
+			return "redirect:home.htm";
 		} else {
 			String[] edmTypesArr = edmTypes.split(",");
-			EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, edmExportServiceListItems.getEDMExportServiceBase().getDspaceName(), "xml");
+			EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, edmExportServiceListItems.getEDMExportServiceBase().getDspaceName(), "", "xml");
 			edmExportServiceListItems.processEDMExportBOListItems(boListItems);
 			List<String> listCollections = edmExportServiceListItems.getListCollections();
 			model.addAttribute("FormEDMData", edmExportBOFormEDMData);
@@ -289,12 +291,12 @@ public class homeController
 	 
 	
 	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="pageAction=listColls")
-	public String postListCollections(@ModelAttribute(value="listCollections") EDMExportBOListCollections listCollectionsBO, BindingResult result, Model model)
+	public String postListCollections(@ModelAttribute(value="listCollections") @Valid EDMExportBOListCollections listCollectionsBO, BindingResult result, Model model)
 	{
-		logger.debug("homeController.post");
+		logger.debug("homeController.postListCollections");
 		if (result.hasErrors()) {
 			logErrorValid(result);
-			return "home";
+			return "redirect:home.htm";
 		} else {
 			listItemsPageInt = Integer.parseInt(listItemsPage);
 			edmExportServiceListCollections.setBoListCollections(listCollectionsBO);
@@ -302,7 +304,7 @@ public class homeController
 			edmExportServiceListItems.clearMapItemsSubmit();
 			EDMExportBOListItems boListIems = edmExportServiceListCollections.getListItems(0, listItemsPageInt);
 			if (boListIems.isEmpty()) {
-				return "home";
+				return "redirect:home.htm";
 			} else {
 				model.addAttribute("referer", "listCollections");
 				model.addAttribute("listItemsBO", boListIems);

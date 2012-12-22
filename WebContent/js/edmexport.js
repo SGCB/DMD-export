@@ -266,6 +266,31 @@ function Hash()
 })();
 
 
+function selectText(pos, term, id)
+{
+	if (pos < 0) return;
+	var EDMXml = document.getElementById(id);
+	EDMXml.focus();
+    if (EDMXml.setSelectionRange)
+    	EDMXml.setSelectionRange(pos, pos + term.length);
+    else {
+        var r = EDMXml.createTextRange();
+        r.collapse(true);
+        r.moveEnd('character',  pos + term);
+        r.moveStart('character', pos);
+        r.select();
+    }
+    var EDMXmlJQ = jQuery('#' + id);
+    var heightPX= EDMXml.scrollHeight;
+    var rowHeightPX = EDMXmlJQ.css('line-height').replace('px','');
+    var numLines = heightPX / rowHeightPX;
+    var avgCharLine = EDMXmlJQ.val().length / numLines;
+    var rowTerm = Math.floor(pos / avgCharLine);
+    EDMXmlJQ.scrollTop(rowHeightPX * rowTerm);
+}
+
+
+
 
 
 

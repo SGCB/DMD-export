@@ -3,9 +3,11 @@ package org.dspace.EDMExport.bo;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 public class EDMExportBOListAuthors
 {
-	
+	@NotNull
 	private List<String> listAuthors;
 	
 	public EDMExportBOListAuthors()
