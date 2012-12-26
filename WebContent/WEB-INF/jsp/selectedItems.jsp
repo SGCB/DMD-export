@@ -76,7 +76,7 @@
 	                    <li>
 	                    <c:if test="${!empty FormEDMData.listTypes}">
 	                       <div id="div_selecteditems_types" class="div_selecteditems_types">
-	                       <h4><spring:message code="edmexport.selecteditems.types" /></h4>
+	                       <spring:message code="edmexport.selecteditems.types" />
 	                       <c:forEach items="${FormEDMData.listTypes}" var="type" varStatus="typeStatus">
 		                        <ul id="ul_selecteditems_text" class="ul_selecteditems_text">
 		                          <li>
@@ -89,6 +89,12 @@
 	                       </div>
 	                    </c:if>
 	                    </li>
+	                    <li>
+                            <form:label path="urlBase"><spring:message code="edmexport.selecteditems.urlbase" /></form:label>
+
+                            <form:input path="urlBase" size="80" required="required" />
+                            <form:errors path="urlBase" cssClass="error" />
+                        </li>
                         <li>
                             <form:label path="edmRights"><spring:message code="edmexport.selecteditems.edm_rights" /></form:label>
 

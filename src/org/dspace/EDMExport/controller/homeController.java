@@ -278,7 +278,8 @@ public class homeController
 			return "redirect:home.htm";
 		} else {
 			String[] edmTypesArr = edmTypes.split(",");
-			EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, edmExportServiceListItems.getEDMExportServiceBase().getDspaceName(), "", "xml");
+			EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()
+					, "", edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl(), "xml");
 			edmExportServiceListItems.processEDMExportBOListItems(boListItems);
 			List<String> listCollections = edmExportServiceListItems.getListCollections();
 			model.addAttribute("FormEDMData", edmExportBOFormEDMData);

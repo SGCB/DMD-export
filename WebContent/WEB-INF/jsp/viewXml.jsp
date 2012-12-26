@@ -9,6 +9,9 @@
 
         <script>
         <!--
+        
+        var posSearchArray = new Array();
+        
         jQuery(document).ready(function() {
         	
         	var ul = jQuery("#ul_viewxml_form");
@@ -46,39 +49,80 @@
             	if (term == "") {
             		alert("<spring:message code='edmexport.viewxml.label.search.term.error' />");
             	} else {
+            		posSearchArray.length = 0;
             		jQuery("#li_viewxml_next").remove();
-            		var pos = 0;
+            		jQuery("#li_viewxml_prev").remove();
             		var element = jQuery("#listElementsFilled").val();
-            		if (element != "") {
-            	
-                    } else {
-                    	pos = jQuery('#EDMXml').val().indexOf(term);
-                 		renderNext(pos, term, 'EDMXml');
-                    }
+            		var pos = searchTermElement(term, element, 'EDMXml', 0);
+            		renderNext(pos, term, 'EDMXml', element);
             	}
             });
         });
         
-        function renderNext(pos, term, id)
+        
+        function searchTermElement(term, element, id, offset)
+        {
+        	var pos = -1;
+        	var content = jQuery('#' + id).val();
+            if (element != "") {
+            	var pos_element = -1;
+            	do {
+            	   pos_element = content.indexOf("<" + element, offset);
+            	   if (pos_element >= 0) {
+	            	   var pos_begin = content.indexOf(">", pos_element);
+	            	   var pos_end = content.indexOf("</" + element + ">", pos_begin);
+	            	   if (pos_begin > 0 && pos_end > 0) {
+	            		    var str = content.substring(pos_begin + 1, pos_end - 1);
+	            		    if ((pos = str.indexOf(term)) >= 0) {
+	            		    	pos += pos_begin + 1;
+	            		    	break;
+	            		    }
+	            		    offset = pos_end + element.length + 3;
+	            	   } else break;
+            	   }
+            	} while (pos_element >= 0);
+            } else {
+            	pos = content.indexOf(term, offset);
+            }
+        	return pos;
+        }
+        
+        function renderNext(pos, term, id, element)
         {
         	if (pos < 0) return;
-        	selectText(pos, term, 'EDMXml');
+            selectText(pos, term, id);
+        	if (posSearchArray.indexOf(pos) < 0) posSearchArray.push(pos);
+        	var index_prev = 0;
+        	if (posSearchArray.length > 0 && (index_prev = posSearchArray.indexOf(pos)) > 0) {
+        		var pos_prev = posSearchArray[index_prev - 1];
+        		var li_prev = jQuery("#li_viewxml_prev");
+        		var prev_str = "<spring:message code='edmexport.viewxml.label.search.prev' />";
+        		if (li_prev.html() == undefined) {
+                    var btn = jQuery("#li_viewxml_btn");
+                    li_prev = jQuery("<li id='li_viewxml_prev'><a href='#' onclick='renderNext(" + pos_prev + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + prev_str + " &lt;&lt;</a></li>");
+                    btn.after(li_prev);
+                } else {
+                	li_prev.html("<a href='#' onclick='renderNext(" + pos_prev + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + prev_str + " &lt;&lt;</a>");
+                }
+        	}
         	var pos_next = pos + term.length;
         	var li = jQuery("#li_viewxml_next");
-        	if (pos_next > jQuery('#EDMXml').val().length) pos_next = 0;
+        	if (pos_next > jQuery('#' + id).val().length) pos_next = 0;
             if (pos_next >= 0) {
-                pos = jQuery('#EDMXml').val().indexOf(term, pos_next);
-                if (pos < 0 && li.html() != undefined) {
+                pos = searchTermElement(term, element, id, pos_next);
+                if (pos < 0 && posSearchArray.length > 1) {
                 	pos_next = 0;
-                	pos = jQuery('#EDMXml').val().indexOf(term, pos_next);
+                	pos = searchTermElement(term, element, id, pos_next);
                 }
                 if (pos >= 0) {
+                	var next_str = "<spring:message code='edmexport.viewxml.label.search.next' />";
                     if (li.html() == undefined) {
                         var btn = jQuery("#li_viewxml_btn");
-                        li = jQuery("<li id='li_viewxml_next'><a href='#' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\")'>&gt;&gt;</a></li>");
-                        btn.after(li);
+                        li = jQuery("<li id='li_viewxml_next'><a href='#' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + next_str + " &gt;&gt;</a></li>");
+                        if (jQuery("#li_viewxml_prev").html() != undefined) jQuery("#li_viewxml_prev").after(li);
+                        else btn.after(li);
                     } else {
-                    	li.html("<a href='#' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\")'>&gt;&gt;</a>");
+                    	li.html("<a href='#' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + next_str + " &gt;&gt;</a>");
                     }
                 } else {
                 	li.remove();

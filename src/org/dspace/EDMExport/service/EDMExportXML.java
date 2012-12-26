@@ -40,6 +40,7 @@ public class EDMExportXML
 	private static final String NAMESPACE_URI_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	private static final String NAMESPACE_URI_DC = "http://purl.org/dc/elements/1.1/";
 	private static final String NAMESPACE_URI_XSI = "http://www.w3.org/2001/XMLSchema-instance";
+	private static final String NAMESPACE_URI_XML = "http://www.w3.org/XML/1998/namespace";
 	private static final String NAMESPACE_URI_SCHEMALOCATION = "http://www.w3.org/1999/02/22-rdf-syntax-ns# EDM.xsd";
 	
 	
@@ -60,6 +61,7 @@ public class EDMExportXML
 	private Namespace RDF = Namespace.getNamespace("rdf", NAMESPACE_URI_RDF);
 	private Namespace DC = Namespace.getNamespace("dc", NAMESPACE_URI_DC);
 	private Namespace XSI = Namespace.getNamespace("xsi", NAMESPACE_URI_XSI);
+	private Namespace XML = Namespace.getNamespace("xml", NAMESPACE_URI_XML);
 	
 	public EDMExportXML()
 	{
@@ -147,11 +149,13 @@ public class EDMExportXML
 				Element WebResource = processWebResource(item, bitstreams[0]); 
 				if (WebResource != null) listElements.add(WebResource);
 				
-				List<Element> listOreAgreggation = processOreAgreggation(item, origBundles, thumbBundles); 
-				if (listOreAgreggation != null && listOreAgreggation.size() > 0) {
-					for (Element oreAggElement : listOreAgreggation)
-					listElements.add(oreAggElement);
+				List<Element> listSkosConcept = processSkosConcept(itemDC); 
+				if (listSkosConcept != null && listSkosConcept.size() > 0) {
+					for (Element skosConceptElement : listSkosConcept)
+						listElements.add(skosConceptElement);
 				}
+				Element oreAggregation = processOreAgreggation(item, origBundles, thumbBundles, bitstreams[0]); 
+				if (oreAggregation != null) listElements.add(oreAggregation);
 			}
 		}
 		
@@ -160,7 +164,7 @@ public class EDMExportXML
 	
 	private Element processProviderCHO(Item item)
 	{
-		Element ProviderCHO = new Element("ProviderCHO", "edm");
+		Element ProviderCHO = new Element("ProviderCHO", EDM);
 		
 		DCValue[] identifiers = item.getDC("identifier", "uri", null);
 		if (identifiers.length > 0) ProviderCHO.setAttribute(new Attribute("about", identifiers[0].value, RDF));
@@ -250,9 +254,9 @@ public class EDMExportXML
 		Element WebResource = null;
 		
 		try {
-			WebResource = new Element("WebResource", "edm");
+			WebResource = new Element("WebResource", EDM);
 			
-			String url = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstreams/"
+			String url = this.edmExportBOFormEDMData.getUrlBase() + "/bitstreams/"
 			+ item.getHandle() + "/" + bitstream.getSequenceID() + "/" + Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
 			
 			WebResource.setAttribute(new Attribute("about", url, RDF));
@@ -269,6 +273,108 @@ public class EDMExportXML
 	}
 	
 	
+	private List<Element> processSkosConcept(DCValue[] itemDC)
+	{
+		List<Element> listElementsSkosConcept = new ArrayList<Element>();
+		
+		for (DCValue dcv : itemDC) {
+			if (dcv.authority != null && !dcv.authority.isEmpty()) {
+				Element skosConcept = null;
+				try {
+					skosConcept = new Element("Concept", SKOS);
+					skosConcept.setAttribute(new Attribute("about", dcv.authority, RDF));
+					Element prefLabel = new Element("prefLabel", SKOS);
+					if (dcv.language != null) prefLabel.setAttribute(new Attribute("lang", dcv.language, XML));
+					prefLabel.setText(dcv.value);
+					skosConcept.addContent(prefLabel);
+					listElementsSkosConcept.add(skosConcept);
+					checkElementFilled("Concept", SKOS);
+				} catch (Exception e) {
+					logger.debug("EDMExportXML.processSkosConcept", e);
+				}
+			}
+		}
+		
+		return listElementsSkosConcept;
+	}
+	
+	
+	private Element processOreAgreggation(Item item, Bundle[] origBundles, Bundle[] thumbBundles, Bitstream bitstream)
+	{
+		
+		Element oreAggregation = null;
+		
+		try {
+			oreAggregation = new Element("Aggregation", ORE);
+			
+			String url = this.edmExportBOFormEDMData.getUrlBase() + "/" + item.getHandle();
+			oreAggregation.setAttribute(new Attribute("about", url, RDF));
+			
+			createElementDC(item, "aggregatedCHO", EDM, "identifier", null, oreAggregation, false);
+			
+			oreAggregation.addContent(new Element("dataProvider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
+			checkElementFilled("dataProvider", EDM);
+			
+			String urlObject = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstreams/"
+					+ item.getHandle() + "/" + bitstream.getSequenceID() + "/"
+					+ Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
+			
+			oreAggregation.addContent(new Element("isShownAt", EDM).setText(url));
+			checkElementFilled("isShownAt", EDM);
+			
+			oreAggregation.addContent(new Element("isShownBy", EDM).setText(urlObject));
+			checkElementFilled("isShownBy", EDM);
+			
+			oreAggregation.addContent(new Element("object", EDM).setText(urlObject));
+			checkElementFilled("object", EDM);
+			
+			int i = 0;
+			for (Bundle bundle : origBundles) {
+				try {
+					Bitstream[] bitstreamsOrig = bundle.getBitstreams();
+					Bitstream[] bitstreamsThumb = null;
+					if (thumbBundles.length > i && thumbBundles[i] != null) bitstreamsThumb = thumbBundles[i].getBitstreams();
+					for (Bitstream bitstream1 : bitstreamsOrig) {
+						urlObject = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstreams/"
+								+ item.getHandle() + "/" + bitstream1.getSequenceID() + "/"
+								+ Util.encodeBitstreamName(bitstream1.getName(), Constants.DEFAULT_ENCODING);
+						String urlThumb = urlObject;
+						if (bitstreamsThumb != null) {
+							for (Bitstream bitThumb : bitstreamsThumb) {
+								if (bitThumb.getSequenceID() == bitstream1.getSequenceID()) {
+									urlThumb = this.edmExportBOFormEDMData.getUrlBase() + "/bitstreams/"
+											+ item.getHandle() + "/" + bitThumb.getSequenceID() + "/"
+											+ Util.encodeBitstreamName(bitThumb.getName(), Constants.DEFAULT_ENCODING);
+									break;
+								}
+							}
+						}
+						
+						oreAggregation.addContent(new Element("hasView", EDM).setText(urlThumb));
+						checkElementFilled("hasView", EDM);
+					}
+				} catch (Exception ex) {
+					logger.debug("EDMExportXML.processOreAgreggation", ex);
+				}
+				i++;
+			}
+			
+			oreAggregation.addContent(new Element("provider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
+			checkElementFilled("provider", EDM);
+			
+			createElementDC(item, "rights", DC, "rights", null, oreAggregation, true);
+			
+			oreAggregation.addContent(new Element("rights", EDM).setText(this.edmExportBOFormEDMData.getEdmRights()));
+			checkElementFilled("rights", EDM);
+			
+		} catch (Exception e) {
+			logger.debug("EDMExportXML.processOreAgreggation", e);
+		}
+		
+		return oreAggregation;
+	}
+	
+	/*
 	private List<Element> processOreAgreggation(Item item, Bundle[] origBundles, Bundle[] thumbBundles)
 	{
 		List<Element> listElementsOreAggregation = new ArrayList<Element>();
@@ -297,9 +403,9 @@ public class EDMExportXML
 		Element oreAggregation = null;
 		
 		try {
-			oreAggregation = new Element("Aggregation", "ore");
+			oreAggregation = new Element("Aggregation", ORE);
 			
-			String url = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/" + item.getHandle();
+			String url = this.edmExportBOFormEDMData.getUrlBase() + "/" + item.getHandle();
 			oreAggregation.setAttribute(new Attribute("about", url, RDF));
 			
 			createElementDC(item, "aggregatedCHO", EDM, "identifier", null, oreAggregation, false);
@@ -347,6 +453,7 @@ public class EDMExportXML
 		
 		return oreAggregation;
 	}
+	*/
 	
 	private String processEDMType(Item item)
 	{
