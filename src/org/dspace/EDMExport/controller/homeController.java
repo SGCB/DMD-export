@@ -2,8 +2,11 @@ package org.dspace.EDMExport.controller;
 
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,10 +16,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
@@ -204,13 +211,35 @@ public class homeController
 		}
 	}
 	
+	
+	@RequestMapping(value = "/selectedItems.htm", method = RequestMethod.GET)
+	public String getXML(Model model)
+	{
+		logger.debug("homeController.getXML");
+		String[] edmTypesArr = edmTypes.split(",");
+		EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()
+				, "", edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl(), "xml");
+		List<String> listCollections = edmExportServiceListItems.getListCollections();
+		model.addAttribute("FormEDMData", edmExportBOFormEDMData);
+		model.addAttribute("listCollections", listCollections);
+		model.addAttribute("listCollectionsCount", listCollections.size());
+		model.addAttribute("selectedItemsCount", edmExportServiceListItems.getMapItemsSubmit().size());
+		return "selectedItems";
+	}
+	
 	@RequestMapping(value = "/viewXml.htm", method = RequestMethod.GET)
-	public String getViewXML(@ModelAttribute(value="FormEDMData") EDMExportBOFormEDMData edmExportBOFormEDMData, BindingResult result, Model model)
+	public String getViewXML(@ModelAttribute(value="FormEDMData") EDMExportBOFormEDMData edmExportBOFormEDMData,
+			BindingResult result, Model model, HttpServletRequest request)
 	{
 		logger.debug("homeController.getViewXML");
+		Map<String,?> map = RequestContextUtils.getInputFlashMap(request);
+		if (map == null) {
+			logger.debug("No FlashMap");
+			return "redirect:selectedItems.htm";
+		}
 		if (result.hasErrors()) {
 			logErrorValid(result);
-			return "redirect:home.htm";
+			return "redirect:selectedItems.htm";
 		} else {
 			edmExportXml.setEdmExportServiceListItems(edmExportServiceListItems);
 			String edmXML = edmExportXml.showEDMXML(edmExportBOFormEDMData);
@@ -239,11 +268,49 @@ public class homeController
 	}
 	
 	
-	@RequestMapping(value = "/home.htm", method = RequestMethod.POST)
+	
+	
+	
+	@RequestMapping(value = "/getFile.htm", method = RequestMethod.POST)
+	public HttpEntity<byte[]> postExport(@ModelAttribute(value="FormEDMData") @Valid EDMExportBOFormEDMData edmExportBOFormEDMData, 
+			BindingResult result)
+	{
+		logger.debug("homeController.postExport");
+		try {
+			if (result.hasErrors()) {
+				logErrorValid(result);
+			} else {
+				edmExportXml.setEdmExportServiceListItems(edmExportServiceListItems);
+				String EDMXml = edmExportXml.showEDMXML(edmExportBOFormEDMData);
+				if (EDMXml != null && !EDMXml.isEmpty()) {
+					return getHttpEntityFromXml(EDMXml);
+				}
+			}
+		} catch (Exception e) {
+			logger.debug("homeController.postExport", e);
+		}
+		return null;
+	}
+	
+	@RequestMapping(value = "/getFile.htm", method = RequestMethod.POST, params="pageAction=exportView")
+	public HttpEntity<byte[]> postExportView(@RequestParam("EDMXml") String EDMXml)
+	{
+		logger.debug("homeController.postExportView");
+		try {
+			if (EDMXml != null && !EDMXml.isEmpty()) {
+				return getHttpEntityFromXml(EDMXml);
+			}
+		} catch (Exception e) {
+			logger.debug("homeController.postExportView", e);
+		}
+		return null;
+	}
+	
+	@RequestMapping(value = "/selectedItems.htm", method = RequestMethod.POST, params="pageAction=xml")
 	public String postXml(@ModelAttribute(value="FormEDMData") @Valid EDMExportBOFormEDMData boFormData, 
 			BindingResult result, Model model, final RedirectAttributes redirectAttributes)
 	{
-		logger.debug("homeController.postXml");
+		logger.debug("homeController.postXml ");
 		if (result.hasErrors()) {
 			logErrorValid(result);
 			List<String> listCollections = edmExportServiceListItems.getListCollections();
@@ -269,7 +336,7 @@ public class homeController
 		}
 	}
 	
-	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="referer")
+	@RequestMapping(value = "/selectedItems.htm", method = RequestMethod.POST, params="referer")
 	public String postListItems(@ModelAttribute(value="listItems") EDMExportBOListItems boListItems, BindingResult result, Model model)
 	{
 		logger.debug("homeController.postListItems");
@@ -288,6 +355,18 @@ public class homeController
 			model.addAttribute("selectedItemsCount", edmExportServiceListItems.getMapItemsSubmit().size());
 			return "selectedItems";
 		}
+	}
+	
+	
+	private HttpEntity<byte[]> getHttpEntityFromXml(String xml) throws UnsupportedEncodingException
+	{
+		byte[] EDMXmlBytes;
+		EDMXmlBytes = xml.getBytes("UTF-8");
+		HttpHeaders header = new HttpHeaders();
+	    header.setContentType(new MediaType("text", "xml"));
+	    header.set("Content-Disposition", "attachment; filename=EDMXml.xml");
+	    header.setContentLength(EDMXmlBytes.length);
+	    return new HttpEntity<byte[]>(EDMXmlBytes, header);
 	}
 	 
 	

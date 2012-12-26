@@ -240,7 +240,7 @@ public class EDMExportXML
 		
 		createElementDC(item, "temporal", DCTERMS, "coverage", "temporal", ProviderCHO, true);
 		
-		ProviderCHO.addContent(new Element("currentLocation", EDM).setText(this.edmExportBOFormEDMData.getCurrentLocation()));
+		ProviderCHO.addContent(new Element("currentLocation", EDM).setText(this.edmExportBOFormEDMData.getTitle()));
 		checkElementFilled("currentLocation", EDM);
 		
 		ProviderCHO.addContent(new Element("type", EDM).setText(processEDMType(item)));

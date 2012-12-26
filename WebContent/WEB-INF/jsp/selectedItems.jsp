@@ -13,8 +13,12 @@
         jQuery(document).ready(function() {
         	
         	jQuery("#btn_export").click(function () {
-        		jQuery("#pageAction").val("export");
-        		jQuery("#FormEDMData").submit();
+        		var message = valid_selectedItems2(document.forms["form_edm_data"]);
+        		if (message == "") {
+        			  jQuery("#FormEDMData").attr("action", "getFile.htm");
+        			  jQuery("#FormEDMData").submit();
+        			  jQuery("#FormEDMData").attr("action", "selectedItems.htm");
+        		} else alert(message);
         	});
         	
         });
@@ -22,27 +26,39 @@
         
         function valid_selectedItems(form)
         {
-        	var send = true;
-        	var message = "";
-        	
-        	if (form.currentLocation.value == "") {
-        		message = "<spring:message code='edmexport.selecteditems.title.error' />\n";
-        		send = false;
-        	}
-        	
-        	jQuery("textarea[id^='listTypes']").each(function() {
-        		if (jQuery(this).val() == "") {
-        			message = jQuery("#label_" + jQuery(this).attr("id")).html() + "<spring:message code='edmexport.selecteditems.type.error' />\n";
-        			send = false;
-        		}
-        	});
-        	
-        	if (send) {
+        	var message = valid_selectedItems2(form);
+        	if (message == "") {
         		jQuery("#pageAction").val("xml");
         		return true;
         	}
         	alert(message);
             return false;
+        }
+        
+        
+        function valid_selectedItems2(form)
+        {
+        	var message = "";
+        	
+        	if (form.title.value == "") {
+                message += "<spring:message code='NotEmpty.FormEDMData.title' />\n";
+            }
+            
+            if (form.urlBase.value == "") {
+                message += "<spring:message code='URL.FormEDMData.urlBase' />\n";
+            }
+            
+            if (form.edmRights.value == "") {
+                message += "<spring:message code='URL.FormEDMData.edmRights' />\n";
+            }
+            
+            jQuery("textarea[id^='listTypes']").each(function() {
+                if (jQuery(this).val() == "") {
+                    message += jQuery("#label_" + jQuery(this).attr("id")).html() + "<spring:message code='edmexport.selecteditems.type.error' />\n";
+                }
+            });
+            
+            return message;
         }
         
         //-->
@@ -62,16 +78,16 @@
 	            </c:if>
             </div>
             <div id="div_selecteditems_form" class="div_selecteditems_form">
-                <form:form action="home.htm" method="post" name="form_edm_data" commandName="FormEDMData" onsubmit="return valid_selectedItems(this);">
+                <form:form action="selectedItems.htm" method="post" name="form_edm_data" commandName="FormEDMData" onsubmit="return valid_selectedItems(this);">
                     <form:errors path="*" cssClass="errorblock" element="div" />
                     <form:hidden path="pageAction" /> 
                     <ul id="ul_selecteditems_form" class="ul_selecteditems_form">
                         <li><h3><spring:message code="edmexport.selecteditems.form.title" /></h3></li>
                         <li>
-                            <form:label path="currentLocation"><spring:message code="edmexport.selecteditems.currentLocation" /></form:label>
+                            <form:label path="title"><spring:message code="edmexport.selecteditems.title" /></form:label>
 
-                            <form:input path="currentLocation" size="80" required="required" />
-                            <form:errors path="currentLocation" cssClass="error" />
+                            <form:input path="title" size="80" required="required" />
+                            <form:errors path="title" cssClass="error" />
                         </li>
 	                    <li>
 	                    <c:if test="${!empty FormEDMData.listTypes}">

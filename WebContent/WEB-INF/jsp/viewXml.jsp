@@ -138,8 +138,8 @@
                 <spring:message code="edmexport.viewxml.title" />
             </div>
             <div id="div_viewxml_form" class="div_viewxml_form">
-                <form action="viewXml.htm" method="post" name="form_edm_data">
-                    <input type="hidden" name="pageAction" id="pageAction" value="export" />
+                <form action="getFile.htm" method="post" name="form_edm_data">
+                    <input type="hidden" name="pageAction" id="pageAction" value="exportView" />
                     <ul id="ul_viewxml_form" class="ul_viewxml_form">
                         <li>
                             <h3><label for="EDMXml" id="EDMXml_label"><spring:message code="edmexport.viewxml.label" /></label></h3>

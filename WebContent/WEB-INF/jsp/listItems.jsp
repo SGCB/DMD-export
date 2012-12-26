@@ -195,7 +195,7 @@
                 </table>
                 </form>
             </div>
-            <form:form action="home.htm" method="post" name="list_items" id="list_items" commandName="listItemsBO" onsubmit="return valid_list_items(this);" >
+            <form:form action="selectedItems.htm" method="post" name="list_items" id="list_items" commandName="listItemsBO" onsubmit="return valid_list_items(this);" >
             <input type="hidden" name="referer" id="referer" value="${referer}" />
             <input type="hidden" name="numItemsChecked" value="${numItemsChecked}" />
             <div id="div_list_items" class="div_list_items">

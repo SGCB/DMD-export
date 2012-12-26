@@ -15,7 +15,7 @@ public class EDMExportBOFormEDMData
 	private List<String> listTypes;
 	
 	@NotEmpty
-	private String currentLocation;
+	private String title;
 	
 	@URL
 	private String edmRights;
@@ -28,19 +28,19 @@ public class EDMExportBOFormEDMData
 	{
 	}
 	
-	public EDMExportBOFormEDMData(String[] listTypes, String currentLocation, String edmRights, String urlBase, String pageAction)
+	public EDMExportBOFormEDMData(String[] listTypes, String title, String edmRights, String urlBase, String pageAction)
 	{
 		this.listTypes = Arrays.asList(listTypes);
-		this.currentLocation = currentLocation;
+		this.title = title;
 		this.pageAction = pageAction;
 		this.edmRights = edmRights;
 		this.urlBase = urlBase;
 	}
 	
-	public EDMExportBOFormEDMData(List<String> listTypes, String currentLocation, String edmRights, String urlBase, String pageAction)
+	public EDMExportBOFormEDMData(List<String> listTypes, String title, String edmRights, String urlBase, String pageAction)
 	{
 		this.listTypes = listTypes;
-		this.currentLocation = currentLocation;
+		this.title = title;
 		this.pageAction = pageAction;
 		this.edmRights = edmRights;
 		this.urlBase = urlBase;
@@ -51,9 +51,9 @@ public class EDMExportBOFormEDMData
 		return this.listTypes;
 	}
 	
-	public String getCurrentLocation()
+	public String getTitle()
 	{
-		return this.currentLocation;
+		return this.title;
 	}
 	
 	public String getPageAction()
@@ -76,9 +76,9 @@ public class EDMExportBOFormEDMData
 		this.listTypes = listTypes;
 	}
 	
-	public void setCurrentLocation(String currentLocation)
+	public void setTitle(String title)
 	{
-		this.currentLocation = currentLocation;
+		this.title = title;
 	}
 	
 	public void setPageAction(String pageAction)
