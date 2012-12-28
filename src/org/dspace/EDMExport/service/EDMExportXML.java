@@ -240,7 +240,13 @@ public class EDMExportXML
 		
 		createElementDC(item, "temporal", DCTERMS, "coverage", "temporal", ProviderCHO, true);
 		
-		ProviderCHO.addContent(new Element("currentLocation", EDM).setText(this.edmExportBOFormEDMData.getTitle()));
+		String currentLocation = null;
+        try {
+            currentLocation = item.getMetadata("edm", "currentLocation", null, Item.ANY)[0].value;
+        } catch (Exception e) {
+        }
+        if (currentLocation == null || currentLocation.isEmpty()) currentLocation = this.edmExportBOFormEDMData.getUrlBase() + "/" + item.getHandle();
+        ProviderCHO.addContent(new Element("currentLocation", EDM).setText(currentLocation));
 		checkElementFilled("currentLocation", EDM);
 		
 		ProviderCHO.addContent(new Element("type", EDM).setText(processEDMType(item)));
@@ -263,7 +269,13 @@ public class EDMExportXML
 			
 			createElementDC(item, "rights", DC, "rights", null, WebResource, true);
 			
-			WebResource.addContent(new Element("rights", EDM).setText(this.edmExportBOFormEDMData.getEdmRights()));
+			String edmRights = null;
+            try {
+                edmRights = item.getMetadata("edm", "rights", null, Item.ANY)[0].value;
+            } catch (Exception e) {
+            }
+            if (edmRights == null || edmRights.isEmpty()) edmRights = this.edmExportBOFormEDMData.getEdmRights();
+            WebResource.addContent(new Element("rights", EDM).setText(edmRights));
 			checkElementFilled("rights", EDM);
 		} catch (Exception e) {
 			logger.debug("EDMExportXML.processWebResource", e);
@@ -364,7 +376,13 @@ public class EDMExportXML
 			
 			createElementDC(item, "rights", DC, "rights", null, oreAggregation, true);
 			
-			oreAggregation.addContent(new Element("rights", EDM).setText(this.edmExportBOFormEDMData.getEdmRights()));
+			String edmRights = null;
+            try {
+                edmRights = item.getMetadata("edm", "rights", null, Item.ANY)[0].value;
+            } catch (Exception e) {
+            }
+            if (edmRights == null || edmRights.isEmpty()) edmRights = this.edmExportBOFormEDMData.getEdmRights();
+			oreAggregation.addContent(new Element("rights", EDM).setText(edmRights));
 			checkElementFilled("rights", EDM);
 			
 		} catch (Exception e) {
@@ -457,6 +475,13 @@ public class EDMExportXML
 	
 	private String processEDMType(Item item)
 	{
+		String edmTypeElement = null;
+        try {
+            edmTypeElement = item.getMetadata("edm", "type", null, Item.ANY)[0].value;
+        } catch (Exception e) {
+        }
+        if (edmTypeElement != null && !edmTypeElement.isEmpty()) return edmTypeElement;
+        
 		StringBuilder edmType = new StringBuilder();
 		DCValue[] elements = item.getDC("type", null, Item.ANY);
 		if (elements.length > 0) {
@@ -468,7 +493,7 @@ public class EDMExportXML
 					String[] typePatternArr = typeListPatterns.split(",");
 					logger.debug("dc.type patterns: " + Arrays.toString(typePatternArr));
 					for (int i=1; i < typePatternArr.length; i++) {
-						if (value.toLowerCase().indexOf(typePatternArr[i].toLowerCase()) >= 0 && edmType.toString().toLowerCase().indexOf(typePatternArr[i].toLowerCase()) < 0) {
+						if (value.toLowerCase().indexOf(typePatternArr[i].toLowerCase()) >= 0 && edmType.toString().toLowerCase().indexOf(typePatternArr[0].toLowerCase()) < 0) {
 							edmType.append(typePatternArr[0]).append(',');
 						}
 					}
