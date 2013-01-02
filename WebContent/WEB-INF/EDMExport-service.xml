@@ -28,6 +28,6 @@
     <bean id="edmExportServiceListItems" class="org.dspace.EDMExport.service.EDMExportServiceListItems"
         c:edmExportServiceBase-ref="edmExportServiceBase" p:edmExportDAOListItems-ref="edmExportDAOListItems" />
         
-    <bean id="edmExportXML" class="org.dspace.EDMExport.service.EDMExportXML"
+    <bean id="edmExportXML" class="org.dspace.EDMExport.service.EDMExportXMLItem"
         p:edmExportServiceListItems-ref="edmExportServiceListItems" />
 </beans>
