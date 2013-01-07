@@ -141,7 +141,11 @@ public class homeController
 		if (referer.equals("listCollections")) {
 			EDMExportBOListItems boListItems = edmExportServiceListCollections.getListItems((pageInt - 1) * listItemsPageInt);
 			if (boListItems.isEmpty()) {
-				return "home";
+				if (pageInt > 1) {
+					model.addAttribute("referer", "listCollections");
+					model.addAttribute("page", 1);
+				} else model.addAttribute("error", 1);
+				return "redirect:home.htm";
 			} else {
 				edmExportServiceListItems.processEDMExportBOListItems(boListItems);
 				logger.debug("Showing items " + boListItems.getListItems().size());
@@ -159,7 +163,10 @@ public class homeController
 		} else {
 			EDMExportBOListItems boListItems = edmExportServiceSearch.getListItems((pageInt - 1) * listItemsPageInt);
 			if (boListItems.isEmpty()) {
-				model.addAttribute("error", 1);
+				if (pageInt > 1) {
+					model.addAttribute("referer", "search");
+					model.addAttribute("page", 1);
+				} else model.addAttribute("error", 1);
 				return "redirect:home.htm";
 			} else {
 				edmExportServiceListItems.processEDMExportBOListItems(boListItems);
