@@ -32,6 +32,7 @@ public class FilterSearchValidator  implements ConstraintValidator<FilterSearch,
 	@Override
 	public boolean isValid(final String filter, final ConstraintValidatorContext context)
 	{
+		if (filter == null || filter.isEmpty()) return true;
         String[] arr = searchFilterValues.split(",");
         for (String value : arr) {
         	if (filter.equalsIgnoreCase(value)) return true;
