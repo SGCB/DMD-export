@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 
@@ -24,6 +25,9 @@ public class EDMExportAuthenticationManager implements AuthenticationManager
 {
 	
 	protected static Logger logger = Logger.getLogger("edmexport");
+	
+	@Value("${auth.groupid}")
+    private String groupIDStr;
 	
 	private Md5PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
 	
@@ -37,7 +41,9 @@ public class EDMExportAuthenticationManager implements AuthenticationManager
 		EDMExportBOUser eperson = null;
 		
 		try {
-			eperson = daoEperson.getEperson(auth.getName());
+			if (groupIDStr != null && !groupIDStr.isEmpty()) {
+				eperson = daoEperson.getEperson(auth.getName(), Integer.parseInt(groupIDStr));
+			} else eperson = daoEperson.getEperson(auth.getName());
 		} catch (Exception e) {
 			logger.error("User "+ auth.getName() + " does not exists! " + e.getMessage() + "," + e.toString(), e);
 			//SecurityContextHolder.getContext().setAuthentication(null);
