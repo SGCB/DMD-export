@@ -75,7 +75,7 @@ function Hash()
 		    				objListColl.list_collections_dict[firstChar] = new Array();
 		    				objListColl.list_collections_dict[firstChar]["offset"] = i;
 		    				if (char_ant != "") objListColl.list_collections_dict[char_ant]["offset_end"] = i - 1;
-		    				objListColl.list_collections_dict[firstChar]["count"] = 0;
+		    				objListColl.list_collections_dict[firstChar]["count"] = 1;
 		    				char_ant = firstChar;
 		    			} else {
 		    				objListColl.list_collections_dict[firstChar]["count"] += 1;
@@ -106,7 +106,7 @@ function Hash()
 			{
 				if (this.list_collections_dict[char] != undefined) {
 					var dict_offset = this.list_collections_dict[char]["offset"];
-					if (this.currentOffset > dict_offset && (this.currentOffset * this.itemspage) < dict_offset) {
+					if (this.currentOffset < dict_offset && (this.currentOffset + this.itemspage) > dict_offset) {
 						window.location.hash = "#" + char;
 						this.renderListDict(dict_offset, char);
 					} else {
