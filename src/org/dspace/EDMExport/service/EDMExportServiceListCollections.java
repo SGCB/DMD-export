@@ -58,6 +58,7 @@ public class EDMExportServiceListCollections
 			EDMExportBOCollection[] collectionArray = new EDMExportBOCollection[listArrayCols.size()];
 			collectionArray = (EDMExportBOCollection[])listArrayCols.toArray(collectionArray);
 			boListCollections.setListCollections(collectionArray);
+			logger.debug("Num collections: " + boListCollections.getListCollections().length);
 		} else {
 			logger.debug("No collections");
 			boListCollections = null;

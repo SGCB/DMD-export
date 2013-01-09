@@ -7,6 +7,8 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
+
+    <c:if test="${!empty listCollections && !empty listCollections.listCollections}">
         <script>
         <!--
         var objListCollectionsJS;
@@ -43,6 +45,7 @@
         }
         //-->
         </script>
+    </c:if>
         <h2><spring:message code="edmexport.home.list.title" /></h2>
         <c:choose>
             <c:when test="${!empty listCollections && !empty listCollections.listCollections}">
