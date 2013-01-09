@@ -232,7 +232,7 @@
                                             <ul class="ul_list_items_item_author">
                                             <c:forEach items="${item.author.listAuthors}" var="authorVar" varStatus="authorStatus">
                                                 <li>
-                                                    <c:out value="${author}" />
+                                                    <c:out value="${authorVar}" />
                                                     <form:hidden path="listItems[${itemStatus.index}].author.listAuthors[${authorStatus.index}]" value="${authorVar}" />
                                                 </li>
                                             </c:forEach>
