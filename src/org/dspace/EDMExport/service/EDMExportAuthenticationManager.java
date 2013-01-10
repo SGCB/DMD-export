@@ -28,18 +28,18 @@ public class EDMExportAuthenticationManager implements AuthenticationManager
 	
 	@Value("${auth.groupid}")
     private String groupIDStr;
-	
+		
 	private Md5PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
 	
 	private EDMExportDAOEperson daoEperson;
+	
+	private EDMExportBOUser eperson = null;;
 
 	@Override
 	public Authentication authenticate(Authentication auth) throws AuthenticationException
 	{
 		logger.debug("Performing EDMExport authentication");
-		
-		EDMExportBOUser eperson = null;
-		
+				
 		try {
 			if (groupIDStr != null && !groupIDStr.isEmpty()) {
 				eperson = daoEperson.getEperson(auth.getName(), Integer.parseInt(groupIDStr));
@@ -83,5 +83,6 @@ public class EDMExportAuthenticationManager implements AuthenticationManager
 	{
     	this.daoEperson = daoEperson;
 	}
+
 
 }

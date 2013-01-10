@@ -8,6 +8,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,6 +39,7 @@ import org.dspace.EDMExport.bo.EDMExportBOFormEDMData;
 import org.dspace.EDMExport.bo.EDMExportBOListCollections;
 import org.dspace.EDMExport.bo.EDMExportBOListItems;
 import org.dspace.EDMExport.bo.EDMExportBOSearch;
+import org.dspace.EDMExport.bo.EDMExportBOUser;
 import org.dspace.EDMExport.service.EDMExportServiceListCollections;
 import org.dspace.EDMExport.service.EDMExportServiceListItems;
 import org.dspace.EDMExport.service.EDMExportServiceSearch;
@@ -64,6 +71,9 @@ public class homeController
 	private int pageTotal = 0;
 	private int hitCount = 0;
 	private int listItemsPageInt;
+	
+	@Autowired
+	private EDMExportBOUser edmExportBOUser;
 	
 	
 	@Autowired
@@ -102,7 +112,7 @@ public class homeController
 		EDMExportBOSearch searchBO = new EDMExportBOSearch();
 		model.addAttribute("search", searchBO);
 		model.addAttribute("error", 1);
-		return "search";
+		return returnView("search", model);
 	}
 	
 	
@@ -158,7 +168,7 @@ public class homeController
 				model.addAttribute("pageTotal", pageTotal);
 				if (pageInt < pageTotal) model.addAttribute("next_page", pageInt + 1);
 				if (pageInt > 1) model.addAttribute("prev_page", pageInt - 1);
-				return "listItems";
+				return returnView("listItems", model);
 			}
 		} else {
 			EDMExportBOListItems boListItems = edmExportServiceSearch.getListItems((pageInt - 1) * listItemsPageInt);
@@ -180,7 +190,7 @@ public class homeController
 				model.addAttribute("pageTotal", pageTotal);
 				if (pageInt < pageTotal) model.addAttribute("next_page", pageInt + 1);
 				if (pageInt > 1) model.addAttribute("prev_page", pageInt - 1);
-				return "listItems";
+				return returnView("listItems", model);
 			}
 		}
 	}
@@ -200,7 +210,7 @@ public class homeController
 				model.addAttribute("listItemsBO", boListItems);
 				model.addAttribute("hitCount", hitCount);
 				model.addAttribute("listItemsPage", hitCount);
-				return "listItems";
+				return returnView("listItems", model);
 			}
 		} else {
 			EDMExportBOListItems boListItems = edmExportServiceSearch.getListItems(0, hitCount);
@@ -214,7 +224,7 @@ public class homeController
 				model.addAttribute("listItemsBO", boListItems);
 				model.addAttribute("hitCount", hitCount);
 				model.addAttribute("listItemsPage", hitCount);
-				return "listItems";
+				return returnView("listItems", model);
 			}
 		}
 	}
@@ -232,7 +242,7 @@ public class homeController
 		model.addAttribute("listCollections", listCollections);
 		model.addAttribute("listCollectionsCount", listCollections.size());
 		model.addAttribute("selectedItemsCount", edmExportServiceListItems.getMapItemsSubmit().size());
-		return "selectedItems";
+		return returnView("selectedItems", model);
 	}
 	
 	@RequestMapping(value = "/viewXml.htm", method = RequestMethod.GET)
@@ -254,7 +264,7 @@ public class homeController
 			logger.debug(edmXML);
 			model.addAttribute("edmXML", edmXML);
 			model.addAttribute("listElementsFilled", edmExportXml.getListElementsFilled());
-			return "viewXml";
+			return returnView("viewXml", model);
 		}
 	}
 	
@@ -262,16 +272,18 @@ public class homeController
 	public String get(@RequestParam(value="tab", required=false) String tab, Model model)
 	{
 		logger.debug("homeController.get");
+		getBOUserFromAuth();
+
 		if (tab == null || tab.isEmpty() || tab.equals("list")) {
 			EDMExportBOListCollections listCollectionsBO = edmExportServiceListCollections.getListCollection();
 			model.addAttribute("listCollections", listCollectionsBO);
 			model.addAttribute("PageCount", PageCount);
 			model.addAttribute("ItemsPage", ItemsPage);
-			return "home";
+			return returnView("home", model);
 		} else {
 			EDMExportBOSearch searchBO = new EDMExportBOSearch();
 			model.addAttribute("search", searchBO);
-			return "search";
+			return returnView("search", model);
 		}
 	}
 	
@@ -326,7 +338,7 @@ public class homeController
 			model.addAttribute("listCollections", listCollections);
 			model.addAttribute("listCollectionsCount", listCollections.size());
 			model.addAttribute("selectedItemsCount", edmExportServiceListItems.getMapItemsSubmit().size());
-			return "selectedItems";
+			return returnView("selectedItems", model);
 		} else {
 			boFormData.paddingTypes(edmTypes.split(","));
 			redirectAttributes.addFlashAttribute("FormEDMData", boFormData);
@@ -337,7 +349,7 @@ public class homeController
 				model.addAttribute("listCollections", listCollections);
 				model.addAttribute("listCollectionsCount", listCollections.size());
 				model.addAttribute("selectedItemsCount", edmExportServiceListItems.getMapItemsSubmit().size());
-				return "selectedItems";
+				return returnView("selectedItems", model);
 			}
 			edmExportXml.clear();
 			return "redirect:viewXml.htm";
@@ -361,7 +373,7 @@ public class homeController
 			model.addAttribute("listCollections", listCollections);
 			model.addAttribute("listCollectionsCount", listCollections.size());
 			model.addAttribute("selectedItemsCount", edmExportServiceListItems.getMapItemsSubmit().size());
-			return "selectedItems";
+			return returnView("selectedItems", model);
 		}
 	}
 	
@@ -403,7 +415,7 @@ public class homeController
 				pageTotal = getPageTotal(hitCount, listItemsPageInt);
 				model.addAttribute("pageTotal", pageTotal);
 				if (pageTotal > 1) model.addAttribute("next_page", 2);
-				return "listItems";
+				return returnView("listItems", model);
 			}
 		}
 	}
@@ -414,7 +426,7 @@ public class homeController
 		logger.debug("homeController.postSearch");
 		if (result.hasErrors()) {
 			logErrorValid(result);
-			return "search";
+			return returnView("search", model);
 		} else {
 			listItemsPageInt = Integer.parseInt(listItemsPage);
 			edmExportServiceSearch.setSearchBO(searchBO);
@@ -434,9 +446,42 @@ public class homeController
 				pageTotal = getPageTotal(hitCount, listItemsPageInt);
 				model.addAttribute("pageTotal", pageTotal);
 				if (pageTotal > 1) model.addAttribute("next_page", 2);
-				return "listItems";
+				return returnView("listItems", model);
 			}
 		}
+	}
+	
+	
+	private void getBOUserFromAuth()
+	{
+		if (edmExportBOUser.getUsername() != null && !edmExportBOUser.getUsername().isEmpty()) return;
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		if (securityContext != null) {
+		    Authentication authentication = securityContext.getAuthentication();
+		    if (authentication != null && !(authentication instanceof AnonymousAuthenticationToken)) {
+		    	Object principal = authentication.getPrincipal();
+		    	if (principal instanceof UserDetails) {
+		    		edmExportBOUser.setUsername(((UserDetails) principal).getUsername());
+		    		edmExportBOUser.setPassword(((UserDetails) principal).getPassword());
+		    		edmExportBOUser.setAccess(1);
+		    	} else if (principal instanceof java.lang.String) {
+		    		edmExportBOUser.setUsername(principal.toString());
+		    	}
+		    }
+		}
+	}
+	
+	
+	private String returnView(String view, Model model)
+	{
+		addCommonObjects2Model(model);
+		return view;
+	}
+	
+	
+	private void addCommonObjects2Model(Model model)
+	{
+		model.addAttribute("edmExportBOUser", edmExportBOUser);
 	}
 	
 	

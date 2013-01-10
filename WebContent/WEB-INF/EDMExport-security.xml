@@ -15,6 +15,7 @@
     
     <context:component-scan base-package="org.dspace.EDMExport.service"/>
     
+    
     <security:http pattern="/css/**" security="none"/>
     <security:http pattern="/js/**" security="none"/>
     <security:http pattern="/img/**" security="none"/>

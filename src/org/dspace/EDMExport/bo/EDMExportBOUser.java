@@ -1,11 +1,17 @@
 package org.dspace.EDMExport.bo;
 
+
 public class EDMExportBOUser
 {
 
 	private String username;
 	private String password;
 	private Integer access;
+	
+	
+	public EDMExportBOUser()
+	{
+	}
 	  
 	public String getUsername()
 	{
