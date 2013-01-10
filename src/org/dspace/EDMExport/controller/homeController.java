@@ -279,10 +279,12 @@ public class homeController
 			model.addAttribute("listCollections", listCollectionsBO);
 			model.addAttribute("PageCount", PageCount);
 			model.addAttribute("ItemsPage", ItemsPage);
+			model.addAttribute("tab", "list");
 			return returnView("home", model);
 		} else {
 			EDMExportBOSearch searchBO = new EDMExportBOSearch();
 			model.addAttribute("search", searchBO);
+			model.addAttribute("tab", tab);
 			return returnView("search", model);
 		}
 	}
