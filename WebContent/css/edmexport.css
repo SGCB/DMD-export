@@ -22,3 +22,7 @@
     padding: 8px;
     margin: 16px;
 }
+
+.li_linefeed {
+	list-style-type:none;
+}

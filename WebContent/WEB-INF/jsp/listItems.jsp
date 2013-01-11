@@ -282,7 +282,7 @@
                                         </c:if>
                                    </li>
 	                            </ul>
-	                        <li>&nbsp;</li>
+	                        <li class="li_linefeed">&nbsp;</li>
 	                    </c:forEach>
                     </ul>
                 </div>
