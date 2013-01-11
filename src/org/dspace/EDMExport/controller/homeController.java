@@ -320,7 +320,12 @@ public class homeController
 		logger.debug("homeController.postExportView");
 		try {
 			if (EDMXml != null && !EDMXml.isEmpty()) {
-				return getHttpEntityFromXml(EDMXml);
+				try {
+				    String s = new String(EDMXml.getBytes(), "UTF-8");
+				    return getHttpEntityFromXml(s);
+				} catch (UnsupportedEncodingException e) {
+					logger.debug("homeController.postExportView", e);
+				}
 			}
 		} catch (Exception e) {
 			logger.debug("homeController.postExportView", e);
