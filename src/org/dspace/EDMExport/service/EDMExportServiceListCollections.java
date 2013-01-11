@@ -143,6 +143,12 @@ public class EDMExportServiceListCollections
 	
 	public void clearBoListItems()
 	{
+		try {
+			if (boListIems.getListItems() != null)
+				boListIems.getListItems().clear();
+		} catch (Exception e) {
+			logger.debug("EDMExportServiceListCollections.clearBoListItems", e);
+		}
 		boListIems.setListItems((List<EDMExportBOItem>) null);
 	}
 	

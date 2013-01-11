@@ -1,5 +1,6 @@
 package org.dspace.EDMExport.bo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,12 +27,12 @@ public class EDMExportBOListItems
 	
 	public EDMExportBOListItems(EDMExportBOItem[] listItems)
 	{
-		this.listItems = Arrays.asList(listItems);
+		this.listItems = new ArrayList<EDMExportBOItem>(Arrays.asList(listItems));
 	}
 	
 	public void setListItems(EDMExportBOItem[] listItems)
 	{
-		this.listItems = Arrays.asList(listItems);
+		this.listItems = new ArrayList<EDMExportBOItem>(Arrays.asList(listItems));
 	}
 	
 	public void setListItems(List<EDMExportBOItem> listItems)
