@@ -54,6 +54,9 @@
             		jQuery("#li_viewxml_prev").remove();
             		var element = jQuery("#listElementsFilled").val();
             		var pos = searchTermElement(term, element, 'EDMXml', 0);
+            		if (pos < 0) {
+            			alert("<spring:message code='edmexport.viewxml.label.search.noresults' />");
+            		}
             		renderNext(pos, term, 'EDMXml', element);
             	}
             });
