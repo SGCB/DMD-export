@@ -22,6 +22,13 @@
         	<c:if test="${!empty PageCount}">
             objListCollectionsJS.setPageCount(${PageCount});
             </c:if>
+            objListCollectionsJS.setCaptionStrong("<spring:message code='edmexport.home.list.caption.strong' />");
+            objListCollectionsJS.setCaptionSummary("<spring:message code='edmexport.home.list.caption.summary' />");
+            objListCollectionsJS.setCaptionParagraph("<spring:message code='edmexport.home.list.caption.paragraph' />");
+            objListCollectionsJS.setThIndex("<spring:message code='edmexport.home.list.index' />");
+            objListCollectionsJS.setThName("<spring:message code='edmexport.home.list.name' />");
+            objListCollectionsJS.setThHandle("<spring:message code='edmexport.home.list.handle' />");
+            objListCollectionsJS.setThSelect("<spring:message code='edmexport.home.list.select' />");
         	objListCollectionsJS.init();
         });
         
@@ -70,18 +77,54 @@
                 </div>
             </div>
             <div id="div_list_collec_nosc" class="div_list_collec_nosc">
-	            <ul id="ul_list_collec_nosc">
-		            <c:set var="i" value="0"/>
-		            <c:forEach items="${listCollections.listCollections}" var="collection">
-		                <li id="li_${i + 1}_nosc">
-		                    <c:set var="i">${i + 1}</c:set><c:out value="${i}" />: <c:out value="${collection.name}" /> (<c:out value="${collection.handle}" />)
-		                    <form:checkbox path="listCollections[${collection.index}].id" value="${collection.id}" />
-		                    <form:hidden path="listCollections[${collection.index}].name" value="${collection.name}" />
-		                    <form:hidden path="listCollections[${collection.index}].handle" value="${collection.handle}" />
-		                </li>
+                <section>
+	            <table id="table_list_collec_nosc">
+	               <caption>
+	                   <strong><spring:message code="edmexport.home.list.caption.strong" /></strong><br />
+                       <em>
+                       <details>
+						   <summary><spring:message code="edmexport.home.list.caption.summary" /></summary>
+						   <p><spring:message code="edmexport.home.list.caption.paragraph" /></p>
+					   </details>
+					   </em>
+	               </caption>
+	               <thead>
+	                   <tr>
+	                       <th><spring:message code="edmexport.home.list.index" /></th>
+	                       <th><spring:message code="edmexport.home.list.name" /></th>
+	                       <th><spring:message code="edmexport.home.list.handle" /></th>
+	                       <th><spring:message code="edmexport.home.list.select" /></th>
+	                   </tr>
+	               </thead>
+	               <tbody>
+		            <c:forEach items="${listCollections.listCollections}" var="collection" varStatus="collectionStatus">
+		                <tr id="tr_${collectionStatus.index}_nosc">
+		                    <td>
+		                      <c:out value="${collectionStatus.index}" />
+		                    </td>
+		                    <td>
+		                      <c:out value="${collection.name}" />
+		                      <form:hidden path="listCollections[${collection.index}].name" value="${collection.name}" />
+		                    </td>
+		                    <td>
+		                      <c:out value="${collection.handle}" />
+		                      <form:hidden path="listCollections[${collection.index}].handle" value="${collection.handle}" />
+		                    </td>
+		                    <td>
+		                      <form:checkbox path="listCollections[${collection.index}].id" value="${collection.id}" />
+		                    </td>
+		                </tr>
 		            </c:forEach>
-		            <li><input  type="submit" name="go_list_collections" value="<spring:message code="edmexport.home.list.save_reg" />" /></li>
-	            </ul>
+		            </tbody>
+		            <tfoot>
+			            <tr>
+			              <td colspan="4">
+			                  <input  type="submit" name="go_list_collections" value="<spring:message code="edmexport.home.list.save_reg" />" />
+		                  </td>
+			            </tr>
+		            </tfoot>
+	            </table>
+	            </section>
             </div>
             </form:form>
             </c:when>

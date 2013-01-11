@@ -44,6 +44,13 @@ function Hash()
 			numPages: 0,
 			currentPage: 0,
 			currentOffset: 0,
+			caption_strong: "",
+			caption_summary: "",
+			caption_paragraph: "",
+			th_index: "",
+			th_name: "",
+			th_handle: "",
+			th_select: "",
 			
 			setItemsPage: function(itemspage)
 			{
@@ -55,10 +62,45 @@ function Hash()
 				this.pagecount = pagecount;
 			},
 			
+			setCaptionStrong: function(caption_strong)
+			{
+				this.caption_strong = caption_strong;
+			},
+			
+			setCaptionSummary: function(caption_summary)
+			{
+				this.caption_summary = caption_summary;
+			},
+			
+			setCaptionParagraph: function(caption_paragraph)
+			{
+				this.caption_paragraph = caption_paragraph;
+			},
+			
+			setThIndex: function(th_index)
+			{
+				this.th_index = th_index;
+			},
+			
+			setThName: function(th_name)
+			{
+				this.th_name = th_name;
+			},
+			
+			setThHandle: function(th_handle)
+			{
+				this.th_handle = th_handle;
+			},
+			
+			setThSelect: function(th_select)
+			{
+				this.th_select = th_select;
+			},
+			
 			init: function()
 			{
 				jQuery("#div_list_collec_nosc").hide();
-		    	var list_collections_jq = jQuery("#ul_list_collec_nosc li");
+		    	var list_collections_jq = jQuery("#table_list_collec_nosc").find("tbody > tr");
 		    	var i = 0;
 		    	var objListColl = this;
 		    	var char_ant = "";
@@ -196,27 +238,91 @@ function Hash()
 				this.checkCollections();
 				div_list_collec_body.empty();
 				var limit = ((offset + this.itemspage) > this.list_num_collections)?this.list_num_collections:offset + this.itemspage;
-				var ul = jQuery('<ul id="ul_list_collec" />');
+				var section = jQuery("<section />");
+				var table = jQuery('<table id="table_list_collec" />');
+				
+				if (this.caption_strong != "" || this.caption_summary != "" || this.caption_paragraph != "") { 
+		            var caption = jQuery("<caption />");
+		            if (this.caption_strong != "") {
+		            	var strong = jQuery("<strong />");
+		            	strong.html(this.caption_strong);
+		            	caption.append(strong);
+		            	caption.append(jQuery("<br />"));
+		            }
+		            if (this.caption_summary != "" || this.caption_paragraph != "") {
+		            	var em = jQuery("<em />");
+		                var details = jQuery("<details />");
+		                if (this.caption_summary != "") {
+		                	var summary = jQuery("<summary />");
+		                	summary.html(this.caption_summary);
+		                	details.append(summary);
+		                }
+		                if (this.caption_paragraph != "") {
+			                var paragraph = jQuery("<p />");
+			                paragraph.html(this.caption_paragraph);
+			                details.append(paragraph);
+		                }
+		                em.append(details);
+		                caption.append(em);
+		            }
+	                table.append(caption);
+				}
+                
+                var thead = jQuery("<thead />");
+                var tr = jQuery("<tr />");
+                var th = jQuery("<th />");
+                th.html(this.th_index);
+                tr.append(th);
+                th = jQuery("<th />");
+                th.html(this.th_name);
+                tr.append(th);
+                th = jQuery("<th />");
+                th.html(this.th_handle);
+                tr.append(th);
+                th = jQuery("<th />");
+                th.html(this.th_select);
+                tr.append(th);
+                thead.append(tr);
+                table.append(thead);
+                
+                var tbody = jQuery("<tbody />");
 				for (var i = offset; i < limit; i++ ) {
-					var li = jQuery('<li id="li_' + i + '" />');
+					var tr = jQuery('<tr id="tr_' + i + '" />');
 					var obj_collec = this.list_collections[i];
-					li.append(i + ": " + obj_collec.name + " (" + obj_collec.handle + ")");
+					
+					var td = jQuery("<td />");
+					td.html(i);
+					tr.append(td);
+					
+					td = jQuery("<td />");
+					td.html(obj_collec.name);
+					tr.append(td);
+					
+					td = jQuery("<td />");
+					td.html(obj_collec.handle);
+					tr.append(td);
+					
+					td = jQuery("<td />");
 					var checked = (this.list_collections_submit[obj_collec.id] != undefined)?"checked='checked'":"";
 					var checkbox = jQuery('<input type="checkbox" id="listCollections' + i + '.id" name="listCollections[' + i + '].id" value="' + obj_collec.id + '" ' + checked + ' />');
-					li.append(checkbox);
-					ul.append(li);
+					td.append(checkbox);
+					tr.append(td);
+					
+					tbody.append(tr);
 				}
-				div_list_collec_body.append(ul);
+				table.append(tbody);
+				section.append(table);
+				div_list_collec_body.append(section);
 			},
 			
 			checkCollections: function()
 			{
-				var list_collections_jq = jQuery("#div_list_collec_body li");
+				var list_collections_jq = jQuery("#table_list_collec").find("tbody > tr");
 				var objListColl = this;
 		    	list_collections_jq.each(function() {
 		    		if (jQuery(this).find('input[type="checkbox"]').length > 0) {
-		    			var li_id = jQuery(this).attr("id");
-		    			var pos = li_id.substring(li_id.indexOf("_") + 1, li_id.length);
+		    			var tr_id = jQuery(this).attr("id");
+		    			var pos = tr_id.substring(tr_id.indexOf("_") + 1, tr_id.length);
 		    			var chk = jQuery(this).find('input[type="checkbox"]');
 		    			var id = chk.val();
 		    			if (chk.attr("checked") == "checked") {
