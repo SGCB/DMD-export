@@ -7,13 +7,13 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
-        <script>
+        <script type="text/javascript">
         <!--
                 
         jQuery(document).ready(function() {
         	
         	jQuery("#btn_export").click(function () {
-        		var message = valid_selectedItems2(document.forms["form_edm_data"]);
+        		var message = valid_selectedItems2(document.forms["FormEDMData"]);
         		if (message == "") {
         			  jQuery("#FormEDMData").attr("action", "getFile.htm");
         			  jQuery("#FormEDMData").submit();
@@ -78,7 +78,7 @@
 	            </c:if>
             </div>
             <div id="div_selecteditems_form" class="div_selecteditems_form">
-                <form:form action="selectedItems.htm" method="post" name="form_edm_data" commandName="FormEDMData" onsubmit="return valid_selectedItems(this);">
+                <form:form action="selectedItems.htm" method="post" name="FormEDMData" commandName="FormEDMData" onsubmit="return valid_selectedItems(this);">
                     <form:errors path="*" cssClass="errorblock" element="div" />
                     <form:hidden path="pageAction" /> 
                     <ul id="ul_selecteditems_form" class="ul_selecteditems_form">
@@ -94,7 +94,7 @@
 	                       <div id="div_selecteditems_types" class="div_selecteditems_types">
 	                       <spring:message code="edmexport.selecteditems.types" />
 	                       <c:forEach items="${FormEDMData.listTypes}" var="type" varStatus="typeStatus">
-		                        <ul id="ul_selecteditems_text" class="ul_selecteditems_text">
+		                        <ul id="ul_selecteditems_text_${typeStatus.index}" class="ul_selecteditems_text">
 		                          <li>
 		                              <label for="listTypes${typeStatus.index}" id="label_listTypes${typeStatus.index}" title='<spring:message code="edmexport.selecteditems.types.title" />'> ${type}</label>
 		                              <form:textarea path="listTypes[${typeStatus.index}]" cols="80" rows="3" required="required" />

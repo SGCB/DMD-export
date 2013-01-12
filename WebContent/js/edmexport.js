@@ -250,20 +250,22 @@ function Hash()
 		            	caption.append(jQuery("<br />"));
 		            }
 		            if (this.caption_summary != "" || this.caption_paragraph != "") {
-		            	var em = jQuery("<em />");
 		                var details = jQuery("<details />");
 		                if (this.caption_summary != "") {
 		                	var summary = jQuery("<summary />");
-		                	summary.html(this.caption_summary);
+		                	var em = jQuery("<em />");
+		                	em.html(this.caption_summary);
+		                	summary.append(em);
 		                	details.append(summary);
 		                }
 		                if (this.caption_paragraph != "") {
 			                var paragraph = jQuery("<p />");
-			                paragraph.html(this.caption_paragraph);
+			                var em = jQuery("<em />");
+			                em.html(this.caption_paragraph);
+			                paragraph.append(em);
 			                details.append(paragraph);
 		                }
-		                em.append(details);
-		                caption.append(em);
+		                caption.append(details);
 		            }
 	                table.append(caption);
 				}

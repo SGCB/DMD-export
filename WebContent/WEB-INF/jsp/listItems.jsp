@@ -7,7 +7,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
-        <script>
+        <script type="text/javascript">
         <!--
         
         jQuery.ajaxSettings.traditional = true;
@@ -175,7 +175,7 @@
                  <img id="loading-image-img" src="${edmexport_loading_url}" alt="Loading..." />
             </div>
             <div id="div_list_items_check" class="div_list_items_check">
-                <form name="form_chk">
+                <form name="form_chk" action="selectedItems.htm">
                 <table>
                     <tr>
                         <td>
@@ -207,7 +207,7 @@
                             <a href="home.htm?referer=${referer}" id="show_all"><spring:message code="edmexport.listItems.show_all.label" /></a>
                         </c:when>
                         <c:otherwise>
-                            <a href="home.htm?referer=${referer}&page=1" id="page_1" class="page_1">Pag 1</a>
+                            <a href="home.htm?referer=${referer}&amp;page=1" id="page_1" class="page_1">Pag 1</a>
                         </c:otherwise>
                     </c:choose>
                 </div>
@@ -233,7 +233,7 @@
                                             <c:forEach items="${item.author.listAuthors}" var="authorVar" varStatus="authorStatus">
                                                 <li>
                                                     <c:out value="${authorVar}" />
-                                                    <form:hidden path="listItems[${itemStatus.index}].author.listAuthors[${authorStatus.index}]" value="${authorVar}" />
+                                                    <form:hidden path="listItems[${itemStatus.index}].author.listAuthors[${authorStatus.index}]" />
                                                 </li>
                                             </c:forEach>
                                             </ul>
@@ -246,10 +246,10 @@
                                             <c:forEach items="${item.listCollections.listCollections}" var="coll" varStatus="collStatus">
                                                 <li>
                                                     <c:out value="${coll.name}" />  (<c:out value="${coll.handle}" />)
-                                                    <form:hidden path="listItems[${itemStatus.index}].listCollections.listCollections[${collStatus.index}].name" value="${coll.name}" />
-                                                    <form:hidden path="listItems[${itemStatus.index}].listCollections.listCollections[${collStatus.index}].handle" value="${coll.handle}" />
-                                                    <form:hidden path="listItems[${itemStatus.index}].listCollections.listCollections[${collStatus.index}].id" value="${coll.id}" />
-                                                    <form:hidden path="listItems[${itemStatus.index}].listCollections.listCollections[${collStatus.index}].index" value="${collStatus.index}" />
+                                                    <form:hidden path="listItems[${itemStatus.index}].listCollections.listCollections[${collStatus.index}].name" />
+                                                    <form:hidden path="listItems[${itemStatus.index}].listCollections.listCollections[${collStatus.index}].handle" />
+                                                    <form:hidden path="listItems[${itemStatus.index}].listCollections.listCollections[${collStatus.index}].id" />
+                                                    <form:hidden path="listItems[${itemStatus.index}].listCollections.listCollections[${collStatus.index}].index" />
                                                 </li>
                                             </c:forEach>
                                             </ul>
@@ -262,7 +262,7 @@
                                             <c:forEach items="${item.subject.listSubjects}" var="subject" varStatus="subjectStatus">
                                                 <li>
                                                     <c:out value="${subject}" />
-                                                    <form:hidden path="listItems[${itemStatus.index}].subject.listSubjects[${subjectStatus.index}]" value="${subject}" />
+                                                    <form:hidden path="listItems[${itemStatus.index}].subject.listSubjects[${subjectStatus.index}]" />
                                                 </li>
                                             </c:forEach>
                                             </ul>
@@ -275,7 +275,7 @@
                                             <c:forEach items="${item.type.listTypes}" var="type" varStatus="typeStatus">
                                                 <li>
                                                     <c:out value="${type}" />
-                                                    <form:hidden path="listItems[${itemStatus.index}].type.listTypes[${typeStatus.index}]" value="${type}" />
+                                                    <form:hidden path="listItems[${itemStatus.index}].type.listTypes[${typeStatus.index}]" />
                                                 </li>
                                             </c:forEach>
                                             </ul>

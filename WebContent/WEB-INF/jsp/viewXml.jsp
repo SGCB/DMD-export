@@ -7,7 +7,7 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
-        <script>
+        <script type="text/javascript">
         <!--
         
         var posSearchArray = new Array();
@@ -16,32 +16,32 @@
         	
         	var ul = jQuery("#ul_viewxml_form");
         	
-        	var li = jQuery("<li id='li_viewxml_btn'><input type='button' id='btn_viewxml_search' name='btn_viewxml_search' value=\"<spring:message code='edmexport.viewxml.label.search.btn' />\" /></li>");
+        	var li = jQuery("<li id='li_viewxml_btn'><input type='button' id='btn_viewxml_search' name='btn_viewxml_search' value=\"<spring:message code='edmexport.viewxml.label.search.btn' />\" \/><\/li>");
             ul.prepend(li);
         	
-        	li = jQuery("<li />");
-        	var label = jQuery("<label for='listElementsFilled'><spring:message code='edmexport.viewxml.label.select' /></label>");
+        	li = jQuery("<li \/>");
+        	var label = jQuery("<label for='listElementsFilled'><spring:message code='edmexport.viewxml.label.select' /><\/label>");
         	li.append(label);
-        	var select = jQuery("<select name='listElementsFilled' id='listElementsFilled' />");
-        	var option = jQuery("<option value=''></option>");
+        	var select = jQuery("<select name='listElementsFilled' id='listElementsFilled' \/>");
+        	var option = jQuery("<option value=''><\/option>");
         	select.append(option);
         	<c:if test="${!empty listElementsFilled}">
         	   <c:forEach items="${listElementsFilled}" var="element" varStatus="elementStatus">
-        	    option = jQuery("<option value='${element}'>${element}</option>");
+        	    option = jQuery("<option value='${element}'>${element}<\/option>");
         	    select.append(option);
         	   </c:forEach>
         	</c:if>
         	li.append(select);
         	ul.prepend(li);
         	
-        	li = jQuery("<li />");
-        	label = jQuery("<label for='term'><spring:message code='edmexport.viewxml.label.search.term' /></label>");
+        	li = jQuery("<li \/>");
+        	label = jQuery("<label for='term'><spring:message code='edmexport.viewxml.label.search.term' /><\/label>");
             li.append(label);
-        	var input = jQuery("<input type='text' name='term' id='term' size='60' />");
+        	var input = jQuery("<input type='text' name='term' id='term' size='60' \/>");
         	li.append(input);
         	ul.prepend(li);
         	
-        	li = jQuery("<li><h3><spring:message code='edmexport.viewxml.label.search' /></h3></li>");
+        	li = jQuery("<li><h3><spring:message code='edmexport.viewxml.label.search' /><\/h3><\/li>");
             ul.prepend(li);
             
             jQuery("#btn_viewxml_search").click(function() {
@@ -75,7 +75,7 @@
 	            	   var pos_begin = content.indexOf(">", pos_element);
 	            	   var pos_end = content.indexOf("</" + element + ">", pos_begin);
 	            	   if (pos_begin > 0 && pos_end > 0) {
-	            		    var str = content.substring(pos_begin + 1, pos_end - 1);
+	            		    var str = content.substring(pos_begin + 1, pos_end);
 	            		    if ((pos = str.indexOf(term)) >= 0) {
 	            		    	pos += pos_begin + 1;
 	            		    	break;
@@ -102,10 +102,10 @@
         		var prev_str = "<spring:message code='edmexport.viewxml.label.search.prev' />";
         		if (li_prev.html() == undefined) {
                     var btn = jQuery("#li_viewxml_btn");
-                    li_prev = jQuery("<li id='li_viewxml_prev'><a href='#' onclick='renderNext(" + pos_prev + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + prev_str + " &lt;&lt;</a></li>");
+                    li_prev = jQuery("<li id='li_viewxml_prev'><a href='#' onclick='renderNext(" + pos_prev + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + prev_str + " &lt;&lt;<\/a><\/li>");
                     btn.after(li_prev);
                 } else {
-                	li_prev.html("<a href='#' onclick='renderNext(" + pos_prev + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + prev_str + " &lt;&lt;</a>");
+                	li_prev.html("<a href='#' onclick='renderNext(" + pos_prev + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + prev_str + " &lt;&lt;<\/a>");
                 }
         	}
         	var pos_next = pos + term.length;
@@ -121,11 +121,11 @@
                 	var next_str = "<spring:message code='edmexport.viewxml.label.search.next' />";
                     if (li.html() == undefined) {
                         var btn = jQuery("#li_viewxml_btn");
-                        li = jQuery("<li id='li_viewxml_next'><a href='#' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + next_str + " &gt;&gt;</a></li>");
+                        li = jQuery("<li id='li_viewxml_next'><a href='#' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + next_str + " &gt;&gt;<\/a><\/li>");
                         if (jQuery("#li_viewxml_prev").html() != undefined) jQuery("#li_viewxml_prev").after(li);
                         else btn.after(li);
                     } else {
-                    	li.html("<a href='#' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + next_str + " &gt;&gt;</a>");
+                    	li.html("<a href='#' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + next_str + " &gt;&gt;<\/a>");
                     }
                 } else {
                 	li.remove();

@@ -9,10 +9,10 @@
 
 
     <c:if test="${!empty listCollections && !empty listCollections.listCollections}">
-        <script>
+        <script type="text/javascript">
         <!--
         var objListCollectionsJS;
-        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = document.body.style.overflow = 'hidden';
         
         jQuery(document).ready(function () {
         	objListCollectionsJS = new ListCollectionsJS();
@@ -34,7 +34,7 @@
         
         jQuery(window).load(function() {
             jQuery('#loading-image').hide();
-            document.body.style.overflow = 'show';
+            document.documentElement.style.overflow = document.body.style.overflow = 'auto';
         });
         
         jQuery(window).unload(function() {
@@ -60,7 +60,7 @@
                 <spring:url value="/img/lb-loading.gif" var="edmexport_loading_url" htmlEscape="true" />
                  <img id="loading-image-img" src="${edmexport_loading_url}" alt="Loading..." />
             </div>
-            <form:form action="home.htm" method="post" name="list_collections" commandName="listCollections" onsubmit="return valid_list_coll(this);" >
+            <form:form action="home.htm" method="post" name="listCollections" commandName="listCollections" onsubmit="return valid_list_coll(this);" >
             <input type="hidden" name="pageAction" value="listColls" />
             <div id="div_list_collec" class="div_list_collec">
                 <div id="div_list_collec_dict" class="div_list_collec_dict">
@@ -81,12 +81,10 @@
 	            <table id="table_list_collec_nosc">
 	               <caption>
 	                   <strong><spring:message code="edmexport.home.list.caption.strong" /></strong><br />
-                       <em>
                        <details>
-						   <summary><spring:message code="edmexport.home.list.caption.summary" /></summary>
-						   <p><spring:message code="edmexport.home.list.caption.paragraph" /></p>
+						   <summary><em><spring:message code="edmexport.home.list.caption.summary" /></em></summary>
+						   <p><em><spring:message code="edmexport.home.list.caption.paragraph" /></em></p>
 					   </details>
-					   </em>
 	               </caption>
 	               <thead>
 	                   <tr>
@@ -104,11 +102,11 @@
 		                    </td>
 		                    <td>
 		                      <c:out value="${collection.name}" />
-		                      <form:hidden path="listCollections[${collection.index}].name" value="${collection.name}" />
+		                    <form:hidden path="listCollections[${collection.index}].name" />
 		                    </td>
 		                    <td>
 		                      <c:out value="${collection.handle}" />
-		                      <form:hidden path="listCollections[${collection.index}].handle" value="${collection.handle}" />
+		                    <form:hidden path="listCollections[${collection.index}].handle" />
 		                    </td>
 		                    <td>
 		                      <form:checkbox path="listCollections[${collection.index}].id" value="${collection.id}" />
