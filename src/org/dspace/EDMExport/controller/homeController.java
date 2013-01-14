@@ -3,6 +3,7 @@ package org.dspace.EDMExport.controller;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -320,12 +321,7 @@ public class homeController
 		logger.debug("homeController.postExportView");
 		try {
 			if (EDMXml != null && !EDMXml.isEmpty()) {
-				try {
-				    String s = new String(EDMXml.getBytes(), "UTF-8");
-				    return getHttpEntityFromXml(s);
-				} catch (UnsupportedEncodingException e) {
-					logger.debug("homeController.postExportView", e);
-				}
+				return getHttpEntityFromXml(EDMXml);
 			}
 		} catch (Exception e) {
 			logger.debug("homeController.postExportView", e);
@@ -390,7 +386,7 @@ public class homeController
 		byte[] EDMXmlBytes;
 		EDMXmlBytes = xml.getBytes("UTF-8");
 		HttpHeaders header = new HttpHeaders();
-	    header.setContentType(new MediaType("text", "xml"));
+	    header.setContentType(new MediaType("text", "xml", Charset.forName("UTF-8")));
 	    header.set("Content-Disposition", "attachment; filename=EDMXml.xml");
 	    header.setContentLength(EDMXmlBytes.length);
 	    return new HttpEntity<byte[]>(EDMXmlBytes, header);
