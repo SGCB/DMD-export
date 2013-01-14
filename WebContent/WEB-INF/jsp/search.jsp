@@ -15,38 +15,38 @@
             if (form.term.value != "") {
                 return true;
             } else {
-                alert("<spring:message code='edmexport.search.no_submit' />");
+                alert("<spring:message code='edmexport.search.no_submit' htmlEscape='false' />");
                 return false;
             }
         }
         //-->
         </script>
-        <h2><spring:message code="edmexport.search.title" /></h2>
+        <h2><spring:message code="edmexport.search.title" htmlEscape='false' /></h2>
         <form:form action="home.htm" method="post" name="search" commandName="search" onsubmit="return valid_search(this);" >
-            <form:errors path="*" cssClass="errorblock" element="div" />
+            <form:errors path="*" cssClass="errorblock" element="div" htmlEscape='false' />
             <input type="hidden" name="pageAction" value="searchItems" />
         <div id="div_search" class="div_search">
             <div id="div_search_text" class="div_search_text">
-                <label for="term"><spring:message code="edmexport.search.term" /></label>
+                <label for="term"><spring:message code="edmexport.search.term" htmlEscape='false' /></label>
                 <form:input path="term" size="50" required="required" />
-                <form:errors path="term" cssClass="error" />
+                <form:errors path="term" cssClass="error" htmlEscape='false' />
             </div>
             <div id="div_search_options" class="div_search_options">
-                <label for="option"><spring:message code="edmexport.search.options" /></label>
+                <label for="option"><spring:message code="edmexport.search.options" htmlEscape='false' /></label>
                 <form:select path="option">
-                    <option value=""><spring:message code="edmexport.search.option0" /></option>
-                    <option value="title"><spring:message code="edmexport.search.option.title" /></option>
-                    <option value="author"><spring:message code="edmexport.search.option.author" /></option>
-                    <option value="subject"><spring:message code="edmexport.search.option.subject" /></option>
+                    <option value=""><spring:message code="edmexport.search.option0" htmlEscape='false' /></option>
+                    <option value="title"><spring:message code="edmexport.search.option.title" htmlEscape='false' /></option>
+                    <option value="author"><spring:message code="edmexport.search.option.author" htmlEscape='false' /></option>
+                    <option value="subject"><spring:message code="edmexport.search.option.subject" htmlEscape='false' /></option>
                 </form:select>
             </div>
             <div id="div_search_submit" class="div_search_submit">
-                <input  type="submit" name="go_search" value="<spring:message code="edmexport.search.go" />" />
+                <input  type="submit" name="go_search" value="<spring:message code="edmexport.search.go" htmlEscape='false' />" />
             </div>
         </div>
         <div id="div_search_error" class="div_search_error">
             <c:if test="${!empty error}">
-                <spring:message code="edmexport.search.no_items" />
+                <spring:message code="edmexport.search.no_items" htmlEscape='false' />
             </c:if>
         </div>
         </form:form>

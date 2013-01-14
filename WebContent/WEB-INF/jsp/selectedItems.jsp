@@ -41,20 +41,20 @@
         	var message = "";
         	
         	if (form.title.value == "") {
-                message += "<spring:message code='NotEmpty.FormEDMData.title' />\n";
+                message += "<spring:message code='NotEmpty.FormEDMData.title' htmlEscape='false' />\n";
             }
             
             if (form.urlBase.value == "") {
-                message += "<spring:message code='URL.FormEDMData.urlBase' />\n";
+                message += "<spring:message code='URL.FormEDMData.urlBase' htmlEscape='false' />\n";
             }
             
             if (form.edmRights.value == "") {
-                message += "<spring:message code='URL.FormEDMData.edmRights' />\n";
+                message += "<spring:message code='URL.FormEDMData.edmRights' htmlEscape='false' />\n";
             }
             
             jQuery("textarea[id^='listTypes']").each(function() {
                 if (jQuery(this).val() == "") {
-                    message += jQuery("#label_" + jQuery(this).attr("id")).html() + "<spring:message code='edmexport.selecteditems.type.error' />\n";
+                    message += jQuery("#label_" + jQuery(this).attr("id")).html() + "<spring:message code='edmexport.selecteditems.type.error' htmlEscape='false' />\n";
                 }
             });
             
@@ -66,10 +66,10 @@
 
         <div id="div_selecteditems" class="div_selecteditems">
             <div id="div_selecteditems_list" class="div_selecteditems_list">
-	            <span id="selecteditems_title" class="selecteditems_title"><spring:message code="edmexport.selecteditems.title" /></span>
-	            <b>${selectedItemsCount}</b> <spring:message code="edmexport.selecteditems.title" />
+	            <span id="selecteditems_title" class="selecteditems_title"><spring:message code="edmexport.selecteditems.title.main" htmlEscape='false' /></span>
+	            <b>${selectedItemsCount}</b>
 	            <c:if test="${!empty listCollections}">
-	                <span id="selecteditems_listCollections" class="selecteditems_listCollections"><spring:message code="edmexport.selecteditems.listcollections" />: <b>${listCollectionsCount}</b></span>
+	                <span id="selecteditems_listCollections" class="selecteditems_listCollections"><spring:message code="edmexport.selecteditems.listcollections" htmlEscape='false' />: <b>${listCollectionsCount}</b></span>
 	                <ul id="ul_selecteditems_listCollections" class="ul_selecteditems_listCollections">
 	                <c:forEach items="${listCollections}" var="coll">
 	                    <li>${coll}</li>
@@ -79,26 +79,26 @@
             </div>
             <div id="div_selecteditems_form" class="div_selecteditems_form">
                 <form:form action="selectedItems.htm" method="post" name="FormEDMData" commandName="FormEDMData" onsubmit="return valid_selectedItems(this);">
-                    <form:errors path="*" cssClass="errorblock" element="div" />
+                    <form:errors path="*" cssClass="errorblock" element="div" htmlEscape='false' />
                     <form:hidden path="pageAction" /> 
                     <ul id="ul_selecteditems_form" class="ul_selecteditems_form">
-                        <li><h3><spring:message code="edmexport.selecteditems.form.title" /></h3></li>
+                        <li><h3><spring:message code="edmexport.selecteditems.form.title" htmlEscape='false' /></h3></li>
                         <li>
-                            <form:label path="title"><spring:message code="edmexport.selecteditems.title" /></form:label>
+                            <form:label path="title"><spring:message code="edmexport.selecteditems.title" htmlEscape='false' /></form:label>
 
                             <form:input path="title" size="80" required="required" />
-                            <form:errors path="title" cssClass="error" />
+                            <form:errors path="title" cssClass="error" htmlEscape='false' />
                         </li>
 	                    <li>
 	                    <c:if test="${!empty FormEDMData.listTypes}">
 	                       <div id="div_selecteditems_types" class="div_selecteditems_types">
-	                       <spring:message code="edmexport.selecteditems.types" />
+	                       <spring:message code="edmexport.selecteditems.types" htmlEscape='false' />
 	                       <c:forEach items="${FormEDMData.listTypes}" var="type" varStatus="typeStatus">
 		                        <ul id="ul_selecteditems_text_${typeStatus.index}" class="ul_selecteditems_text">
 		                          <li>
-		                              <label for="listTypes${typeStatus.index}" id="label_listTypes${typeStatus.index}" title='<spring:message code="edmexport.selecteditems.types.title" />'> ${type}</label>
+		                              <label for="listTypes${typeStatus.index}" id="label_listTypes${typeStatus.index}" title='<spring:message code="edmexport.selecteditems.types.title" htmlEscape='false' />'> ${type}</label>
 		                              <form:textarea path="listTypes[${typeStatus.index}]" cols="80" rows="3" required="required" />
-		                              <form:errors path="listTypes[${typeStatus.index}]" cssClass="error" />
+		                              <form:errors path="listTypes[${typeStatus.index}]" cssClass="error" htmlEscape='false' />
 		                          </li>
 		                        </ul>
 	                       </c:forEach>
@@ -106,22 +106,22 @@
 	                    </c:if>
 	                    </li>
 	                    <li>
-                            <form:label path="urlBase"><spring:message code="edmexport.selecteditems.urlbase" /></form:label>
+                            <form:label path="urlBase"><spring:message code="edmexport.selecteditems.urlbase" htmlEscape='false' /></form:label>
 
                             <form:input path="urlBase" size="80" required="required" />
-                            <form:errors path="urlBase" cssClass="error" />
+                            <form:errors path="urlBase" cssClass="error" htmlEscape='false' />
                         </li>
                         <li>
-                            <form:label path="edmRights"><spring:message code="edmexport.selecteditems.edm_rights" /></form:label>
+                            <form:label path="edmRights"><spring:message code="edmexport.selecteditems.edm_rights" htmlEscape='false' /></form:label>
 
                             <form:input path="edmRights" size="80" required="required" />
-                            <form:errors path="edmRights" cssClass="error" />
+                            <form:errors path="edmRights" cssClass="error" htmlEscape='false' />
                         </li>
                     </ul>
                     <div id="div_selecteditems_actions" class="div_selecteditems_actions">
                         <ul>
-		                    <li><input type="submit" value="<spring:message code="edmexport.selecteditems.visualize" />" /></li>
-		                    <li><input type="button" name="btn_export" id="btn_export" value="<spring:message code="edmexport.selecteditems.exportxml" />" /></li>
+		                    <li><input type="submit" value="<spring:message code="edmexport.selecteditems.visualize" htmlEscape='false' />" /></li>
+		                    <li><input type="button" name="btn_export" id="btn_export" value="<spring:message code="edmexport.selecteditems.exportxml" htmlEscape='false' />" /></li>
 		                </ul>
 		            </div>
                 </form:form>

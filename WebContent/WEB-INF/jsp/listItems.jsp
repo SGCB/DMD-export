@@ -55,7 +55,7 @@
                     traditional: true,
                     success: function(data) {
                         if (parseInt(data, 10) >= 0) window.location = "home.htm?referer=${referer}&page=${next_page}";
-                        else alert("<spring:message code='edmexport.listItems.json.error' />");
+                        else alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' />");
                     }
                 });
 	        });
@@ -79,7 +79,7 @@
                     traditional: true,
                     success: function(data) {
                         if (parseInt(data, 10) >= 0) window.location = "home.htm?referer=${referer}&page=${prev_page}";
-                        else alert("<spring:message code='edmexport.listItems.json.error' />");
+                        else alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' />");
                     }
                 });
             });
@@ -103,7 +103,7 @@
                     traditional: true,
                     success: function(data) {
                         if (parseInt(data, 10) >= 0) window.location = "home.htm?referer=${referer}";
-                        else alert("<spring:message code='edmexport.listItems.json.error' />");
+                        else alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' />");
                     }
                 });
             });
@@ -127,7 +127,7 @@
                     traditional: true,
                     success: function(data) {
                         if (parseInt(data, 10) >= 0) window.location = "home.htm?referer=${referer}&page=1";
-                        else alert("<spring:message code='edmexport.listItems.json.error' />");
+                        else alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' />");
                     }
                 });
             });
@@ -160,14 +160,14 @@
             });
             if (result > 0) return true;
             else {
-                alert("<spring:message code='edmexport.listItems.json.submit.error' />");
+                alert("<spring:message code='edmexport.listItems.json.submit.error' htmlEscape='false' />");
                 return false;
             }
         }
         
         //-->
         </script>
-        <h2><spring:message code="edmexport.listItems.title" /></h2>
+        <h2><spring:message code="edmexport.listItems.title" htmlEscape='false' /></h2>
         <c:choose>
             <c:when test="${!empty listItemsBO && !empty listItemsBO.listItems}">
             <div id="loading-image">
@@ -179,14 +179,14 @@
                 <table>
                     <tr>
                         <td>
-                            <label for="chk_all"><spring:message code="edmexport.listItems.chk_all.label" /></label>
+                            <label for="chk_all"><spring:message code="edmexport.listItems.chk_all.label" htmlEscape='false' /></label>
                         </td>
                         <td>
                             <input type="checkbox" id="chk_all" name="chk_all" value="chk_all" />
                         </td>
                         <td>&nbsp;</td>
                         <td>
-                            <label for="un_chk_all"><spring:message code="edmexport.listItems.un_chk_all.label" /></label>
+                            <label for="un_chk_all"><spring:message code="edmexport.listItems.un_chk_all.label" htmlEscape='false' /></label>
                         </td>
                         <td>
                             <input type="checkbox" id="un_chk_all" name="un_chk_all" value="un_chk_all" />
@@ -200,7 +200,7 @@
             <input type="hidden" name="numItemsChecked" value="${numItemsChecked}" />
             <div id="div_list_items" class="div_list_items">
                 <div id="div_list_items_header" class="div_list_items_header">
-                    <spring:message code="edmexport.listItems.header.item.label" /> ${listItemsPage} / ${hitCount}.
+                    <spring:message code="edmexport.listItems.header.item.label" htmlEscape='false' /> ${listItemsPage} / ${hitCount}.
                      <c:if test="${!empty page}">Pag: ${page}/${pageTotal}</c:if>
                      <c:choose>
                         <c:when test="${listItemsPage < hitCount}">
@@ -221,13 +221,13 @@
 	                                   <c:set var="i">${i + 1 + offset}</c:set><c:out value="${i}" />
 	                               </li>
 	                               <li>
-	                                   <spring:message code="edmexport.listItems.title.label" />: <c:out value="${item.title}" /> (<c:out value="${item.handle}" />)
+	                                   <spring:message code="edmexport.listItems.title.label" htmlEscape='false' />: <c:out value="${item.title}" /> (<c:out value="${item.handle}" />)
 	                                   <spring:bind path="listItems[${itemStatus.index}].id">
 	                                       <input type="checkbox" name="listItems[${itemStatus.index}].id" id="listItems${itemStatus.index}.id" value="${item.id}" <c:if test="${item.checked}" >checked="checked"</c:if> />
 	                                   </spring:bind>
                                     </li>
                                     <li>
-                                        <spring:message code="edmexport.listItems.author.label" />:
+                                        <spring:message code="edmexport.listItems.author.label" htmlEscape='false' />:
                                         <c:if test="${!empty item.author && !empty item.author.listAuthors}">
                                             <ul class="ul_list_items_item_author">
                                             <c:forEach items="${item.author.listAuthors}" var="authorVar" varStatus="authorStatus">
@@ -240,7 +240,7 @@
                                         </c:if>
 	                               </li>
 	                               <li>
-                                        <spring:message code="edmexport.listItems.collection.label" />:
+                                        <spring:message code="edmexport.listItems.collection.label" htmlEscape='false' />:
                                         <c:if test="${!empty item.listCollections && !empty item.listCollections.listCollections}">
                                             <ul class="ul_list_items_item_collections">
                                             <c:forEach items="${item.listCollections.listCollections}" var="coll" varStatus="collStatus">
@@ -256,7 +256,7 @@
                                         </c:if>
                                    </li>
 	                               <li>
-                                        <spring:message code="edmexport.listItems.subject.label" />:
+                                        <spring:message code="edmexport.listItems.subject.label" htmlEscape='false' />:
                                         <c:if test="${!empty item.subject && !empty item.subject.listSubjects}">
                                             <ul class="ul_list_items_item_subject">
                                             <c:forEach items="${item.subject.listSubjects}" var="subject" varStatus="subjectStatus">
@@ -269,7 +269,7 @@
                                         </c:if>
                                    </li>
                                    <li>
-                                        <spring:message code="edmexport.listItems.type.label" />:
+                                        <spring:message code="edmexport.listItems.type.label" htmlEscape='false' />:
                                         <c:if test="${!empty item.type && !empty item.type.listTypes}">
                                             <ul class="ul_list_items_item_type">
                                             <c:forEach items="${item.type.listTypes}" var="type" varStatus="typeStatus">
@@ -287,17 +287,17 @@
                     </ul>
                 </div>
                 <div id="div_list_items_submit" class="div_list_items_submit">
-                    <input  type="submit" name="go_list_items" value="<spring:message code="edmexport.listItems.save_reg" />" />
+                    <input  type="submit" name="go_list_items" value="<spring:message code="edmexport.listItems.save_reg" htmlEscape='false' />" />
                 </div>
                 
                 <div id="div_list_items_footer" class="div_list_items_footer">
-                    <c:if test="${!empty prev_page}"><a href="home.htm?referer=${referer}&page=${prev_page}" id="prev_page" class="prev_page"><spring:message code="edmexport.listItems.previous_page.label" /></a></c:if>
-                    <c:if test="${!empty next_page}"><a href="home.htm?referer=${referer}&page=${next_page}" id="next_page" class="next_page"><spring:message code="edmexport.listItems.next_page.label" /></a></c:if>
+                    <c:if test="${!empty prev_page}"><a href="home.htm?referer=${referer}&page=${prev_page}" id="prev_page" class="prev_page"><spring:message code="edmexport.listItems.previous_page.label" htmlEscape='false' /></a></c:if>
+                    <c:if test="${!empty next_page}"><a href="home.htm?referer=${referer}&page=${next_page}" id="next_page" class="next_page"><spring:message code="edmexport.listItems.next_page.label" htmlEscape='false' /></a></c:if>
                 </div>
             </div>
             </form:form>
             </c:when>
             <c:otherwise>
-                <h3><spring:message code="edmexport.listItems.void" /></h3>
+                <h3><spring:message code="edmexport.listItems.void" htmlEscape='false' /></h3>
             </c:otherwise>
         </c:choose>

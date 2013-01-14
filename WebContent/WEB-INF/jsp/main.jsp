@@ -26,7 +26,7 @@
     </head>
     <body>
         <tiles:insertAttribute name="header"/>
-        <h1><spring:message code="edmexport.title" /></h1>
+        <h1><spring:message code="edmexport.title" htmlEscape='false' /></h1>
         <tiles:insertAttribute name="tabs" />
         <tiles:insertAttribute name="body" />
         <tiles:insertAttribute name="footer"/>

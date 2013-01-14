@@ -7,14 +7,14 @@
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
-        <h1><spring:message code="edmexport.login.title" /></h1>
+        <h1><spring:message code="edmexport.login.title" htmlEscape='false' /></h1>
         <c:if test="${not empty error}">
         <div id="login-error" class="login-error"><spring:message code="edmexport.login.error" /></div>
         </c:if>
         <form action="../j_spring_security_check" method="post" >
-            <label for="j_username"><spring:message code="edmexport.login.username" /></label>
+            <label for="j_username"><spring:message code="edmexport.login.username" htmlEscape='false' /></label>
             <input id="j_username" name="j_username" type="text" />
-            <label for="j_password"><spring:message code="edmexport.login.password" /></label>
+            <label for="j_password"><spring:message code="edmexport.login.password" htmlEscape='false' /></label>
             <input id="j_password" name="j_password" type="password" />
             <br /><input  type="submit" value="Login"/>
         </form>

@@ -10,10 +10,10 @@
         <td align="center">
             <c:choose>
             <c:when test="${tab == 'list'}">
-            <spring:message code="edmexport.tab.list_collections" />
+            <spring:message code="edmexport.tab.list_collections" htmlEscape='false' />
             </c:when>
             <c:otherwise>
-            <a href="home.htm?tab=list"><spring:message code="edmexport.tab.list_collections" /></a>
+            <a href="home.htm?tab=list"><spring:message code="edmexport.tab.list_collections" htmlEscape='false' /></a>
             </c:otherwise>
             </c:choose>
         </td>
@@ -21,10 +21,10 @@
         <td align="center">
             <c:choose>
             <c:when test="${tab == 'search'}">
-            <spring:message code="edmexport.tab.search" />
+            <spring:message code="edmexport.tab.search" htmlEscape='false' />
             </c:when>
             <c:otherwise>
-            <a href="home.htm?tab=search"><spring:message code="edmexport.tab.search" /></a>
+            <a href="home.htm?tab=search"><spring:message code="edmexport.tab.search" htmlEscape='false' /></a>
             </c:otherwise>
             </c:choose>
         </td> 
