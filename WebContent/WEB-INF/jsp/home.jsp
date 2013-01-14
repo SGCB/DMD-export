@@ -46,7 +46,12 @@
         	if (objListCollectionsJS.list_collections_submit.length() > 0) {
         		return true;
         	} else {
-        		alert("<spring:message code='edmexport.home.list.no_check_coll' htmlEscape='false' javaScriptEscape='true' />");
+        		try {
+        			  jQuery.spro.jpopit("<spring:message code='edmexport.home.list.no_check_coll' htmlEscape='false' javaScriptEscape='true' />"
+        				, {fadeInTime: 200, fadeOutTime: 1000, delay: 10000}).css({"background-color":"#FFFFFF", "color":"#000000"});
+        		} catch (e) {
+        			alert("<spring:message code='edmexport.home.list.no_check_coll' htmlEscape='false' javaScriptEscape='true' />");
+        		}
         		return false;
         	}
         }

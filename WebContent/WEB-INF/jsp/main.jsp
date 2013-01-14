@@ -21,6 +21,8 @@
         
         <spring:url value="/js/jquery-1.8.3.js" var="jquery_url" htmlEscape="true" />
         <script type="text/javascript" src="${jquery_url}"> </script>
+        <spring:url value="/js/jpopit.jquery.js" var="jpopit_jquery_url" htmlEscape="true" />
+        <script type="text/javascript" src="${jpopit_jquery_url}"> </script>
         <spring:url value="/js/edmexport.js" var="edmexport_url" htmlEscape="true" />
         <script type="text/javascript" src="${edmexport_url}"> </script>
     </head>

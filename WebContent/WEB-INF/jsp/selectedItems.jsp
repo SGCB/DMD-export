@@ -18,7 +18,14 @@
         			  jQuery("#FormEDMData").attr("action", "getFile.htm");
         			  jQuery("#FormEDMData").submit();
         			  jQuery("#FormEDMData").attr("action", "selectedItems.htm");
-        		} else alert(message);
+        		} else {
+        			try {
+        			    jQuery.spro.jpopit(message
+        			        , {fadeInTime: 200, fadeOutTime: 1000, delay: 10000}).css({"background-color":"#FFFFFF", "color":"#000000"});
+        			} catch (e) {
+        				alert(messsage);
+        			}
+        		}
         	});
         	
         });
@@ -31,7 +38,12 @@
         		jQuery("#pageAction").val("xml");
         		return true;
         	}
-        	alert(message);
+        	try {
+        		jQuery.spro.jpopit(message
+                    , {fadeInTime: 200, fadeOutTime: 1000, delay: 10000}).css({"background-color":"#FFFFFF", "color":"#000000"});
+        	} catch (e) {
+                alert(messsage);
+            }
             return false;
         }
         

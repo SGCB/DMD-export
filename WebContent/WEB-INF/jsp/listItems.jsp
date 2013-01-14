@@ -55,7 +55,14 @@
                     traditional: true,
                     success: function(data) {
                         if (parseInt(data, 10) >= 0) window.location = "home.htm?referer=${referer}&page=${next_page}";
-                        else alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />");
+                        else {
+                        	try {
+                        	    jQuery.spro.jpopit("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />"
+                                , {fadeInTime: 200, fadeOutTime: 1000, delay: 10000}).css({"background-color":"#FFFFFF", "color":"#000000"});
+                        	} catch (e) {
+                        		alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />");
+                        	}
+                        }
                     }
                 });
 	        });
@@ -79,7 +86,14 @@
                     traditional: true,
                     success: function(data) {
                         if (parseInt(data, 10) >= 0) window.location = "home.htm?referer=${referer}&page=${prev_page}";
-                        else alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />");
+                        else {
+                            try {
+                                jQuery.spro.jpopit("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />"
+                                , {fadeInTime: 200, fadeOutTime: 1000, delay: 10000}).css({"background-color":"#FFFFFF", "color":"#000000"});
+                            } catch (e) {
+                                alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />");
+                            }
+                        }
                     }
                 });
             });
@@ -103,7 +117,14 @@
                     traditional: true,
                     success: function(data) {
                         if (parseInt(data, 10) >= 0) window.location = "home.htm?referer=${referer}";
-                        else alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />");
+                        else {
+                            try {
+                                jQuery.spro.jpopit("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />"
+                                , {fadeInTime: 200, fadeOutTime: 1000, delay: 10000}).css({"background-color":"#FFFFFF", "color":"#000000"});
+                            } catch (e) {
+                                alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />");
+                            }
+                        }
                     }
                 });
             });
@@ -127,7 +148,14 @@
                     traditional: true,
                     success: function(data) {
                         if (parseInt(data, 10) >= 0) window.location = "home.htm?referer=${referer}&page=1";
-                        else alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />");
+                        else {
+                            try {
+                                jQuery.spro.jpopit("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />"
+                                , {fadeInTime: 200, fadeOutTime: 1000, delay: 10000}).css({"background-color":"#FFFFFF", "color":"#000000"});
+                            } catch (e) {
+                                alert("<spring:message code='edmexport.listItems.json.error' htmlEscape='false' javaScriptEscape='true' />");
+                            }
+                        }
                     }
                 });
             });
@@ -160,7 +188,12 @@
             });
             if (result > 0) return true;
             else {
-                alert("<spring:message code='edmexport.listItems.json.submit.error' htmlEscape='false' javaScriptEscape='true' />");
+            	try {
+                    jQuery.spro.jpopit("<spring:message code='edmexport.listItems.json.submit.error' htmlEscape='false' javaScriptEscape='true' />"
+                    , {fadeInTime: 200, fadeOutTime: 1000, delay: 10000}).css({"background-color":"#FFFFFF", "color":"#000000"});
+                } catch (e) {
+                    alert("<spring:message code='edmexport.listItems.json.submit.error' htmlEscape='false' javaScriptEscape='true' />");
+                }
                 return false;
             }
         }

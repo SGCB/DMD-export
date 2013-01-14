@@ -47,7 +47,12 @@
             jQuery("#btn_viewxml_search").click(function() {
             	var term = jQuery("#term").val();
             	if (term == "") {
-            		alert("<spring:message code='edmexport.viewxml.label.search.term.error' htmlEscape='false' javaScriptEscape='true' />");
+            		try {
+            			jQuery.spro.jpopit("<spring:message code='edmexport.viewxml.label.search.term.error' htmlEscape='false' javaScriptEscape='true' />"
+                            , {fadeInTime: 200, fadeOutTime: 1000, delay: 10000}).css({"background-color":"#FFFFFF", "color":"#000000"});
+            		} catch (e) {
+            			alert("<spring:message code='edmexport.viewxml.label.search.term.error' htmlEscape='false' javaScriptEscape='true' />");
+            		}
             	} else {
             		posSearchArray.length = 0;
             		jQuery("#li_viewxml_next").remove();
@@ -55,7 +60,12 @@
             		var element = jQuery("#listElementsFilled").val();
             		var pos = searchTermElement(term, element, 'EDMXml', 0);
             		if (pos < 0) {
-            			alert("<spring:message code='edmexport.viewxml.label.search.noresults' htmlEscape='false' javaScriptEscape='true' />");
+            			try {
+            			    jQuery.spro.jpopit("<spring:message code='edmexport.viewxml.label.search.noresults' htmlEscape='false' javaScriptEscape='true' />"
+                                , {fadeInTime: 200, fadeOutTime: 1000, delay: 10000}).css({"background-color":"#FFFFFF", "color":"#000000"});
+            			} catch (e) {
+            			    alert("<spring:message code='edmexport.viewxml.label.search.noresults' htmlEscape='false' javaScriptEscape='true' />");
+            			}
             		}
             		renderNext(pos, term, 'EDMXml', element);
             	}
