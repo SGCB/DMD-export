@@ -22,13 +22,13 @@
         	<c:if test="${!empty PageCount}">
             objListCollectionsJS.setPageCount(${PageCount});
             </c:if>
-            objListCollectionsJS.setCaptionStrong("<spring:message code='edmexport.home.list.caption.strong' htmlEscape='false' />");
-            objListCollectionsJS.setCaptionSummary("<spring:message code='edmexport.home.list.caption.summary' htmlEscape='false' />");
-            objListCollectionsJS.setCaptionParagraph("<spring:message code='edmexport.home.list.caption.paragraph' htmlEscape='false' />");
-            objListCollectionsJS.setThIndex("<spring:message code='edmexport.home.list.index' htmlEscape='false' />");
-            objListCollectionsJS.setThName("<spring:message code='edmexport.home.list.name' htmlEscape='false' />");
-            objListCollectionsJS.setThHandle("<spring:message code='edmexport.home.list.handle' htmlEscape='false' />");
-            objListCollectionsJS.setThSelect("<spring:message code='edmexport.home.list.select' htmlEscape='false' />");
+            objListCollectionsJS.setCaptionStrong("<spring:message code='edmexport.home.list.caption.strong' htmlEscape='false' javaScriptEscape='true' />");
+            objListCollectionsJS.setCaptionSummary("<spring:message code='edmexport.home.list.caption.summary' htmlEscape='false' javaScriptEscape='true' />");
+            objListCollectionsJS.setCaptionParagraph("<spring:message code='edmexport.home.list.caption.paragraph' htmlEscape='false' javaScriptEscape='true' />");
+            objListCollectionsJS.setThIndex("<spring:message code='edmexport.home.list.index' htmlEscape='false' javaScriptEscape='true' />");
+            objListCollectionsJS.setThName("<spring:message code='edmexport.home.list.name' htmlEscape='false' javaScriptEscape='true' />");
+            objListCollectionsJS.setThHandle("<spring:message code='edmexport.home.list.handle' htmlEscape='false' javaScriptEscape='true' />");
+            objListCollectionsJS.setThSelect("<spring:message code='edmexport.home.list.select' htmlEscape='false' javaScriptEscape='true' />");
         	objListCollectionsJS.init();
         });
         
@@ -42,11 +42,11 @@
         
         function valid_list_coll(form)
         {
-        	objListCollectionsJS.submit("<spring:message code='edmexport.home.list.recov_items' htmlEscape='false' />");
+        	objListCollectionsJS.submit("<spring:message code='edmexport.home.list.recov_items' htmlEscape='false' javaScriptEscape='true' />");
         	if (objListCollectionsJS.list_collections_submit.length() > 0) {
         		return true;
         	} else {
-        		alert("<spring:message code='edmexport.home.list.no_check_coll' htmlEscape='false' />");
+        		alert("<spring:message code='edmexport.home.list.no_check_coll' htmlEscape='false' javaScriptEscape='true' />");
         		return false;
         	}
         }

@@ -41,20 +41,20 @@
         	var message = "";
         	
         	if (form.title.value == "") {
-                message += "<spring:message code='NotEmpty.FormEDMData.title' htmlEscape='false' />\n";
+                message += "<spring:message code='NotEmpty.FormEDMData.title' htmlEscape='false' javaScriptEscape='true' />\n";
             }
             
             if (form.urlBase.value == "") {
-                message += "<spring:message code='URL.FormEDMData.urlBase' htmlEscape='false' />\n";
+                message += "<spring:message code='URL.FormEDMData.urlBase' htmlEscape='false' javaScriptEscape='true' />\n";
             }
             
             if (form.edmRights.value == "") {
-                message += "<spring:message code='URL.FormEDMData.edmRights' htmlEscape='false' />\n";
+                message += "<spring:message code='URL.FormEDMData.edmRights' htmlEscape='false' javaScriptEscape='true' />\n";
             }
             
             jQuery("textarea[id^='listTypes']").each(function() {
                 if (jQuery(this).val() == "") {
-                    message += jQuery("#label_" + jQuery(this).attr("id")).html() + "<spring:message code='edmexport.selecteditems.type.error' htmlEscape='false' />\n";
+                    message += jQuery("#label_" + jQuery(this).attr("id")).html() + "<spring:message code='edmexport.selecteditems.type.error' htmlEscape='false' javaScriptEscape='true' />\n";
                 }
             });
             

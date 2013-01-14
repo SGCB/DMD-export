@@ -15,7 +15,7 @@
             if (form.term.value != "") {
                 return true;
             } else {
-                alert("<spring:message code='edmexport.search.no_submit' htmlEscape='false' />");
+                alert("<spring:message code='edmexport.search.no_submit' htmlEscape='false' javaScriptEscape='true' />");
                 return false;
             }
         }
