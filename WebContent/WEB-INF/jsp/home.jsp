@@ -58,6 +58,7 @@
         //-->
         </script>
     </c:if>
+        <span id="edmexport_main_help" class="edmexport_main_help"><p><spring:message code="edmexport.home.list.help" htmlEscape='false' /></p></span>
         <h2><spring:message code="edmexport.home.list.title" htmlEscape='false' /></h2>
         <c:choose>
             <c:when test="${!empty listCollections && !empty listCollections.listCollections}">

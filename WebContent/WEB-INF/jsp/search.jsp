@@ -26,6 +26,7 @@
         }
         //-->
         </script>
+        <span id="edmexport_main_help" class="edmexport_main_help"><p><spring:message code="edmexport.search.help" htmlEscape='false' /></p></span>
         <h2><spring:message code="edmexport.search.title" htmlEscape='false' /></h2>
         <form:form action="home.htm" method="post" name="search" commandName="search" onsubmit="return valid_search(this);" >
             <form:errors path="*" cssClass="errorblock" element="div" htmlEscape='false' />

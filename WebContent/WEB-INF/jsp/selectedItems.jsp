@@ -76,6 +76,7 @@
         //-->
         </script>
 
+        <span id="edmexport_main_help" class="edmexport_main_help"><p><spring:message code="edmexport.selecteditems.help" htmlEscape='false' /></p></span>
         <div id="div_selecteditems" class="div_selecteditems">
             <div id="div_selecteditems_list" class="div_selecteditems_list">
 	            <span id="selecteditems_title" class="selecteditems_title"><spring:message code="edmexport.selecteditems.title.main" htmlEscape='false' /></span>
@@ -96,7 +97,8 @@
                     <ul id="ul_selecteditems_form" class="ul_selecteditems_form">
                         <li><h3><spring:message code="edmexport.selecteditems.form.title" htmlEscape='false' /></h3></li>
                         <li>
-                            <form:label path="title"><spring:message code="edmexport.selecteditems.title" htmlEscape='false' /></form:label>
+                            <form:label path="title"><span title="<spring:message code='edmexport.selecteditems.title.help' htmlEscape='false' />">
+                                <spring:message code="edmexport.selecteditems.title" htmlEscape='false' /></span></form:label>
 
                             <form:input path="title" size="80" required="required" />
                             <form:errors path="title" cssClass="error" htmlEscape='false' />
@@ -118,13 +120,15 @@
 	                    </c:if>
 	                    </li>
 	                    <li>
-                            <form:label path="urlBase"><spring:message code="edmexport.selecteditems.urlbase" htmlEscape='false' /></form:label>
+                            <form:label path="urlBase"><span title="<spring:message code='edmexport.selecteditems.urlbase.help' htmlEscape='false' />">
+                                <spring:message code="edmexport.selecteditems.urlbase" htmlEscape='false' /></span></form:label>
 
                             <form:input path="urlBase" size="80" required="required" />
                             <form:errors path="urlBase" cssClass="error" htmlEscape='false' />
                         </li>
                         <li>
-                            <form:label path="edmRights"><spring:message code="edmexport.selecteditems.edm_rights" htmlEscape='false' /></form:label>
+                            <form:label path="edmRights"><span title="<spring:message code='edmexport.selecteditems.edm_rights.help' htmlEscape='false' />">
+                                <spring:message code="edmexport.selecteditems.edm_rights" htmlEscape='false' /></span></form:label>
 
                             <form:input path="edmRights" size="80" required="required" />
                             <form:errors path="edmRights" cssClass="error" htmlEscape='false' />
@@ -132,8 +136,8 @@
                     </ul>
                     <div id="div_selecteditems_actions" class="div_selecteditems_actions">
                         <ul>
-		                    <li><input type="submit" value="<spring:message code="edmexport.selecteditems.visualize" htmlEscape='false' />" /></li>
-		                    <li><input type="button" name="btn_export" id="btn_export" value="<spring:message code="edmexport.selecteditems.exportxml" htmlEscape='false' />" /></li>
+		                    <li><input type="submit" title="<spring:message code='edmexport.selecteditems.visualize.help' htmlEscape='false' />" value="<spring:message code='edmexport.selecteditems.visualize' htmlEscape='false' />" /></li>
+		                    <li><input type="button" title="<spring:message code='edmexport.selecteditems.exportxml.help' htmlEscape='false' />" name="btn_export" id="btn_export" value="<spring:message code='edmexport.selecteditems.exportxml' htmlEscape='false' />" /></li>
 		                </ul>
 		            </div>
                 </form:form>

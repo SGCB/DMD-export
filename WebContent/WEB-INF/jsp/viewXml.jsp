@@ -146,6 +146,7 @@
         //--> 
         </script>
 
+        <span id="edmexport_main_help" class="edmexport_main_help"><p><spring:message code="edmexport.viewxml.help" htmlEscape='false' /></p></span>
         <div id="div_viewxml" class="div_viewxml">
             <div id="div_viewxml_title" class="div_viewxml_title">
                 <spring:message code="edmexport.viewxml.title" htmlEscape='false' />
@@ -163,7 +164,7 @@
                     </ul>
                     <div id="div_viewxml_actions" class="div_viewxml_actions">
                         <ul>
-                            <li><input type="submit" value="<spring:message code="edmexport.viewxml.export" htmlEscape='false' />" /></li>
+                            <li><input type="submit" title="<spring:message code="edmexport.selecteditems.exportxml.help" htmlEscape='false' />" value="<spring:message code="edmexport.viewxml.export" htmlEscape='false' />" /></li>
                         </ul>
                     </div>
                 </form>

@@ -8,6 +8,7 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
         <h1><spring:message code="edmexport.login.title" htmlEscape='false' /></h1>
+        <span id="edmexport_login_help" class="edmexport_login_help"><spring:message code="edmexport.login.help" htmlEscape='false' /></span>
         <c:if test="${not empty error}">
         <div id="login-error" class="login-error"><spring:message code="edmexport.login.error" /></div>
         </c:if>

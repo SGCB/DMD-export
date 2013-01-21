@@ -200,6 +200,7 @@
         
         //-->
         </script>
+        <span id="edmexport_main_help" class="edmexport_main_help"><p><spring:message code="edmexport.listItems.help" htmlEscape='false' /></p></span>
         <h2><spring:message code="edmexport.listItems.title" htmlEscape='false' /></h2>
         <c:choose>
             <c:when test="${!empty listItemsBO && !empty listItemsBO.listItems}">
