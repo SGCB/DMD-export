@@ -1,8 +1,81 @@
 @CHARSET "UTF-8";
 
+body {
+	font: 13px/1.5em Arial, Verdana, Sans-Serif;
+	margin: 0;
+	padding: 20px 0;
+	color: #555;
+	text-align: left;
+}
+
+a {
+	color: #d61921;
+}
+
+caption {
+	text-align: left;
+	border-bottom: 1px solid #DDD;
+	padding: 10px 0;
+}
+
+caption > strong {
+	text-transform: uppercase;
+	font: normal 1.4em 'calibri', Arial, Verdana, Sans-Serif;
+}
+
+details {
+	color: #aaa;
+	line-height: 1.1em;
+}
+
+details p {
+	margin: 0;
+}
+
+input {
+	border: none;
+	padding: 3px 6px;
+	margin-right: 25px;
+	font-family: Arial, Verdana, Sans-Serif;
+}
+
+select, textarea {
+	border: 1px solid #ccc;
+	padding: 2px;
+	font-family: Arial, Verdana, Sans-Serif;
+	color: #555;
+}
+
+textarea {
+	font-size: 1em;
+	width: 100%;
+	background-color: #F4F4F4;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+	background-color: #555;
+	color: #fff;
+}
+
+label {
+	margin-right: 5px;
+}
+
+li {
+	list-style: none;
+}
+
+li ul {
+	padding-left: 0;
+}
+
+li ul li ul {
+	margin-bottom: 10px;
+}
+
 #loading-image {
     background-color: white;
-    border-radius: 10px 10px 10px 10px;
+    border-radius: 10px;
     height: 800px;
     left: 5px;
     position: fixed;
@@ -26,3 +99,348 @@
 .li_linefeed {
 	list-style-type:none;
 }
+body > * {
+	margin: 0 auto;
+	width: 1000px;
+	display: block;
+}
+
+body > script {
+	display: none;
+}
+
+
+#edmexport_header {
+	margin-bottom: 50px;
+}
+
+#edmexport_header h2 a {
+	color: #555;
+	text-transform: uppercase;
+	font-weight: normal;
+	text-decoration: none;
+	width: 60%;
+	display: block;
+	font: 2em/.8em 'calibri', Arial, Verdana, Sans-Serif;
+}
+
+#edmexport_header h2 a:hover {
+	color: #d61921;
+}
+
+body > h1 {
+	display: none;
+}
+
+body > h1+h1 {
+	display: block;
+	font-size: 1.9em;
+	margin-bottom: 5px;
+}
+
+body > h2 {
+	margin: 30px auto 5px;
+}
+
+h3 {
+	margin-top: 0;
+	font: bold 1.2em Arial, Verdana, Sans-Serif;
+}
+
+#edmexport_footer {
+	border-top: 1px solid #ddd;
+	margin: 50px auto 20px;
+	padding: 20px 0;
+}
+
+#edmexport_footer h2 {
+	font: normal 11px Arial, Verdana, Sans-Serif;
+	color: #999;
+}
+
+form {
+	background-color: #ddd;
+	padding: 20px;
+	width: 960px;
+	margin-top: 10px;
+	position: relative;
+}
+
+form > input[type="submit"] {
+	left: 570px;
+    position: absolute;
+    top: 19px;
+	text-transform: uppercase;
+	font-size: 1em;
+	border: 1px solid #555;
+	background-color: #555;
+	color: #fff;
+	padding: 3px 12px;
+}
+
+form > input:hover[type="submit"] {
+	background-color: #d61921;
+	border: 1px solid #d61921;
+}
+
+form input#j_username {
+	width: 200px;
+}
+
+input[type="submit"] {
+	cursor: pointer;
+}
+
+#edmexport_user {
+	border-bottom: 1px solid #ccc;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font-style: italic;
+}
+
+#edmexport_hometabs {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+#edmexport_hometabs table {
+	width: 41%;
+	text-transform: uppercase;
+	font-size: .9em;
+}
+
+#edmexport_hometabs table td {
+	padding: 0 10px 0 0;
+}
+
+#edmexport_hometabs table a {
+	display: block;
+	background-color: #555;
+	color: #fff;
+	text-decoration: none;
+	padding: 4px 50px;
+}
+
+#edmexport_hometabs table a:hover {
+	background-color: #1d7abe;
+}
+
+#edmexport_main_help {
+	padding: 2px 15px;
+	background-color: #eee;
+	width: 970px;
+}
+
+form#listCollections, form#search, form#list_items, form#FormEDMData, #div_viewxml_form form {
+	background-color: #fff;
+	border: 1px solid #ddd;
+}
+
+form#list_items {
+	padding: 20px 20px 40px;
+}
+
+table#table_list_collec {
+	width: 100%;
+}
+
+#div_list_collec_dict {
+	margin-bottom: 15px;
+}
+
+#div_list_collec_dict a {
+	text-decoration: none;
+	color: #d61921;
+}
+
+#div_list_collec_header {
+	padding: 5px;
+	background-color: #eee;
+}
+
+#div_list_collec_body {
+	margin-top: 20px;
+}
+
+table#table_list_collec thead {
+	background-color: #eee;
+}
+
+table#table_list_collec tbody td {
+	border-bottom: 1px solid #eee;
+}
+
+#div_list_collec_submit {
+	margin: 10px 0;
+}
+
+#div_list_collec_submit input[type="submit"], #div_list_items_submit input[type="submit"], #div_selecteditems_actions input, input#btn_viewxml_search, #div_viewxml_actions input {
+	font-weight: bold;
+	font-size: .9em;
+	padding: 3px;
+	color: #fff;
+	background-color: #d61921;
+}
+
+#div_list_collec_submit input[type="submit"]:hover, #div_list_items_submit input[type="submit"]:hover,  #div_selecteditems_actions input:hover, input#btn_viewxml_search:hover, #div_viewxml_actions input:hover {
+	background-color: #333;
+}
+
+form#search #div_search {
+	height: 25px;
+}
+
+form#search #div_search div {
+	float: left;
+	margin-right: 15px;
+}
+
+form#search #div_search input[type="text"] {
+	border: 1px solid #ccc;
+}
+
+form#search #div_search #div_search_submit input {
+	background-color: #d61921;
+	color: #fff;
+	font-weight: bold;
+	font-size: .9em;
+	text-transform: uppercase;
+}
+
+form#search #div_search #div_search_submit input:hover {
+	background-color: #333;
+}
+
+#div_list_items_check form {
+	padding: 0;
+	background-color: #fff;
+}
+
+#div_list_items_header {
+	padding: 5px;
+	background-color: #eee;
+}
+
+#ul_list_items {
+	padding: 0;
+}
+
+#ul_list_items li {
+	font-weight: bold;
+}
+
+#ul_list_items ul li ul li {
+	font-weight: normal;
+	color: #777;
+}
+
+li.li_linefeed {
+	border-bottom: 1px solid #ddd;
+	padding: 0;
+	margin: 0 0 10px 0;
+}
+
+#div_list_items_submit {
+	float: left;
+}
+
+#div_list_items_footer {
+	float: right;
+}
+
+#div_selecteditems_list {
+	padding: 15px;
+}
+
+#div_selecteditems_list ul {
+	padding: 0;
+	margin-bottom: 0;
+}
+
+#div_selecteditems_list ul li {
+	font-size: 1.3em;
+	color: #D61921;
+}
+
+#ul_selecteditems_form {
+	padding: 0;
+	margin: 0;
+}
+
+#ul_selecteditems_form input[type=text] {
+	border: 1px solid #ddd;
+}
+
+#div_selecteditems_types {
+	margin-top: 20px;
+}
+
+.ul_selecteditems_text {
+	margin-bottom: 10px;
+}
+
+.ul_selecteditems_text li {
+	vertical-align: top;
+	font: .875em Arial, Verdana, Sans-Serif;
+}
+
+.ul_selecteditems_text li label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+#div_selecteditems_actions ul {
+	margin: 20px 0 0;
+	padding: 0;
+}
+
+#div_selecteditems_actions ul li {
+	float: left;
+	margin: 0;
+}
+
+#FormEDMData {
+	padding: 20px 20px 40px;
+}
+
+#ul_viewxml_form {
+	margin: 0;
+	padding: 0;
+}
+
+textarea#EDMXml {
+	padding: 15px;
+	width: 97%;
+}
+
+#div_viewxml_actions ul {
+	padding: 0;
+	margin: 10px 0 0;
+}
+
+#div_viewxml_title {
+	margin: 10px 0;
+	text-transform: uppercase;
+}
+
+#ul_viewxml_form li {
+	margin: 0 0 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

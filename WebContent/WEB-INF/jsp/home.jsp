@@ -123,7 +123,7 @@
 		            <tfoot>
 			            <tr>
 			              <td colspan="4">
-			                  <input  type="submit" name="go_list_collections" value="<spring:message code="edmexport.home.list.save_reg" htmlEscape='false' />" />
+			                  <input  type="submit" name="go_list_collections" title="<spring:message code='edmexport.home.list.save_reg.help' htmlEscape='false' />" value="<spring:message code="edmexport.home.list.save_reg" htmlEscape='false' />" />
 		                  </td>
 			            </tr>
 		            </tfoot>
