@@ -1,5 +1,8 @@
 package org.dspace.EDMExport.service;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -189,13 +192,26 @@ public class EDMExportXMLItem extends EDMExportXML
 	private List<Element> processSkosConcept(DCValue[] itemDC)
 	{
 		List<Element> listElementsSkosConcept = new ArrayList<Element>();
+		final String REGEX_HANDLE_PATTERN = "^\\d+/\\d+$";
+        String prefixUrl = this.edmExportBOFormEDMData.getUrlBase() + "/handle/";
 		
 		for (DCValue dcv : itemDC) {
+			String authority;
 			if (dcv.authority != null && !dcv.authority.isEmpty()) {
+				if (!isValidURI(dcv.authority)) {
+                    try {
+                        if (dcv.authority.matches(REGEX_HANDLE_PATTERN) && edmExportServiceListItems.checkHandleItemDataBase(dcv.authority)) {
+                            authority = prefixUrl + dcv.authority;
+                        } else continue;
+                    } catch (Exception e) {
+                    	logger.debug("EDMExportXML.processSkosConcept authority", e);
+                        continue;
+                    }
+                } else authority = dcv.authority;
 				Element skosConcept = null;
 				try {
 					skosConcept = new Element("Concept", SKOS);
-					skosConcept.setAttribute(new Attribute("about", dcv.authority, RDF));
+					skosConcept.setAttribute(new Attribute("about", authority, RDF));
 					Element prefLabel = new Element("prefLabel", SKOS);
 					if (dcv.language != null) prefLabel.setAttribute(new Attribute("lang", dcv.language, XML));
 					prefLabel.setText(dcv.value);
@@ -404,4 +420,19 @@ public class EDMExportXMLItem extends EDMExportXML
 		return (edmType.length() > 0)?edmType.toString().substring(0, edmType.length() - 1):edmType.toString();
 	}
 	
+	
+	private boolean isValidURI(String uriStr)
+    {
+        try {
+            URI uri = new URI(uriStr);
+            uri.toURL();
+            return true;
+        } catch (URISyntaxException e) {
+            return false;
+        } catch (MalformedURLException e) {
+        	return false;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+    }
 }

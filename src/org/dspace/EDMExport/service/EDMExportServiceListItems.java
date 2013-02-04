@@ -151,6 +151,11 @@ public class EDMExportServiceListItems
 		return listCollections;
 	}
 	
+	public boolean checkHandleItemDataBase(String handle) throws Exception
+	{
+		return daoListItems.checkHandleItemDataBase(handle);
+	}
+	
 	
 	public Item getDSPaceItem(EDMExportBOItem boItem)
 	{
