@@ -80,7 +80,7 @@ li ul li ul {
     left: 5px;
     position: fixed;
     top: 180px;
-    width: 800px;
+    width: 100%;
     z-index: 1;
 }
 
@@ -121,7 +121,7 @@ body > script {
 	text-decoration: none;
 	width: 60%;
 	display: block;
-	font: 2em/.8em 'calibri', Arial, Verdana, Sans-Serif;
+	font: 2.3em/.8em 'calibri', Arial, Verdana, Sans-Serif;
 }
 
 #edmexport_header h2 a:hover {
@@ -139,12 +139,19 @@ body > h1+h1 {
 }
 
 body > h2 {
-	margin: 30px auto 5px;
+	margin: 30px auto 0;
+}
+
+h2 {
+	margin-bottom: 5px;
 }
 
 h3 {
-	margin-top: 0;
-	font: bold 1.2em Arial, Verdana, Sans-Serif;
+	color: #777;
+    font: 1.8em/.9em Arial,Verdana,Sans-Serif;
+    letter-spacing: 0;
+    margin-top: 0;
+    width: 60%;
 }
 
 #edmexport_footer {
@@ -227,7 +234,7 @@ input[type="submit"] {
 
 #edmexport_main_help {
 	padding: 2px 15px;
-	background-color: #eee;
+	background-color: #d4e3f0;
 	width: 970px;
 }
 
@@ -425,6 +432,15 @@ textarea#EDMXml {
 
 #ul_viewxml_form li {
 	margin: 0 0 10px;
+}
+
+#li_selecteditems_help {
+	color: #AAA;
+    font-size: 0.9em;
+    font-style: italic;
+    line-height: 1.2em;
+    margin-bottom: 10px;
+    width: 60%;
 }
 
 

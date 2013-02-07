@@ -59,6 +59,7 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 		return null;
 	}
 	
+	@Override
 	public Bundle[] getDSPaceBundleItem(Item item, String type)
 	{
 		logger.debug("EDMExportDAODspaceListItems.getDSPaceBundleItem");
@@ -70,6 +71,7 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 		return null;
 	}
 	
+	@Override
 	public boolean checkHandleItemDataBase(String handle) throws SQLException
 	{
 		return (HandleManager.resolveToObject(context, handle) != null);

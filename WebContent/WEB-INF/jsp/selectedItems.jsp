@@ -96,12 +96,20 @@
                     <form:hidden path="pageAction" /> 
                     <ul id="ul_selecteditems_form" class="ul_selecteditems_form">
                         <li><h3><spring:message code="edmexport.selecteditems.form.title" htmlEscape='false' /></h3></li>
+                        <li>&nbsp;</li>
+                        <li id="li_selecteditems_help">
+                           <spring:message code="edmexport.selecteditems.title.help" htmlEscape='false' />
+                        </li>
                         <li>
-                            <form:label path="title"><span title="<spring:message code='edmexport.selecteditems.title.help' htmlEscape='false' />">
+                            <form:label path="title"><span title="<spring:message code='edmexport.selecteditems.title' htmlEscape='false' />">
                                 <spring:message code="edmexport.selecteditems.title" htmlEscape='false' /></span></form:label>
 
                             <form:input path="title" size="80" required="required" />
                             <form:errors path="title" cssClass="error" htmlEscape='false' />
+                        </li>
+                        <li>&nbsp;</li>
+                        <li id="li_selecteditems_help">
+                           <spring:message code="edmexport.selecteditems.types.title" htmlEscape='false' />
                         </li>
 	                    <li>
 	                    <c:if test="${!empty FormEDMData.listTypes}">
@@ -110,7 +118,7 @@
 	                       <c:forEach items="${FormEDMData.listTypes}" var="type" varStatus="typeStatus">
 		                        <ul id="ul_selecteditems_text_${typeStatus.index}" class="ul_selecteditems_text">
 		                          <li>
-		                              <label for="listTypes${typeStatus.index}" id="label_listTypes${typeStatus.index}" title='<spring:message code="edmexport.selecteditems.types.title" htmlEscape='false' />'> ${type}</label>
+		                              <label for="listTypes${typeStatus.index}" id="label_listTypes${typeStatus.index}" title='${type}'> ${type}</label>
 		                              <form:textarea path="listTypes[${typeStatus.index}]" cols="80" rows="3" required="required" />
 		                              <form:errors path="listTypes[${typeStatus.index}]" cssClass="error" htmlEscape='false' />
 		                          </li>
@@ -119,15 +127,23 @@
 	                       </div>
 	                    </c:if>
 	                    </li>
+	                    <li>&nbsp;</li>
+	                    <li id="li_selecteditems_help">
+                            <spring:message code="edmexport.selecteditems.urlbase.help" htmlEscape='false' />
+                        </li>
 	                    <li>
-                            <form:label path="urlBase"><span title="<spring:message code='edmexport.selecteditems.urlbase.help' htmlEscape='false' />">
+                            <form:label path="urlBase"><span title="<spring:message code='edmexport.selecteditems.urlbase' htmlEscape='false' />">
                                 <spring:message code="edmexport.selecteditems.urlbase" htmlEscape='false' /></span></form:label>
 
                             <form:input path="urlBase" size="80" required="required" />
                             <form:errors path="urlBase" cssClass="error" htmlEscape='false' />
                         </li>
+                        <li>&nbsp;</li>
+                        <li id="li_selecteditems_help">
+                            <spring:message code="edmexport.selecteditems.edm_rights.help" htmlEscape='false' />
+                        </li>
                         <li>
-                            <form:label path="edmRights"><span title="<spring:message code='edmexport.selecteditems.edm_rights.help' htmlEscape='false' />">
+                            <form:label path="edmRights"><span title="<spring:message code='edmexport.selecteditems.edm_rights' htmlEscape='false' />">
                                 <spring:message code="edmexport.selecteditems.edm_rights" htmlEscape='false' /></span></form:label>
 
                             <form:input path="edmRights" size="80" required="required" />
