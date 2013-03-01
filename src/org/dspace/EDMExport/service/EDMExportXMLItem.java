@@ -166,7 +166,7 @@ public class EDMExportXMLItem extends EDMExportXML
 		try {
 			WebResource = new Element("WebResource", EDM);
 			
-			String url = this.edmExportBOFormEDMData.getUrlBase() + "/bitstreams/"
+			String url = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
 			+ item.getHandle() + "/" + bitstream.getSequenceID() + "/" + Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
 			
 			WebResource.setAttribute(new Attribute("about", url, RDF));
@@ -236,7 +236,7 @@ public class EDMExportXMLItem extends EDMExportXML
 		try {
 			oreAggregation = new Element("Aggregation", ORE);
 			
-			String url = this.edmExportBOFormEDMData.getUrlBase() + "/" + item.getHandle();
+			String url = this.edmExportBOFormEDMData.getUrlBase() + "/handle/" + item.getHandle();
 			oreAggregation.setAttribute(new Attribute("about", url, RDF));
 			
 			createElementDC(item, "aggregatedCHO", EDM, "identifier", null, oreAggregation, false);
@@ -244,7 +244,7 @@ public class EDMExportXMLItem extends EDMExportXML
 			oreAggregation.addContent(new Element("dataProvider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
 			checkElementFilled("dataProvider", EDM);
 			
-			String urlObject = this.edmExportBOFormEDMData.getUrlBase() + "/bitstreams/"
+			String urlObject = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
 					+ item.getHandle() + "/" + bitstream.getSequenceID() + "/"
 					+ Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
 			
@@ -264,14 +264,14 @@ public class EDMExportXMLItem extends EDMExportXML
 					Bitstream[] bitstreamsThumb = null;
 					if (thumbBundles.length > i && thumbBundles[i] != null) bitstreamsThumb = thumbBundles[i].getBitstreams();
 					for (Bitstream bitstream1 : bitstreamsOrig) {
-						urlObject = this.edmExportBOFormEDMData.getUrlBase() + "/bitstreams/"
+						urlObject = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
 								+ item.getHandle() + "/" + bitstream1.getSequenceID() + "/"
 								+ Util.encodeBitstreamName(bitstream1.getName(), Constants.DEFAULT_ENCODING);
 						String urlThumb = urlObject;
 						if (bitstreamsThumb != null) {
 							for (Bitstream bitThumb : bitstreamsThumb) {
 								if (bitThumb.getSequenceID() == bitstream1.getSequenceID()) {
-									urlThumb = this.edmExportBOFormEDMData.getUrlBase() + "/bitstreams/"
+									urlThumb = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
 											+ item.getHandle() + "/" + bitThumb.getSequenceID() + "/"
 											+ Util.encodeBitstreamName(bitThumb.getName(), Constants.DEFAULT_ENCODING);
 									break;
@@ -347,7 +347,7 @@ public class EDMExportXMLItem extends EDMExportXML
 			
 			oreAggregation.addContent(new Element("dataProvider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
 			
-			String urlObject = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstreams/"
+			String urlObject = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstream/"
 					+ item.getHandle() + "/" + bitstream.getSequenceID() + "/"
 					+ Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
 			
@@ -355,7 +355,7 @@ public class EDMExportXMLItem extends EDMExportXML
 			if (bitstreamsThumb != null) {
 				for (Bitstream bitThumb : bitstreamsThumb) {
 					if (bitThumb.getSequenceID() == bitstream.getSequenceID()) {
-						urlThumb = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstreams/"
+						urlThumb = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstream/"
 								+ item.getHandle() + "/" + bitThumb.getSequenceID() + "/"
 								+ Util.encodeBitstreamName(bitThumb.getName(), Constants.DEFAULT_ENCODING);
 						break;
