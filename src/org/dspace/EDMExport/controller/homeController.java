@@ -71,7 +71,6 @@ public class homeController
 	private EDMExportServiceSearch edmExportServiceSearch;
 	private EDMExportServiceListItems edmExportServiceListItems;
 	private EDMExportXML edmExportXml;
-	private DataBinder dataBinder = null;
 	
 	private int pageTotal = 0;
 	private int hitCount = 0;
@@ -110,21 +109,18 @@ public class homeController
 	}
 	
 	
-	@InitBinder
+	@InitBinder("listItems")
     public void initBinder(WebDataBinder dataBinder)
 	{
-		if (this.dataBinder == null) this.dataBinder = dataBinder;
-    }
-	
-	
-	private void resizeAutoGrowCollectionLimit(int newSize)
-	{
+		logger.debug("homeController.initBinder size: " + dataBinder.getAutoGrowCollectionLimit());
+		int newSize = edmExportServiceListItems.getMapItemsSubmit().size() + 1;
 		if (dataBinder.getAutoGrowCollectionLimit() < newSize) {
 			dataBinder.setAutoGrowCollectionLimit(newSize);
 			logger.debug("homeController.resizeAutoGrowCollectionLimit new size: " + newSize);
 		}
-	}
-
+    }
+	
+	
 	
 	@RequestMapping(value = "/home.htm", method = RequestMethod.GET, params="error=search")
 	public String getError(@RequestParam(value="error", required=true) String error, Model model)
@@ -153,9 +149,7 @@ public class homeController
 			EDMExportBOListItems boListItems = (referer.equals("listCollections"))?edmExportServiceListCollections.getBoListItems():edmExportServiceSearch.getBoListItems();
 			edmExportServiceListItems.processEDMExportBOItemsChecked(boListItems, checked);
 			edmExportServiceListItems.processEDMExportBOItemsNoChecked(boListItems, nochecked);
-			int newSize = edmExportServiceListItems.getMapItemsSubmit().size();
-			logger.debug("Items checked: " + newSize);
-			resizeAutoGrowCollectionLimit(newSize);
+			logger.debug("Items checked: " + edmExportServiceListItems.getMapItemsSubmit().size());
 		} catch (JsonParseException e) {
 		    logger.debug("JsonParseException", e);
 		} catch (IOException e) {
