@@ -1,7 +1,14 @@
 package org.dspace.EDMExport.bo;
 
 import org.dspace.EDMExport.controller.FilterSearch;
+import org.dspace.EDMExport.controller.FilterSearchValidator;
 import org.hibernate.validator.constraints.NotEmpty;
+
+/**
+ * Clase pojo con los datos de la búsqueda.
+ * Esta clase se valida mediante hibernate y nuestra clase {@link FilterSearchValidator}
+ *
+ */
 
 public class EDMExportBOSearch
 {

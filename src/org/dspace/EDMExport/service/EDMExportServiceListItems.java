@@ -14,27 +14,55 @@ import org.dspace.EDMExport.bo.EDMExportBOCollection;
 import org.dspace.EDMExport.bo.EDMExportBOItem;
 import org.dspace.EDMExport.bo.EDMExportBOListCollections;
 import org.dspace.EDMExport.bo.EDMExportBOListItems;
+import org.dspace.EDMExport.dao.EDMExportDAODspaceListItems;
 import org.dspace.EDMExport.dao.EDMExportDAOListItems;
 import org.dspace.content.Bundle;
 import org.dspace.content.Item;
 
+/**
+ * 
+ * Clase con la lógica para gestionar el listado de los ítems.
+ * <p>Se obtienen los ítems que se han seleccionado y sus colecciones asociadas</p>
+ *
+ */
 
 public class EDMExportServiceListItems
 {
+	/**
+	 * Logs de EDMExport
+	 */
 	protected static Logger logger = Logger.getLogger("edmexport");
 
+	/**
+	 * Diccionario con el id del ítem y el POJO del ítem {@link EDMExportBOItem} con los que se han seleccionados y se enviarán
+	 */
 	private Map<Integer, EDMExportBOItem> mapItemsSubmit;
 	
+	/**
+	 * obtiene propiedades del archivode configuración de dspace
+	 */
 	private EDMExportServiceBase edmExportServiceBase;
+	
+	/**
+	 * DAO con el acceso a base de datos para el listado de ítems
+	 */
 	private EDMExportDAOListItems daoListItems;
 	
 	
+	/**
+	 * Constructor vacío, se inicializa el diccionario
+	 */
 	public EDMExportServiceListItems()
 	{
 		logger.debug("Init EDMExportServiceListItems");
 		this.mapItemsSubmit = new ConcurrentHashMap<Integer, EDMExportBOItem>();
 	}
 	
+	/**
+	 * Constructor con la inyección del DAO. Se inicializa el diccionario
+	 * 
+	 * @param edmExportServiceBase objeto {@link EDMExportServiceBase} inyectado
+	 */
 	public EDMExportServiceListItems(EDMExportServiceBase edmExportServiceBase)
 	{
 		logger.debug("Init EDMExportServiceListItems");
@@ -42,12 +70,22 @@ public class EDMExportServiceListItems
 		this.mapItemsSubmit = new ConcurrentHashMap<Integer, EDMExportBOItem>();
 	}
 	
+	/**
+	 * Vaciamos la el diccionario de ítems a enviar
+	 */
 	public void clearMapItemsSubmit()
 	{
 		mapItemsSubmit.clear();
 	}
 	
 	
+	/**
+	 * Busca en la lista de ítems uno con id específico
+	 * 
+	 * @param boListItems POJO {@link EDMExportBOListItems} con la lista de ítems
+	 * @param id entero con el id del ítem a buscar
+	 * @return POJO del ítem {@link EDMExportBOItem}
+	 */
 	public EDMExportBOItem searchEDMExportBOItemFromId(EDMExportBOListItems boListItems, int id)
 	{
 		for (EDMExportBOItem boItem : boListItems.getListItems()) {
@@ -56,6 +94,12 @@ public class EDMExportServiceListItems
 		return null;
 	}
 	
+	/**
+	 * Añade al diccionario los nuevos ítems seleccionados
+	 * 
+	 * @param boListItems POJO con la lista de ítems
+	 * @param checked array de cadenas con los ids de los nuevos ítems seleccionados
+	 */
 	public synchronized void processEDMExportBOItemsChecked(EDMExportBOListItems boListItems, String[] checked)
 	{
 		try {
@@ -71,6 +115,12 @@ public class EDMExportServiceListItems
 		}
 	}
 	
+	/**
+	 * Quita del diccionario los nuevos ítems no seleccionados
+	 * 
+	 * @param boListItems POJO con la lista de ítems
+	 * @param nochecked array de cadenas con los ids de los nuevos ítems no seleccionados
+	 */
 	public synchronized void processEDMExportBOItemsNoChecked(EDMExportBOListItems boListItems, String[] nochecked)
 	{
 		try {
@@ -86,6 +136,11 @@ public class EDMExportServiceListItems
 		}
 	}
 	
+	/**
+	 * Procesa toda la lista de ítems para marcar como válidos los que están en el diccionario
+	 * 
+	 * @param boListItems POJO {@link EDMExportBOListItems} con la lista de ítems
+	 */
 	public synchronized void processEDMExportBOListItems(EDMExportBOListItems boListItems)
 	{
 		for (EDMExportBOItem item : boListItems.getListItems()) {
@@ -98,17 +153,33 @@ public class EDMExportServiceListItems
 	}
 	
 	
+	/**
+	 * Comprueba si existe un ítem en el diccionario de los ítems a enviar
+	 * 
+	 * @param id entero con el id del ítem
+	 * @return cierto si existe
+	 */
 	public synchronized boolean containsEDMExportBOItem(int id)
 	{
 		return mapItemsSubmit.containsKey(id);
 	}
 	
 	
+	/**
+	 * Devuelve el diccionario de ítems a enviar
+	 * 
+	 * @return diccionario de ítems a enviar
+	 */
 	public Map<Integer, EDMExportBOItem> getMapItemsSubmit()
 	{
 		return this.mapItemsSubmit;
 	}
 	
+	/**
+	 * Añade un POJO {@link EDMExportBOItem} de ítem al diccionario de ítems a enviar y lo marca como seleccionado
+	 * @param id entero con el id del ítem
+	 * @param item POJO {@link EDMExportBOItem} del ítem a añadir
+	 */
 	public synchronized void addItem(int id, EDMExportBOItem item)
 	{
 		if (!mapItemsSubmit.containsKey(id)) {
@@ -118,6 +189,11 @@ public class EDMExportServiceListItems
 		}
 	}
 	
+	/**
+	 * Quita un POJO {@link EDMExportBOItem} de ítem al diccionario de ítems a enviar y lo marca como no seleccionado
+	 * @param id entero con el id del ítem
+	 * @param item POJO {@link EDMExportBOItem} del ítem a quitar
+	 */
 	public synchronized void removeItem(int id, EDMExportBOItem item)
 	{
 		if (mapItemsSubmit.containsKey(id)) {
@@ -127,6 +203,12 @@ public class EDMExportServiceListItems
 		}
 	}
 	
+	
+	/**
+	 * Obtiene las colecciones de un ítem
+	 * 
+	 * @return lista de cadenas con los ids de las colecciones
+	 */
 	public List<String> getListCollections()
 	{
 		logger.debug("EDMExportServiceListItems.getListCollections");
@@ -151,28 +233,58 @@ public class EDMExportServiceListItems
 		return listCollections;
 	}
 	
+	/**
+	 * Comprueba si existe el handel en dspace
+	 * 
+	 * @param handle cadena con el handle a comprobar
+	 * @return cierto si existe
+	 * @throws Exception
+	 */
 	public boolean checkHandleItemDataBase(String handle) throws Exception
 	{
 		return daoListItems.checkHandleItemDataBase(handle);
 	}
 	
 	
+	/**
+	 * Obtiene un objeto Item de dspace {@link Item} a partir del POJO {@link EDMExportBOItem} del item y su id
+	 * 
+	 * @param boItem POJO del Item
+	 * @return objeto Item de dspace
+	 */
 	public Item getDSPaceItem(EDMExportBOItem boItem)
 	{
 		return daoListItems.getDSPaceItem(boItem.getId());
 	}
 	
+	/**
+	 * Obtiene un array con los recursos electrónicos de cierto tipo asociado a un ítem
+	 * 
+	 * @param item objeto Itm de dspace
+	 * @param type cadena con el tipo de recursos
+	 * @return array de objetos Bundle de dspace que representan los recursos electrónicos
+	 */
 	public Bundle[] getDSPaceBundleItem(Item item, String type)
 	{
 		return daoListItems.getDSPaceBundleItem(item, type);
 	}
 	
 	
+	/**
+	 * Inyección del DAO del listado de ítems
+	 * 
+	 * @param daoListItems DAO {@link EDMExportDAODspaceListItems} de lista de ítems
+	 */
 	public void setEdmExportDAOListItems(EDMExportDAOListItems daoListItems)
 	{
 		this.daoListItems = daoListItems;
 	}
 	
+	/**
+	 * Obtiene el objeto que devuelve propiedades del archivo de configuración de dspace
+	 * 
+	 * @return objeto {@link EDMExportServiceBase} con las propiedades de dspace
+	 */
 	public EDMExportServiceBase getEDMExportServiceBase()
 	{
 		return edmExportServiceBase;

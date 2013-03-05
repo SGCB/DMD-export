@@ -5,6 +5,12 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Clase pojo con los datos de los tipos para edm, se usa en {@link EDMExportBOItem}
+ * Esta clase se valida mediante hibernate 
+ *
+ */
+
 public class EDMExportBOListTypes
 {
 	@NotNull

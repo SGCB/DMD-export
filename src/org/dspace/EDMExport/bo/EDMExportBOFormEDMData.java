@@ -6,6 +6,12 @@ import java.util.List;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
+/**
+ * Clase pojo con los datos del formulario de los elementos EDM
+ * Se valida con hibernate
+ *
+ */
+
 public class EDMExportBOFormEDMData
 {
 	@NotEmpty

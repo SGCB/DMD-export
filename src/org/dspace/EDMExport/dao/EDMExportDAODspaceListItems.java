@@ -11,12 +11,41 @@ import org.dspace.content.Item;
 import org.dspace.core.Context;
 import org.dspace.handle.HandleManager;
 
+
+/**
+ * 
+ * Clase para realizar consultas desde la API de Dspace sobre los ítems {@link Item}
+ * Implementa la interfaz para la consulta a los ítems {@link EDMExportDAOListItems}
+ * 
+ * Obtiene todas los datos del ítem a partir de su id o handle.
+ * Obtiene los recursos electrónicos asociados a un ítem.
+ * Obtiene las colecciones en las que está asociado el ítem.
+ *
+ */
+
 public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 {
+	/**
+	 * Logs de EDMExport
+	 */
 	protected static Logger logger = Logger.getLogger("edmexport");
+	
+	/**
+	 * contexto de Dspace {@link Context}
+	 */
 	private Context context;
+	
+	/**
+	 * Objeto con la obtención del contexto de Dspace {@link EDMExportDAOBase}
+	 */
 	private EDMExportDAOBase edmExportDAOBase;
 
+	
+	/**
+	 * Constructor donde se incializa el contexto
+	 * 
+	 * @param edmExportDAOBase Objeto con la obtención del contexto de Dspace {@link EDMExportDAOBase}
+	 */
 	public EDMExportDAODspaceListItems(EDMExportDAOBase edmExportDAOBase)
 	{
 		logger.debug("Init EDMExportDAODspaceListItems");
@@ -24,6 +53,12 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 		context = edmExportDAOBase.getContext();
 	}
 
+	/**
+	 * Obtiene la lista de colecciones {@link EDMExportBOListCollections} asociadas al ítem
+	 * 
+	 *  @param id entero con el id del ítem {@link Item}
+	 *  @return lista de las colecciones {@link EDMExportBOListCollections}
+	 */
 	@Override
 	public EDMExportBOListCollections getListCollectionsItem(int id)
 	{
@@ -47,6 +82,12 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 		return null;
 	}
 
+	/**
+	 * Obtiene un objeto Dspace del ítem {@link Item} a partir de su id
+	 * 
+	 * @param id entero con el id del ítem
+	 * @return objeto Dspace del ítem {@link Item}
+	 */
 	@Override
 	public Item getDSPaceItem(int id)
 	{
@@ -59,6 +100,13 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 		return null;
 	}
 	
+	/**
+	 * Obtiene un array de los recursos electrónicos (objeto Bundle de Dspace {@link Bundle}) de un ítem
+	 * 
+	 * @param item objeto Dspace del item {@link Item}
+	 * @param type cadena con el tipo de recurso electrónico a recoger
+	 * @return array de los recursos electrónicos {@link Bundle}
+	 */
 	@Override
 	public Bundle[] getDSPaceBundleItem(Item item, String type)
 	{
@@ -71,6 +119,13 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 		return null;
 	}
 	
+	
+	/**
+	 * Comprueba si el handle es un objeto Dspace
+	 * 
+	 * @param handle cadena con el handle del objeto Dspace
+	 * @return cierto si es un objeto Dspace
+	 */
 	@Override
 	public boolean checkHandleItemDataBase(String handle) throws SQLException
 	{

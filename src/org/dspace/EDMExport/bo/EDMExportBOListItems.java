@@ -9,6 +9,12 @@ import javax.validation.constraints.NotNull;
 
 import org.dspace.EDMExport.bo.EDMExportBOItem;
 
+/**
+ * Clase pojo con los datos de la lista de ítems {@link EDMExportBOItem}
+ * Se valida con hibernate
+ *
+ */
+
 public class EDMExportBOListItems
 {
 	@NotNull

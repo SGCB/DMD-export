@@ -17,47 +17,81 @@ import org.dspace.content.Item;
 import org.jdom.Attribute;
 import org.jdom.Element;
 
+/**
+ * 
+ * Clase con la lógica para crear un elemento RDF del esquema EDM a partir de los datos de un POJO {@link EDMExportBOItem}
+ * <p>Usa la librería jdom para crear el elemento RDF y todos sus hijos</p>
+ * <p>Hereda de la clase {@link EDMExportXML} e implementa el método {@link #processItemElement}</p>
+ *
+ */
 @SuppressWarnings("deprecation")
 public class EDMExportXMLItem extends EDMExportXML
 {
-	
+
+	/**
+	 * Constructor vacío
+	 */
 	public EDMExportXMLItem()
 	{
 	}
 	
+	/**
+	 * Constructor que inyecta el servicio del lista de ítems {@link EDMExportServiceListItems}
+	 * <p>Llama al constructor de la clase padre</p>
+	 * 
+	 * @param edmExportServiceListItems {@link EDMExportServiceListItems}
+	 */
 	public EDMExportXMLItem(EDMExportServiceListItems edmExportServiceListItems)
 	{
 		super(edmExportServiceListItems);
 	}
 
+	/**
+	 * Procesa los datos del ítem para generar los hijos del element rdf del esquema EDM:
+	 * <p>ProviderCHO, WebResource, SkosConcept y oreAggregation</p>
+	 * 
+	 * @param boItem POJO {@link EDMExportBOItem} con los datos del ítem
+	 * @return lista de elementos jdom con las clases de EDM ProviderCHO, WebResource, SkosConcept y oreAggregation
+	 */
 	@Override
 	protected List<Element> processItemElement(EDMExportBOItem boItem)
 	{
 		List<Element> listElements = new ArrayList<Element>();
+		
+		// obtenemos el objeto de dspace del ítem a partir del POJO
 		Item item = edmExportServiceListItems.getDSPaceItem(boItem);
 		
+		// recogemos otods los elementos DC
 		DCValue[] itemDC = item.getDC(Item.ANY, Item.ANY, Item.ANY);
 		for (DCValue dcv : itemDC) {
 			logger.debug(dcv.schema+"."+dcv.element+"."+dcv.qualifier+" = "+dcv.value);
 		}
 		
+		// generamos ProviderCHO
 		Element ProviderCHO = processProviderCHO(item);
 		listElements.add(ProviderCHO);
 		
+		// recogemos los recursos electrónicos del tipo "original" del ítem
 		Bundle[] origBundles = edmExportServiceListItems.getDSPaceBundleItem(item, "ORIGINAL");
 		
 		if (origBundles.length > 0) {
+			// recogemos los recursos electrónicos del tipo "thumbnail" del ítem
 			Bundle[] thumbBundles = edmExportServiceListItems.getDSPaceBundleItem(item, "THUMBNAIL");
 			Bitstream[] bitstreams = origBundles[0].getBitstreams();
 			if (bitstreams.length > 0) {
+				
+				// generamos WebResource
 				Element WebResource = processWebResource(item, bitstreams[0]); 
 				if (WebResource != null) listElements.add(WebResource);
 				
+				// generamos SkosConcept
 				List<Element> listSkosConcept = processSkosConcept(itemDC); 
 				if (listSkosConcept != null && listSkosConcept.size() > 0) {
 					for (Element skosConceptElement : listSkosConcept)
 						listElements.add(skosConceptElement);
 				}
+				
+				// generamos oreAggregation
 				Element oreAggregation = processOreAgreggation(item, origBundles, thumbBundles, bitstreams[0]); 
 				if (oreAggregation != null) listElements.add(oreAggregation);
 			}
@@ -66,6 +100,15 @@ public class EDMExportXMLItem extends EDMExportXML
 		return listElements;
 	}
 	
+	/**
+	 * Genera todos los elementos EDM de la clase ProviderCHO que se pueden mapear desde DC
+	 * <p>Para generar los tipos (sólo permitidos TEXT, VIDEO, IMAGE, SOUND, 3D) en el formulario de EDM se asignaron
+	 * las palabras que se asociarían a estos tipos, para poder buscarlas en el elemento dc.type y sustituirlas por
+	 * los tipos asociados.</p>
+	 * 
+	 * @param item objeto Item de dspace {@link Item}
+	 * @return elemento jdom con la clase ProviderCHO
+	 */
 	private Element processProviderCHO(Item item)
 	{
 		Element ProviderCHO = new Element("ProviderCHO", EDM);
@@ -159,20 +202,32 @@ public class EDMExportXMLItem extends EDMExportXML
 	}
 	
 	
+	/**
+	 * Genera todos los elementos EDM de la clase WebResource que se pueden mapear desde DC y el primer recurso electrónico
+	 * <p>el elemento edm.rights, buscamos si existe un edm.rights, si no lo cogemos del formulario EDM</p>
+	 * 
+	 * @param item objeto Item de dspace {@link Item}
+	 * @param bitstream objeto bitstream de dspace {@link Bitstream} con el primer recurso electrónico de tipo "original"
+	 * @return elemento jdom con la clase WebResource
+	 */
 	private Element processWebResource(Item item, Bitstream bitstream)
 	{
 		Element WebResource = null;
 		
 		try {
+			// creamos el elemento Aggregation
 			WebResource = new Element("WebResource", EDM);
 			
+			// url del primer recurso
 			String url = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
 			+ item.getHandle() + "/" + bitstream.getSequenceID() + "/" + Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
 			
 			WebResource.setAttribute(new Attribute("about", url, RDF));
 			
+			// creamos el elemento dc.rights
 			createElementDC(item, "rights", DC, "rights", null, WebResource, true);
 			
+			// creamos el elemento edm.rights, buscamos si existe un edm.rights, si no lo cogemos del formulario EDM
 			String edmRights = null;
             try {
                 edmRights = item.getMetadata("edm", "rights", null, Item.ANY)[0].value;
@@ -189,17 +244,29 @@ public class EDMExportXMLItem extends EDMExportXML
 	}
 	
 	
+	/**
+	 * Genera todos los elementos EDM de la clase SkosConcept que se pueden mapear desde las autoridades de los elementos DC
+	 * <p>Las autoridades han de ser una URL bien formada o un handle que exista en la base de datos de dspace y a partir de
+	 * cual se creará la URL desde la que se puede acceder en nuestro dspace</p>
+	 * 
+	 * @param itemDC array con los elementos DC del ítem
+	 * @return lista de elementos jdom con los Concept de Skos
+	 */
 	private List<Element> processSkosConcept(DCValue[] itemDC)
 	{
 		List<Element> listElementsSkosConcept = new ArrayList<Element>();
 		final String REGEX_HANDLE_PATTERN = "^\\d+/\\d+$";
         String prefixUrl = this.edmExportBOFormEDMData.getUrlBase() + "/handle/";
 		
+        // recorremos los elementos DC
 		for (DCValue dcv : itemDC) {
 			String authority;
+			//  comprobamos si tiene autoridad
 			if (dcv.authority != null && !dcv.authority.isEmpty()) {
+				// si no es una url válida, o es un handle del dspace o se descarta
 				if (!isValidURI(dcv.authority)) {
                     try {
+                    	// comprobamos que es un handle y que existe en nuestro dspace
                         if (dcv.authority.matches(REGEX_HANDLE_PATTERN) && edmExportServiceListItems.checkHandleItemDataBase(dcv.authority)) {
                             authority = prefixUrl + dcv.authority;
                         } else continue;
@@ -207,7 +274,10 @@ public class EDMExportXMLItem extends EDMExportXML
                     	logger.debug("EDMExportXML.processSkosConcept authority", e);
                         continue;
                     }
+                    // es una url válida
                 } else authority = dcv.authority;
+				
+				// creamos el elemento Concept para la autoridad
 				Element skosConcept = null;
 				try {
 					skosConcept = new Element("Concept", SKOS);
@@ -228,35 +298,58 @@ public class EDMExportXMLItem extends EDMExportXML
 	}
 	
 	
+	/**
+	 * Genera todos los elementos EDM de la clase ProviderCHO que se pueden mapear desde DC y los recursos electrónicos
+	 * <p>Para cada uno de los recursos electrónicos crea un elemento hasView. con el pimer recursos electrónico además crea
+	 * isShownBy y object.</p>
+	 * <p>Las URL se generan a partir del handle del item {@link Item}, de la secuencia del bitstream {@link Bitstream} y
+	 * del nombre del recurso</p>
+	 * <p>el elemento edm.rights, buscamos si existe un edm.rights, si no lo cogemos del formulario EDM</p>
+	 * 
+	 * @param item objeto item de dspace {@link Item}
+	 * @param origBundles array de {@link Bundle} recursos del tipo "original"
+	 * @param thumbBundles array de {@link Bundle} recursos del tipo "thumbnail"
+	 * @param bitstream primer recurso electrónico
+	 * @return elemento jdom con la clase oreAggregation
+	 */
 	private Element processOreAgreggation(Item item, Bundle[] origBundles, Bundle[] thumbBundles, Bitstream bitstream)
 	{
 		
 		Element oreAggregation = null;
 		
 		try {
+			// creamos el elemento Aggregation
 			oreAggregation = new Element("Aggregation", ORE);
 			
+			// creamos la url de nuestro item
 			String url = this.edmExportBOFormEDMData.getUrlBase() + "/handle/" + item.getHandle();
 			oreAggregation.setAttribute(new Attribute("about", url, RDF));
 			
+			// creamos el elemento aggregatedCHO
 			createElementDC(item, "aggregatedCHO", EDM, "identifier", null, oreAggregation, false);
 			
+			// creamos el elemento dataProvider
 			oreAggregation.addContent(new Element("dataProvider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
 			checkElementFilled("dataProvider", EDM);
 			
+			// url del primer recurso
 			String urlObject = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
 					+ item.getHandle() + "/" + bitstream.getSequenceID() + "/"
 					+ Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
 			
+			// creamos el elemento isShownAt
 			oreAggregation.addContent(new Element("isShownAt", EDM).setText(url));
 			checkElementFilled("isShownAt", EDM);
 			
+			// creamos el elemento isShownBy
 			oreAggregation.addContent(new Element("isShownBy", EDM).setText(urlObject));
 			checkElementFilled("isShownBy", EDM);
 			
+			// creamos el elemento object
 			oreAggregation.addContent(new Element("object", EDM).setText(urlObject));
 			checkElementFilled("object", EDM);
 			
+			// recorremos todos los recursos
 			int i = 0;
 			for (Bundle bundle : origBundles) {
 				try {
@@ -264,9 +357,11 @@ public class EDMExportXMLItem extends EDMExportXML
 					Bitstream[] bitstreamsThumb = null;
 					if (thumbBundles.length > i && thumbBundles[i] != null) bitstreamsThumb = thumbBundles[i].getBitstreams();
 					for (Bitstream bitstream1 : bitstreamsOrig) {
+						// url del recurso
 						urlObject = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
 								+ item.getHandle() + "/" + bitstream1.getSequenceID() + "/"
 								+ Util.encodeBitstreamName(bitstream1.getName(), Constants.DEFAULT_ENCODING);
+						// comprobar que tiene thumbnail o nos quedamos con la original
 						String urlThumb = urlObject;
 						if (bitstreamsThumb != null) {
 							for (Bitstream bitThumb : bitstreamsThumb) {
@@ -279,6 +374,7 @@ public class EDMExportXMLItem extends EDMExportXML
 							}
 						}
 						
+						// creamos el elemento hasView
 						oreAggregation.addContent(new Element("hasView", EDM).setText(urlThumb));
 						checkElementFilled("hasView", EDM);
 					}
@@ -288,11 +384,14 @@ public class EDMExportXMLItem extends EDMExportXML
 				i++;
 			}
 			
+			// creamos el elemento provider
 			oreAggregation.addContent(new Element("provider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
 			checkElementFilled("provider", EDM);
 			
+			// creamos el elemento dc.rights
 			createElementDC(item, "rights", DC, "rights", null, oreAggregation, true);
 			
+			// creamos el elemento edm.rights, buscamos si existe un edm.rights, si no lo cogemos del formulario EDM
 			String edmRights = null;
             try {
                 edmRights = item.getMetadata("edm", "rights", null, Item.ANY)[0].value;
@@ -390,49 +489,5 @@ public class EDMExportXMLItem extends EDMExportXML
 	}
 	*/
 	
-	private String processEDMType(Item item)
-	{
-		String edmTypeElement = null;
-        try {
-            edmTypeElement = item.getMetadata("edm", "type", null, Item.ANY)[0].value;
-        } catch (Exception e) {
-        }
-        if (edmTypeElement != null && !edmTypeElement.isEmpty()) return edmTypeElement;
-        
-		StringBuilder edmType = new StringBuilder();
-		DCValue[] elements = item.getDC("type", null, Item.ANY);
-		if (elements.length > 0) {
-			checkElementFilled("type", EDM);
-			for (DCValue element : elements) {
-				String value = element.value;
-				//logger.debug("dc.type: " + value);
-				for (String typeListPatterns : edmExportBOFormEDMData.getListTypes()) {
-					String[] typePatternArr = typeListPatterns.split(",");
-					logger.debug("dc.type patterns: " + Arrays.toString(typePatternArr));
-					for (int i=1; i < typePatternArr.length; i++) {
-						if (value.toLowerCase().indexOf(typePatternArr[i].toLowerCase()) >= 0 && edmType.toString().toLowerCase().indexOf(typePatternArr[0].toLowerCase()) < 0) {
-							edmType.append(typePatternArr[0]).append(',');
-						}
-					}
-				}
-			}
-		}
-		return (edmType.length() > 0)?edmType.toString().substring(0, edmType.length() - 1):edmType.toString();
-	}
 	
-	
-	private boolean isValidURI(String uriStr)
-    {
-        try {
-            URI uri = new URI(uriStr);
-            uri.toURL();
-            return true;
-        } catch (URISyntaxException e) {
-            return false;
-        } catch (MalformedURLException e) {
-        	return false;
-		} catch (IllegalArgumentException e) {
-			return false;
-		}
-    }
 }

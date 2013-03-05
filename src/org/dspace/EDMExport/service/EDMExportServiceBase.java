@@ -4,19 +4,38 @@ import org.apache.log4j.Logger;
 import org.dspace.core.ConfigurationManager;
 import org.springframework.beans.factory.annotation.Value;
 
+/**
+ * Clase que obtiene algunas propiedades el fichero de configuración de dspace.
+ * <p>Mirar el fichero EDMExport-service.xml</p>
+ *
+ */
 
 public class EDMExportServiceBase
 {
 	
+	/**
+	 * Logs de EDMExport
+	 */
 	protected static Logger logger = Logger.getLogger("edmexport");
 	
+	/**
+	 * Inyectamos el valor del archivo de configuración de dspace
+	 */
 	@Value("${dspace-config}") private String dspaceConfig;
 	
 	
+	/**
+	 * Constructor vacío
+	 */
 	public EDMExportServiceBase()
 	{
 	}
 	
+	/**
+	 * Inyectamos el valor del archivo de configuración de dspace
+	 * 
+	 * @param dspaceConfig cadena con el valor del archivo de configuración de dspace
+	 */
 	@Value("${dspace-config}")
 	public void setDspaceConfig(String dspaceConfig)
 	{
@@ -24,6 +43,10 @@ public class EDMExportServiceBase
 	}
 	
 
+	/**
+	 * Inicialización desde EDMExport-service.xml
+	 * <p>Se cargan las propiedades del archivo</p>
+	 */
 	protected void init()
 	{
 		logger.debug("initConfDspace dspaceConfig: " + dspaceConfig);
@@ -38,16 +61,31 @@ public class EDMExportServiceBase
 	    }
 	}
 	
+	/**
+	 * Obtenemos la propiedad de dspace: "dspace.dir"
+	 * 
+	 * @return el directorio de dspace
+	 */
 	public String getDspaceDir()
 	{
 		return ConfigurationManager.getProperty("dspace.dir");
 	}
 	
+	/**
+	 * Obtenemos la propiedad de dspace: "dspace.name"
+	 * 
+	 * @return el nombre de este dspace
+	 */
 	public String getDspaceName()
 	{
 		return ConfigurationManager.getProperty("dspace.name");
 	}
 	
+	/**
+	 * Obtenemos la propiedad de dspace: "dspace.baseUrl"
+	 * 
+	 * @return url base de dspace
+	 */
 	public String getDspaceBaseUrl()
 	{
 		return ConfigurationManager.getProperty("dspace.baseUrl");

@@ -5,6 +5,14 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+
+/**
+ * 
+ * Clase pojo con las materias, se usa en {@link EDMExportBOItem}
+ * Esta clase se valida mediante hibernate 
+ *
+ */
+
 public class EDMExportBOListSubjects
 {
 	@NotNull

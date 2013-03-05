@@ -9,6 +9,13 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+/**
+ * Clase pojo con los datos de un ítem
+ * Se valida con hibernate y javax
+ * Usa {@link EDMExportBOListCollections}, {@link EDMExportBOListAuthors}, {@link EDMExportBOListSubjects}, {@link EDMExportBOListTypes}
+ *
+ */
+
 public class EDMExportBOItem
 {
 	@NotEmpty

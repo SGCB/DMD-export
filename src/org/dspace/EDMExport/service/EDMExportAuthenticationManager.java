@@ -21,26 +21,54 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.dspace.EDMExport.bo.EDMExportBOUser;
 import org.dspace.EDMExport.dao.EDMExportDAOEperson;
 
+/**
+ * Clase que gestiona la autenticación de los usuarios en la aplicación
+ * 
+ *
+ */
 public class EDMExportAuthenticationManager implements AuthenticationManager
 {
 	
+	/**
+	 * Logs de EDMExport
+	 */
 	protected static Logger logger = Logger.getLogger("edmexport");
 	
+	/**
+	 *  Variable recogida de edmexport.properties, indica el grupo de usuarios válido para entrar
+	 */
 	@Value("${auth.groupid}")
     private String groupIDStr;
 		
+	/**
+	 * codificar el password
+	 */
 	private Md5PasswordEncoder passwordEncoder = new Md5PasswordEncoder();
 	
+	/**
+	 * acceso a bbdd para validar usuario {@link EDMExportDAOEperson}
+	 */
 	private EDMExportDAOEperson daoEperson;
 	
-	private EDMExportBOUser eperson = null;;
+	/**
+	 * datos del usuario {@link EDMExportBOUser}
+	 */
+	private EDMExportBOUser eperson = null;
 
+	/**
+	 * Redefinimos el método para autenticarse
+	 * 
+	 * @param auth objeto de Spring de Authentication {@link Authentication}
+	 * @return UsernamePasswordAuthenticationToken {@link Authentication}
+	 * @throws AuthenticationException
+	 */
 	@Override
 	public Authentication authenticate(Authentication auth) throws AuthenticationException
 	{
 		logger.debug("Performing EDMExport authentication");
 				
 		try {
+			// Buscar usuario con login y grupo o sólo con login
 			if (groupIDStr != null && !groupIDStr.isEmpty()) {
 				eperson = daoEperson.getEperson(auth.getName(), Integer.parseInt(groupIDStr));
 			} else eperson = daoEperson.getEperson(auth.getName());
@@ -50,11 +78,13 @@ public class EDMExportAuthenticationManager implements AuthenticationManager
 			throw new BadCredentialsException("User does not exists!");
 		}
 		
+		// Validamos el password
 		if (!passwordEncoder.isPasswordValid(eperson.getPassword(), (String) auth.getCredentials(), null)) {
 			logger.error("Wrong password!" + eperson.getPassword() + " " + (String) auth.getCredentials());
 			throw new BadCredentialsException("Wrong password!");
 		}
 		
+		// Comprobamos que el login no se igual que el password, poco seguridad
 		if (auth.getName().equals(auth.getCredentials())) {
 			logger.debug("Entered username and password are the same!");
 			throw new BadCredentialsException("Entered username and password are the same!");
@@ -64,7 +94,12 @@ public class EDMExportAuthenticationManager implements AuthenticationManager
 		}
 	}
 	
-	
+	/**
+	 * Autoridades de los permisos que se obtiene al validarse, mirar EDMExport-security.xml
+	 * 
+	 * @param access entero con el tipo de acceso requerido
+	 * @return Collection<SimpleGrantedAuthority>
+	 */
 	public Collection<SimpleGrantedAuthority> getAuthorities(Integer access)
 	{
 		List<SimpleGrantedAuthority> authList = new ArrayList<SimpleGrantedAuthority>(2);
@@ -78,6 +113,10 @@ public class EDMExportAuthenticationManager implements AuthenticationManager
 		return authList;
 	}
 	
+	/**
+	 * Inyectamos el objeto de la consulta de usuario en bbdd, mirar EDMExport-security.xml
+	 * @param daoEperson
+	 */
 	@Required
 	public void setEdmExportDAOEperson(EDMExportDAOEperson daoEperson)
 	{

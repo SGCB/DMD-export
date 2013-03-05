@@ -9,22 +9,57 @@ import org.dspace.content.Item;
 import org.dspace.content.ItemIterator;
 import org.dspace.core.Context;
 
+/**
+ * 
+ * Clase para realizar consultas desde la API de Dspace sobre las colecciones {@link Collection}
+ * Implementa la interfaz para la consulta a las colecciones {@link EDMExportDAOListCollections}
+ * 
+ * Obtiene todas las colecciones existentes en Dspace y los ítems de colecciones específicas.
+ *
+ */
+
+
 public class EDMExportDAODspaceListCollections implements EDMExportDAOListCollections
 {
+	/**
+	 * Objeto con la obtención del contexto de Dspace {@link EDMExportDAOBase}
+	 */
 	private EDMExportDAOBase edmExportDAOBase;
+	
+	/**
+	 * contexto de Dspace {@link Context}
+	 */
 	private Context context;
 	
+	/**
+	 * Logs de EDMExport
+	 */
 	protected static Logger logger = Logger.getLogger("edmexport");
 	
+	
+	/**
+	 * Array con las colecciones {@link Collection}
+	 */
 	private Collection[] listCol;
 	
+	
+	/**
+	 * Constructor donde se incializa el contexto
+	 * 
+	 * @param edmExportDAOBase Objeto con la obtención del contexto de Dspace {@link EDMExportDAOBase}
+	 */
 	public EDMExportDAODspaceListCollections(EDMExportDAOBase edmExportDAOBase)
 	{
 		logger.debug("Init EDMExportDAODspaceListCollections");
 		this.edmExportDAOBase = edmExportDAOBase;
 		context = edmExportDAOBase.getContext();
 	}
-		
+	
+	/**
+	 * Obtiene todas las colecciones en Dspace
+	 * 
+	 * @return devuelve un array de colecciones {@link Collection}
+	 */
 	public Collection[] getListCollections()
 	{
 		try {
@@ -36,6 +71,12 @@ public class EDMExportDAODspaceListCollections implements EDMExportDAOListCollec
 		return listCol;
 	}
 	
+	/**
+	 * Obtiene los ítems pertenecientes a una colección
+	 * 
+	 * @param id entero con el id de la colección
+	 * @return array de ítems {@link Item}
+	 */
 	public Item[] getItems(int id)
 	{
 		logger.debug("EDMExportDAODspaceListCollections.getItems");

@@ -5,6 +5,12 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Clase pojo con los datos de la lista de autores, se usa en {@link EDMExportBOItem}
+ * Se valida con hibernate
+ *
+ */
+
 public class EDMExportBOListAuthors
 {
 	@NotNull

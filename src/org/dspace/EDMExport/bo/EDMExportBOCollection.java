@@ -4,6 +4,12 @@ import javax.validation.constraints.Min;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+/**
+ * Clase pojo con los datos de una colección
+ * Se valida con hibernate y javax
+ *
+ */
+
 public class EDMExportBOCollection
 {
 	@NotEmpty

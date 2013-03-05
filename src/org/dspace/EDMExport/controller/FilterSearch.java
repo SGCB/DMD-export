@@ -7,6 +7,13 @@ import java.lang.annotation.Target;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.ElementType;
 
+
+/**
+ * 
+ * Interfaz que dice que la validación es de la clase {@link FilterSearchValidator}, por campos y en tiempo de ejecución
+ *
+ */
+
 @Documented
 @Constraint(validatedBy = FilterSearchValidator.class)
 @Target( { ElementType.FIELD })

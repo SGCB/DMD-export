@@ -1,6 +1,11 @@
 package org.dspace.EDMExport.bo;
 
 
+/**
+ * Clase pojo con los datos del usuario
+ *
+ */
+
 public class EDMExportBOUser
 {
 
