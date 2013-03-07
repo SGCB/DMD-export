@@ -448,6 +448,44 @@ public class homeController
 	
 	
 	/**
+	 * Controller para la url /home.htm con método POST y con parámetro "referer","checked","nochecked" obligatorios.
+	 * Devuelve un entero y no una vista porque este método se llama desde una petición Ajax
+	 * 
+	 * @param referer cadena con el valor del parámetro referer. Puede venir de la búsqueda o del listado de colecciones
+	 * @param checkedStr cadena en Json con el valor del parámetro checked
+	 * @param nocheckedStr cadena en Json  con el valor del parámetro nochecked
+	 * @param model objeto de Spring Model con la petición {@link Model}
+	 * @return devuelve un entero con el número de ítems seleccionados
+	 */
+	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params={"referer","checked","nochecked"})
+	public @ResponseBody Integer getItemsCheckPost(@RequestParam(value="referer", required=true) String referer, 
+		@RequestParam(value="checked", required=true) String checkedStr, @RequestParam(value="nochecked", required=true) String nocheckedStr, Model model)
+	{
+		logger.debug("homeController.getItemsCheckPost");
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapperNo = new ObjectMapper();
+		try {
+			// decodificamos el json
+			String[] checked = mapper.readValue(checkedStr, new TypeReference<String[]>(){});
+			String[] nochecked = mapperNo.readValue(nocheckedStr, new TypeReference<String[]>(){});
+			logger.debug("referer: " + referer + " ; checked: " + checked.length + " ; nochecked: " + nochecked.length);
+			for (int i=0; i < checked.length; i++)
+			logger.debug("referer: " + referer + " ; checked: " + checked[i]);
+			// recogemos los ítems con origen el listado de colecciones o desde la búsqueda
+			EDMExportBOListItems boListItems = (referer.equals("listCollections"))?edmExportServiceListCollections.getBoListItems():edmExportServiceSearch.getBoListItems();
+			// guardamos los ítems BO seleccionados y quitamos el resto
+			edmExportServiceListItems.processEDMExportBOItemsChecked(boListItems, checked);
+			edmExportServiceListItems.processEDMExportBOItemsNoChecked(boListItems, nochecked);
+			logger.debug("Items checked: " + edmExportServiceListItems.getMapItemsSubmit().size());
+		} catch (JsonParseException e) {
+		    logger.debug("JsonParseException", e);
+		} catch (IOException e) {
+			logger.debug("IOException", e);
+		}
+		return Integer.valueOf(edmExportServiceListItems.getMapItemsSubmit().size());
+	}
+	
+	/**
 	 * Controller para la url /getFile.htm con método POST.
 	 * Devuelve el fichero del EDM en xml. Viene de la página del formulario EDM.
 	 * 

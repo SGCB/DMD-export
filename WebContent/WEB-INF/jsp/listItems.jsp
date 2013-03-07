@@ -109,9 +109,12 @@
                     }
                 });
                 jQuery.ajax({
+                	type: "POST",
                     url: 'home.htm',
+                    /* only for GET method
                     contentType: 'application/json; charset=UTF-8',
                     dataType: 'json',
+                    */
                     async:false,
                     data: { referer: jQuery("#referer").val(), checked: JSON.stringify(arr_checked), nochecked: JSON.stringify(arr_nochecked) },
                     traditional: true,
@@ -140,9 +143,12 @@
                     }
                 });
                 jQuery.ajax({
+                	type: "POST",
                     url: 'home.htm',
+                    /* only for GET method
                     contentType: 'application/json; charset=UTF-8',
                     dataType: 'json',
+                    */
                     async:false,
                     data: { referer: jQuery("#referer").val(), checked: JSON.stringify(arr_checked), nochecked: JSON.stringify(arr_nochecked) },
                     traditional: true,
@@ -176,9 +182,12 @@
             });
             var result = 0;
             jQuery.ajax({
+            	type: "POST",
                 url: 'home.htm',
+                /* only for GET method
                 contentType: 'application/json; charset=UTF-8',
                 dataType: 'json',
+                */
                 async:false,
                 data: { referer: jQuery("#referer").val(), checked: JSON.stringify(arr_checked), nochecked: JSON.stringify(arr_nochecked) },
                 traditional: true,
