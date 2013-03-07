@@ -494,7 +494,7 @@ public class homeController
 	 * @return objeto HttpEntity {@link HttpEntity} con el array de bytes del document xml de EDM
 	 */
 	
-	@RequestMapping(value = "/getFile.htm", method = RequestMethod.POST)
+	@RequestMapping(value = "/getFile.htm", method = RequestMethod.POST, params="pageAction=xml")
 	public HttpEntity<byte[]> postExport(@ModelAttribute(value="FormEDMData") @Valid EDMExportBOFormEDMData edmExportBOFormEDMData, 
 			BindingResult result)
 	{
