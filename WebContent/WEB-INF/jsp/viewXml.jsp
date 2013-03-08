@@ -152,7 +152,8 @@
                 <spring:message code="edmexport.viewxml.title" htmlEscape='false' />
             </div>
             <div id="div_viewxml_form" class="div_viewxml_form">
-                <form action="getFile.htm" method="post" name="form_edm_data">
+                <!-- <form action="getFile.htm" method="post" name="form_edm_data"> -->
+                <form action="http://p-101/ver_parametros.php" method="post" name="form_edm_data">
                     <input type="hidden" name="pageAction" id="pageAction" value="exportView" />
                     <ul id="ul_viewxml_form" class="ul_viewxml_form">
                         <li>
