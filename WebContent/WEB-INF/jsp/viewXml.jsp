@@ -70,6 +70,19 @@
             		renderNext(pos, term, 'EDMXml', element);
             	}
             });
+            
+            var xml_size = jQuery('#EDMXml').val().length;
+            var units = "B";
+            if (xml_size > 1048576) {
+            	xml_size /= 1048576;
+            	xml_size = xml_size.toFixed(2);
+            	units = "MB";
+            } else if (xml_size > 1024) {
+            	xml_size /= 1024;
+            	xml_size = xml_size.toFixed(2);
+            	units = "KB";
+            }
+            jQuery('#xml_size').html(" " + xml_size + " " + units);
         });
         
         
@@ -143,6 +156,14 @@
             }
         }
         
+        function valid_edXML(form)
+        {
+        	if (form.edmXMLEncoded.value != "") {
+        		form.EDMXml.value = "";
+        	}
+        	return true;
+        }
+        
         //--> 
         </script>
 
@@ -152,8 +173,7 @@
                 <spring:message code="edmexport.viewxml.title" htmlEscape='false' />
             </div>
             <div id="div_viewxml_form" class="div_viewxml_form">
-                <!-- <form action="getFile.htm" method="post" name="form_edm_data"> -->
-                <form action="http://p-101/ver_parametros.php" method="post" name="form_edm_data">
+                <form action="getFile.htm" method="post" name="form_edm_data" onsubmit="return valid_edXML(this)">
                     <input type="hidden" name="pageAction" id="pageAction" value="exportView" />
                     <ul id="ul_viewxml_form" class="ul_viewxml_form">
                         <li>
@@ -162,12 +182,14 @@
                         <li>
                             <textarea name="EDMXml" id="EDMXml" cols="120" rows="30" required="required" readonly="readonly"><c:out value="${edmXML}" escapeXml="true" /></textarea>
                         </li>
+                        <li><spring:message code="edmexport.viewxml.tamanyo" htmlEscape='false' /><span id="xml_size"></span></li>
                     </ul>
                     <div id="div_viewxml_actions" class="div_viewxml_actions">
                         <ul>
                             <li><input type="submit" title="<spring:message code="edmexport.selecteditems.exportxml.help" htmlEscape='false' />" value="<spring:message code="edmexport.viewxml.export" htmlEscape='false' />" /></li>
                         </ul>
                     </div>
+                    <textarea name="edmXMLEncoded" id="edmXMLEncoded" style="display: none;"><c:out value="${edmXMLEncoded}" /></textarea>
                 </form>
             </div>
         </div>

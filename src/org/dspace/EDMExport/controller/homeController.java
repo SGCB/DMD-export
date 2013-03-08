@@ -1,7 +1,12 @@
 package org.dspace.EDMExport.controller;
 
 
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -35,6 +40,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64OutputStream;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -48,6 +56,10 @@ import org.dspace.EDMExport.service.EDMExportServiceListCollections;
 import org.dspace.EDMExport.service.EDMExportServiceListItems;
 import org.dspace.EDMExport.service.EDMExportServiceSearch;
 import org.dspace.EDMExport.service.EDMExportXML;
+
+
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Clase que gestiona todas las peticiones web cuando ya estamos validados.
@@ -383,6 +395,7 @@ public class homeController
 	 * Controller para la url /viewXml.htm con método GET y sin parámetros.
 	 * Se recogen los datos del formulario con la configuración de elementos EDM para mostrar el xml de los ítems seleccionados.
 	 * Si hay errores se redirige a la lista de ítems seleccionados, si no se muestra el xml con los datos en EDM.
+	 * Si el xml a mostrar excede los 2MB y no se comprime con el servlet se comprime el contenido y se envía también.
 	 * 
 	 * @param edmExportBOFormEDMData objeto que recoge los datos pasados del formulario {@link EDMExportBOFormEDMData}
 	 * @param result objeto con el que se une la petición y se valida {@link BindingResult}
@@ -407,7 +420,39 @@ public class homeController
 			edmExportXml.setEdmExportServiceListItems(edmExportServiceListItems);
 			String edmXML = edmExportXml.showEDMXML(edmExportBOFormEDMData);
 			logger.debug(edmXML);
+			String edmXMLEncoded = "";
+			String encoding = request.getHeader("Content-Encoding");
+			if (edmXML.length() > 2000000 && (encoding == null || (encoding != null && encoding.isEmpty()))) {
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+				BufferedWriter writer = null;
+				Base64OutputStream b64os = null;
+				GZIPOutputStream gzip = null;
+				try {
+					/*writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(output), "UTF-8"));
+					writer.write(edmXML);
+					byte[] encoded = Base64.encodeBase64(output.toByteArray());
+					edmXMLEncoded = new String(encoded);
+					*/
+					b64os = new Base64OutputStream(output);
+		            gzip = new GZIPOutputStream(b64os);
+		            gzip.write(edmXML.getBytes("UTF-8"));
+					edmXMLEncoded = output.toString();
+				} catch (IOException e) {
+					logger.debug("IOException", e);
+				} finally {
+					try {
+						if (writer != null) writer.close();
+						if (output != null) output.close();
+						if (gzip != null) gzip.close();
+						if (b64os != null) b64os.close();
+					} catch (IOException e) {
+						logger.debug("IOException", e);
+					}
+					
+				}
+			}
 			model.addAttribute("edmXML", edmXML);
+			model.addAttribute("edmXMLEncoded", edmXMLEncoded);
 			model.addAttribute("listElementsFilled", edmExportXml.getListElementsFilled());
 			return returnView("viewXml", model);
 		}
@@ -520,13 +565,27 @@ public class homeController
 	 * Devuelve el fichero del EDM en xml. Viene de la página del formulario que muestra el xml.
 	 * 
 	 * @param EDMXml cadena con el contenido xml
+	 * @param edmXMLEncoded cadena con el contenido xml codificado bas64 y comprimido gzip
 	 * @return objeto HttpEntity {@link HttpEntity} con el array de bytes del document xml de EDM
 	 */
 	@RequestMapping(value = "/getFile.htm", method = RequestMethod.POST, params="pageAction=exportView")
-	public HttpEntity<byte[]> postExportView(@RequestParam("EDMXml") String EDMXml)
+	public HttpEntity<byte[]> postExportView(@RequestParam("EDMXml") String EDMXml, @RequestParam("edmXMLEncoded") String edmXMLEncoded)
 	{
 		logger.debug("homeController.postExportView");
 		try {
+			if (edmXMLEncoded != null && !edmXMLEncoded.isEmpty()) {
+				BufferedInputStream reader = null;
+				try {
+					logger.debug("edmXMLEncoded: " + edmXMLEncoded);
+					byte[] compressedData = Base64.decodeBase64(edmXMLEncoded.getBytes());
+					reader = new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(compressedData)));
+					EDMXml = IOUtils.toString(reader, "UTF-8");
+				} catch (Exception e) {
+					logger.debug("homeController.postExportView", e);
+				} finally {
+					 if (reader != null) reader.close();
+				}
+			}
 			if (EDMXml != null && !EDMXml.isEmpty()) {
 				return getHttpEntityFromXml(EDMXml);
 			}
