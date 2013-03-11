@@ -160,6 +160,8 @@
         {
         	if (form.edmXMLEncoded.value != "") {
         		form.EDMXml.value = "";
+        	} else {
+        		form.EDMXml.value = document.getElementById("EDMXml").value;
         	}
         	return true;
         }
@@ -173,8 +175,7 @@
                 <spring:message code="edmexport.viewxml.title" htmlEscape='false' />
             </div>
             <div id="div_viewxml_form" class="div_viewxml_form">
-                <form action="getFile.htm" method="post" name="form_edm_data" onsubmit="return valid_edXML(this)">
-                    <input type="hidden" name="pageAction" id="pageAction" value="exportView" />
+                <form action="getFile.htm" method="post" name="form_edm_data">
                     <ul id="ul_viewxml_form" class="ul_viewxml_form">
                         <li>
                             <h3><label for="EDMXml" id="EDMXml_label"><spring:message code="edmexport.viewxml.label" htmlEscape='false' /></label></h3>
@@ -184,12 +185,16 @@
                         </li>
                         <li><spring:message code="edmexport.viewxml.tamanyo" htmlEscape='false' /><span id="xml_size"></span></li>
                     </ul>
+                </form>
+                <form action="getFile.htm" method="post" name="form_edm_data_submit" onsubmit="return valid_edXML(this)">
+                    <input type="hidden" name="pageAction" id="pageAction" value="exportView" />
+                    <textarea name="EDMXml" cols="120" rows="30" required="required" readonly="readonly" style="display: none;"></textarea>
+                    <textarea name="edmXMLEncoded" id="edmXMLEncoded" style="display: none;" readonly="readonly"><c:out value="${edmXMLEncoded}" /></textarea>
                     <div id="div_viewxml_actions" class="div_viewxml_actions">
                         <ul>
                             <li><input type="submit" title="<spring:message code="edmexport.selecteditems.exportxml.help" htmlEscape='false' />" value="<spring:message code="edmexport.viewxml.export" htmlEscape='false' />" /></li>
                         </ul>
                     </div>
-                    <textarea name="edmXMLEncoded" id="edmXMLEncoded" style="display: none;"><c:out value="${edmXMLEncoded}" /></textarea>
                 </form>
             </div>
         </div>

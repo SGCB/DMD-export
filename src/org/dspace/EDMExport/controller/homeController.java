@@ -2,11 +2,9 @@ package org.dspace.EDMExport.controller;
 
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -41,7 +39,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
@@ -422,35 +419,30 @@ public class homeController
 			logger.debug(edmXML);
 			String edmXMLEncoded = "";
 			String encoding = request.getHeader("Content-Encoding");
+			//while (edmXML.length() <= 2000000) edmXML += edmXML;
 			if (edmXML.length() > 2000000 && (encoding == null || (encoding != null && encoding.isEmpty()))) {
-				ByteArrayOutputStream output = new ByteArrayOutputStream();
-				BufferedWriter writer = null;
-				Base64OutputStream b64os = null;
-				GZIPOutputStream gzip = null;
+				ByteArrayOutputStream output = null;
+				GZIPOutputStream gzOut = null;
 				try {
-					/*writer = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(output), "UTF-8"));
-					writer.write(edmXML);
+					output = new ByteArrayOutputStream();
+					gzOut = new GZIPOutputStream(output);
+					gzOut.write(edmXML.getBytes("UTF-8"));
+					gzOut.finish();
 					byte[] encoded = Base64.encodeBase64(output.toByteArray());
-					edmXMLEncoded = new String(encoded);
-					*/
-					b64os = new Base64OutputStream(output);
-		            gzip = new GZIPOutputStream(b64os);
-		            gzip.write(edmXML.getBytes("UTF-8"));
-					edmXMLEncoded = output.toString();
+					edmXMLEncoded = new String(encoded, "UTF-8");
 				} catch (IOException e) {
 					logger.debug("IOException", e);
 				} finally {
 					try {
-						if (writer != null) writer.close();
 						if (output != null) output.close();
-						if (gzip != null) gzip.close();
-						if (b64os != null) b64os.close();
+						if (gzOut != null) gzOut.close();
 					} catch (IOException e) {
 						logger.debug("IOException", e);
 					}
 					
 				}
 			}
+			logger.debug(edmXMLEncoded);
 			model.addAttribute("edmXML", edmXML);
 			model.addAttribute("edmXMLEncoded", edmXMLEncoded);
 			model.addAttribute("listElementsFilled", edmExportXml.getListElementsFilled());
@@ -563,6 +555,7 @@ public class homeController
 	/**
 	 * Controller para la url /getFile.htm con método POST.
 	 * Devuelve el fichero del EDM en xml. Viene de la página del formulario que muestra el xml.
+	 * Si el parámetro del xml comprimido tiene datos se descomprime para usarlos como contenido xml.
 	 * 
 	 * @param EDMXml cadena con el contenido xml
 	 * @param edmXMLEncoded cadena con el contenido xml codificado bas64 y comprimido gzip
