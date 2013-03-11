@@ -160,7 +160,7 @@
         {
         	if (form.edmXMLEncoded.value != "") {
         		form.EDMXml.value = "";
-        	} else {
+        	} else if (form.EDMXml.value == "") {
         		form.EDMXml.value = document.getElementById("EDMXml").value;
         	}
         	return true;
