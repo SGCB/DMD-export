@@ -111,17 +111,22 @@ body > script {
 
 
 #edmexport_header {
-	margin-bottom: 50px;
+    height: 100px;
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+
+#edmexport_header h2 {
+    float: left;
+    margin: -17px 25px 0 0;
 }
 
 #edmexport_header h2 a {
-	color: #555;
-	text-transform: uppercase;
-	font-weight: normal;
-	text-decoration: none;
-	width: 60%;
-	display: block;
-	font: 2.3em/.8em 'calibri', Arial, Verdana, Sans-Serif;
+	background: url("../img/logo.gif") no-repeat;
+    display: block;
+    height: 100px;
+    text-indent: -9999px;
+    width: 120px;
 }
 
 #edmexport_header h2 a:hover {
