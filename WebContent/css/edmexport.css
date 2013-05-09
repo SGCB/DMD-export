@@ -210,6 +210,26 @@ input[type="submit"] {
 	font-style: italic;
 }
 
+#edmexport_user_logout {
+	float: right;
+    margin-top: -30px;
+    padding-bottom: 0px;
+    font-style: italic;
+    background-color: #555555;
+}
+
+#edmexport_user_logout a {
+    background-color: #555555;
+    color: #FFFFFF;
+    display: block;
+    padding: 4px 30px;
+    text-decoration: none;
+}
+
+#edmexport_user_logout a:hover {
+	background-color: #D61921;
+}
+
 #edmexport_hometabs {
 	margin-top: 20px;
 	margin-bottom: 20px;

@@ -14,7 +14,12 @@ if (window.location.href.indexOf("login.htm") < 0) {
 }
 </script>
 <c:if test="${!empty edmExportBOUser}">
+<div>
 <div id="edmexport_user" class="edmexport_user">
     <spring:message code="edmexport.dspace_user" htmlEscape='false' /> <strong><c:out value="${edmExportBOUser.username}" /></strong>
+</div>
+<div id="edmexport_user_logout" class="edmexport_user_logout">
+    <a href="<c:url value="j_spring_security_logout" />" ><spring:message code="edmexport.dspace_user.logout" htmlEscape='false' /></a>
+</div>
 </div>
 </c:if>
