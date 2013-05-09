@@ -82,7 +82,7 @@
 	            <span id="selecteditems_title" class="selecteditems_title"><spring:message code="edmexport.selecteditems.title.main" htmlEscape='false' /></span>
 	            <b>${selectedItemsCount}</b>
 	            <c:if test="${!empty listCollections}">
-	                <span id="selecteditems_listCollections" class="selecteditems_listCollections"><spring:message code="edmexport.selecteditems.listcollections" htmlEscape='false' />: <b>${listCollectionsCount}</b></span>
+	                <span id="selecteditems_listCollections" class="selecteditems_listCollections"><spring:message code="edmexport.selecteditems.listcollections" htmlEscape='false' /> <b>${listCollectionsCount}</b> <spring:message code="edmexport.selecteditems.collections" htmlEscape='false' /></span>
 	                <ul id="ul_selecteditems_listCollections" class="ul_selecteditems_listCollections">
 	                <c:forEach items="${listCollections}" var="coll">
 	                    <li>${coll}</li>
