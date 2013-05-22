@@ -127,7 +127,8 @@ public abstract class EDMExportXML
 	{
 		this.edmExportBOFormEDMData = edmExportBOFormEDMData;
 		
-		Element rdf_RDF = new Element("RDF", "rdf");
+		//Element rdf_RDF = new Element("RDF", "rdf");
+		Element rdf_RDF = new Element("RDF", RDF);
 		
 		rdf_RDF.addNamespaceDeclaration(DCTERMS);
 		
@@ -182,7 +183,7 @@ public abstract class EDMExportXML
 	protected abstract List<Element> processItemElement(EDMExportBOItem boItem);
 	
 	/**
-	 * Creación de un elemento dc para añadir a la clase EDM ProviderCHO
+	 * Creación de un elemento dc para añadir a la clase EDM ProvidedCHO
 	 * <p>Actúa en las clases que heradena de ésta</p>
 	 * 
 	 * @param item objeto Item de dspace {@link Item} para obtener sus elementos dc
@@ -190,16 +191,16 @@ public abstract class EDMExportXML
 	 * @param nameSpace namespace del nuevo elemento EDM
 	 * @param elementDC elemento DC del que se sacarán los datos
 	 * @param qualifier calificador del elemento DC del que se sacarán los datos
-	 * @param ProviderCHO elemento jdom con la clase EDM ProviderCHO
+	 * @param ProvidedCHO elemento jdom con la clase EDM ProvidedCHO
 	 * @param repeat indica si se ha de buscar más elementos DC con ese nombre y calificador en el ítem
 	 */
-	protected void createElementDC(Item item, String elementEDM, Namespace nameSpace, String elementDC, String qualifier, Element ProviderCHO, boolean repeat)
+	protected void createElementDC(Item item, String elementEDM, Namespace nameSpace, String elementDC, String qualifier, Element ProvidedCHO, boolean repeat)
 	{
 		DCValue[] elements = item.getDC(elementDC, qualifier, Item.ANY);
 		if (elements.length > 0) {
 			checkElementFilled(elementEDM, nameSpace);
 			for (DCValue element : elements) {
-				ProviderCHO.addContent(new Element(elementEDM, nameSpace).setText(element.value));
+				ProvidedCHO.addContent(new Element(elementEDM, nameSpace).setText(element.value));
 				if (!repeat) break;
 			}
 		}

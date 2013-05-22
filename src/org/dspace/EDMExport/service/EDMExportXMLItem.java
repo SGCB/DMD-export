@@ -48,10 +48,10 @@ public class EDMExportXMLItem extends EDMExportXML
 
 	/**
 	 * Procesa los datos del ítem para generar los hijos del element rdf del esquema EDM:
-	 * <p>ProviderCHO, WebResource, SkosConcept y oreAggregation</p>
+	 * <p>ProvidedCHO, WebResource, SkosConcept y oreAggregation</p>
 	 * 
 	 * @param boItem POJO {@link EDMExportBOItem} con los datos del ítem
-	 * @return lista de elementos jdom con las clases de EDM ProviderCHO, WebResource, SkosConcept y oreAggregation
+	 * @return lista de elementos jdom con las clases de EDM ProvidedCHO, WebResource, SkosConcept y oreAggregation
 	 */
 	@Override
 	protected List<Element> processItemElement(EDMExportBOItem boItem)
@@ -67,9 +67,9 @@ public class EDMExportXMLItem extends EDMExportXML
 			logger.debug(dcv.schema+"."+dcv.element+"."+dcv.qualifier+" = "+dcv.value);
 		}
 		
-		// generamos ProviderCHO
-		Element ProviderCHO = processProviderCHO(item);
-		listElements.add(ProviderCHO);
+		// generamos ProvidedCHO
+		Element ProvidedCHO = processProvidedCHO(item);
+		listElements.add(ProvidedCHO);
 		
 		// recogemos los recursos electrónicos del tipo "original" del ítem
 		Bundle[] origBundles = edmExportServiceListItems.getDSPaceBundleItem(item, "ORIGINAL");
@@ -101,91 +101,91 @@ public class EDMExportXMLItem extends EDMExportXML
 	}
 	
 	/**
-	 * Genera todos los elementos EDM de la clase ProviderCHO que se pueden mapear desde DC
+	 * Genera todos los elementos EDM de la clase ProvidedCHO que se pueden mapear desde DC
 	 * <p>Para generar los tipos (sólo permitidos TEXT, VIDEO, IMAGE, SOUND, 3D) en el formulario de EDM se asignaron
 	 * las palabras que se asociarían a estos tipos, para poder buscarlas en el elemento dc.type y sustituirlas por
 	 * los tipos asociados.</p>
 	 * 
 	 * @param item objeto Item de dspace {@link Item}
-	 * @return elemento jdom con la clase ProviderCHO
+	 * @return elemento jdom con la clase ProvidedCHO
 	 */
-	private Element processProviderCHO(Item item)
+	private Element processProvidedCHO(Item item)
 	{
-		Element ProviderCHO = new Element("ProviderCHO", EDM);
+		Element ProvidedCHO = new Element("ProvidedCHO", EDM);
 		
 		DCValue[] identifiers = item.getDC("identifier", "uri", null);
-		if (identifiers.length > 0) ProviderCHO.setAttribute(new Attribute("about", identifiers[0].value, RDF));
+		if (identifiers.length > 0) ProvidedCHO.setAttribute(new Attribute("about", identifiers[0].value, RDF));
 
-		createElementDC(item, "contributor", DC, "contributor", Item.ANY, ProviderCHO, true);
+		createElementDC(item, "contributor", DC, "contributor", Item.ANY, ProvidedCHO, true);
 		
-		createElementDC(item, "coverage", DC, "coverage", null, ProviderCHO, true);
+		createElementDC(item, "coverage", DC, "coverage", null, ProvidedCHO, true);
 		
-		createElementDC(item, "creator", DC, "creator", null, ProviderCHO, true);
+		createElementDC(item, "creator", DC, "creator", null, ProvidedCHO, true);
 		
-		createElementDC(item, "date", DC, "date", null, ProviderCHO, true);
+		createElementDC(item, "date", DC, "date", null, ProvidedCHO, true);
 		
-		createElementDC(item, "description", DC, "description", Item.ANY, ProviderCHO, true);
+		createElementDC(item, "description", DC, "description", Item.ANY, ProvidedCHO, true);
 		
-		createElementDC(item, "format", DC, "format", Item.ANY, ProviderCHO, true);
+		createElementDC(item, "format", DC, "format", Item.ANY, ProvidedCHO, true);
 		
-		createElementDC(item, "identifier", DC, "identifier", Item.ANY, ProviderCHO, true);
+		createElementDC(item, "identifier", DC, "identifier", Item.ANY, ProvidedCHO, true);
 		
-		createElementDC(item, "language", DC, "language", "iso", ProviderCHO, true);
-		createElementDC(item, "language", DC, "language", null, ProviderCHO, true);
+		createElementDC(item, "language", DC, "language", "iso", ProvidedCHO, true);
+		createElementDC(item, "language", DC, "language", null, ProvidedCHO, true);
 		
-		createElementDC(item, "publisher", DC, "publisher", null, ProviderCHO, false);
+		createElementDC(item, "publisher", DC, "publisher", null, ProvidedCHO, false);
 		
-		createElementDC(item, "relation", DC, "relation", null, ProviderCHO, false);
+		createElementDC(item, "relation", DC, "relation", null, ProvidedCHO, false);
 		
-		createElementDC(item, "rights", DC, "rights", "holder", ProviderCHO, true);
-		createElementDC(item, "rights", DC, "rights", "uri", ProviderCHO, true);
+		createElementDC(item, "rights", DC, "rights", "holder", ProvidedCHO, true);
+		createElementDC(item, "rights", DC, "rights", "uri", ProvidedCHO, true);
 		
-		createElementDC(item, "source", DC, "source", null, ProviderCHO, false);
+		createElementDC(item, "source", DC, "source", null, ProvidedCHO, false);
 		
-		createElementDC(item, "subject", DC, "subject", Item.ANY, ProviderCHO, true);
+		createElementDC(item, "subject", DC, "subject", Item.ANY, ProvidedCHO, true);
 		
-		createElementDC(item, "title", DC, "title", null, ProviderCHO, true);
+		createElementDC(item, "title", DC, "title", null, ProvidedCHO, true);
 		
-		createElementDC(item, "type", DC, "type", null, ProviderCHO, true);
+		createElementDC(item, "type", DC, "type", null, ProvidedCHO, true);
 		
-		createElementDC(item, "alternative", DCTERMS, "title", "alternative", ProviderCHO, true);
+		createElementDC(item, "alternative", DCTERMS, "title", "alternative", ProvidedCHO, true);
 		
-		createElementDC(item, "created", DCTERMS, "date", "created", ProviderCHO, true);
+		createElementDC(item, "created", DCTERMS, "date", "created", ProvidedCHO, true);
 		
-		createElementDC(item, "extent", DCTERMS, "format", "extent", ProviderCHO, true);
+		createElementDC(item, "extent", DCTERMS, "format", "extent", ProvidedCHO, true);
 		
-		createElementDC(item, "hasFormat", DCTERMS, "relation", "hasformatof", ProviderCHO, true);
+		createElementDC(item, "hasFormat", DCTERMS, "relation", "hasformatof", ProvidedCHO, true);
 		
-		createElementDC(item, "hasPart", DCTERMS, "relation", "haspart", ProviderCHO, true);
+		createElementDC(item, "hasPart", DCTERMS, "relation", "haspart", ProvidedCHO, true);
 		
-		createElementDC(item, "hasVersion", DCTERMS, "relation", "hasversion", ProviderCHO, true);
+		createElementDC(item, "hasVersion", DCTERMS, "relation", "hasversion", ProvidedCHO, true);
 		
-		createElementDC(item, "isPartOf", DCTERMS, "relation", "ispartof", ProviderCHO, true);
-		createElementDC(item, "isPartOf", DCTERMS, "relation", "ispartofseries", ProviderCHO, true);
+		createElementDC(item, "isPartOf", DCTERMS, "relation", "ispartof", ProvidedCHO, true);
+		createElementDC(item, "isPartOf", DCTERMS, "relation", "ispartofseries", ProvidedCHO, true);
 		
-		createElementDC(item, "isReferencedBy", DCTERMS, "relation", "isreferencedby", ProviderCHO, true);
+		createElementDC(item, "isReferencedBy", DCTERMS, "relation", "isreferencedby", ProvidedCHO, true);
 		
-		createElementDC(item, "isReplacedBy", DCTERMS, "relation", "isreplacedby", ProviderCHO, true);
+		createElementDC(item, "isReplacedBy", DCTERMS, "relation", "isreplacedby", ProvidedCHO, true);
 		
-		createElementDC(item, "issued", DCTERMS, "date", "issued", ProviderCHO, true);
+		createElementDC(item, "issued", DCTERMS, "date", "issued", ProvidedCHO, true);
 		
-		createElementDC(item, "isVersionOf", DCTERMS, "relation", "isversionof", ProviderCHO, true);
+		createElementDC(item, "isVersionOf", DCTERMS, "relation", "isversionof", ProvidedCHO, true);
 		
-		createElementDC(item, "medium", DCTERMS, "format", "medium", ProviderCHO, true);
+		createElementDC(item, "medium", DCTERMS, "format", "medium", ProvidedCHO, true);
 		
-		createElementDC(item, "provenance", DCTERMS, "description", "provenance", ProviderCHO, true);
+		createElementDC(item, "provenance", DCTERMS, "description", "provenance", ProvidedCHO, true);
 		
-		createElementDC(item, "replaces", DCTERMS, "relation", "replaces", ProviderCHO, true);
+		createElementDC(item, "replaces", DCTERMS, "relation", "replaces", ProvidedCHO, true);
 		
-		createElementDC(item, "requires", DCTERMS, "relation", "requires", ProviderCHO, true);
+		createElementDC(item, "requires", DCTERMS, "relation", "requires", ProvidedCHO, true);
 		
-		createElementDC(item, "spatial", DCTERMS, "coverage", "spatial", ProviderCHO, true);
+		createElementDC(item, "spatial", DCTERMS, "coverage", "spatial", ProvidedCHO, true);
 		
-		createElementDC(item, "tableOfContents", DCTERMS, "description", "tableofcontents", ProviderCHO, true);
+		createElementDC(item, "tableOfContents", DCTERMS, "description", "tableofcontents", ProvidedCHO, true);
 		
-		createElementDC(item, "temporal", DCTERMS, "coverage", "temporal", ProviderCHO, true);
+		createElementDC(item, "temporal", DCTERMS, "coverage", "temporal", ProvidedCHO, true);
 		
-		createElementDC(item, "temporal", DCTERMS, "coverage", "temporal", ProviderCHO, true);
+		createElementDC(item, "temporal", DCTERMS, "coverage", "temporal", ProvidedCHO, true);
 		
 		String currentLocation = null;
         try {
@@ -193,12 +193,12 @@ public class EDMExportXMLItem extends EDMExportXML
         } catch (Exception e) {
         }
         if (currentLocation == null || currentLocation.isEmpty()) currentLocation = this.edmExportBOFormEDMData.getUrlBase() + "/" + item.getHandle();
-        ProviderCHO.addContent(new Element("currentLocation", EDM).setText(currentLocation));
+        ProvidedCHO.addContent(new Element("currentLocation", EDM).setText(currentLocation));
 		checkElementFilled("currentLocation", EDM);
 		
-		ProviderCHO.addContent(new Element("type", EDM).setText(processEDMType(item)));
+		ProvidedCHO.addContent(new Element("type", EDM).setText(processEDMType(item)));
 		
-		return ProviderCHO;
+		return ProvidedCHO;
 	}
 	
 	
@@ -299,7 +299,7 @@ public class EDMExportXMLItem extends EDMExportXML
 	
 	
 	/**
-	 * Genera todos los elementos EDM de la clase ProviderCHO que se pueden mapear desde DC y los recursos electrónicos
+	 * Genera todos los elementos EDM de la clase ProvidedCHO que se pueden mapear desde DC y los recursos electrónicos
 	 * <p>Para cada uno de los recursos electrónicos crea un elemento hasView. con el pimer recursos electrónico además crea
 	 * isShownBy y object.</p>
 	 * <p>Las URL se generan a partir del handle del item {@link Item}, de la secuencia del bitstream {@link Bitstream} y
