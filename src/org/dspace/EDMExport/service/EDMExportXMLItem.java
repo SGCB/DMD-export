@@ -6,6 +6,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.dspace.EDMExport.bo.EDMExportBOItem;
 import org.dspace.app.util.Util;
@@ -256,6 +258,8 @@ public class EDMExportXMLItem extends EDMExportXML
 	{
 		List<Element> listElementsSkosConcept = new ArrayList<Element>();
 		final String REGEX_HANDLE_PATTERN = "^\\d+/\\d+$";
+		final String REGEX_HANDLE_VOCAB_PATTERN = "^.+_(\\d+_\\d+)$";
+        Pattern patternHandleVocab = Pattern.compile(REGEX_HANDLE_VOCAB_PATTERN);
         String prefixUrl = this.edmExportBOFormEDMData.getUrlBase() + "/handle/";
 		
         // recorremos los elementos DC
@@ -266,6 +270,8 @@ public class EDMExportXMLItem extends EDMExportXML
 				// si no es una url válida, o es un handle del dspace o se descarta
 				if (!isValidURI(dcv.authority)) {
                     try {
+                    	Matcher matcherHandleVocab = patternHandleVocab.matcher(dcv.authority);
+                        if (matcherHandleVocab.find()) dcv.authority = ((String) matcherHandleVocab.group(1)).replace('_', '/');
                     	// comprobamos que es un handle y que existe en nuestro dspace
                         if (dcv.authority.matches(REGEX_HANDLE_PATTERN) && edmExportServiceListItems.checkHandleItemDataBase(dcv.authority)) {
                             authority = prefixUrl + dcv.authority;
