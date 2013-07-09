@@ -73,6 +73,13 @@ public class EDMExportXMLItem extends EDMExportXML
 		Element ProvidedCHO = processProvidedCHO(item);
 		listElements.add(ProvidedCHO);
 		
+		// generamos SkosConcept
+		List<Element> listSkosConcept = processSkosConcept(itemDC); 
+		if (listSkosConcept != null && listSkosConcept.size() > 0) {
+			for (Element skosConceptElement : listSkosConcept)
+				listElements.add(skosConceptElement);
+		}
+		
 		// recogemos los recursos electrónicos del tipo "original" del ítem
 		Bundle[] origBundles = edmExportServiceListItems.getDSPaceBundleItem(item, "ORIGINAL");
 		
@@ -85,13 +92,6 @@ public class EDMExportXMLItem extends EDMExportXML
 				// generamos WebResource
 				Element WebResource = processWebResource(item, bitstreams[0]); 
 				if (WebResource != null) listElements.add(WebResource);
-				
-				// generamos SkosConcept
-				List<Element> listSkosConcept = processSkosConcept(itemDC); 
-				if (listSkosConcept != null && listSkosConcept.size() > 0) {
-					for (Element skosConceptElement : listSkosConcept)
-						listElements.add(skosConceptElement);
-				}
 				
 				// generamos oreAggregation
 				Element oreAggregation = processOreAgreggation(item, origBundles, thumbBundles, bitstreams[0]); 
@@ -267,6 +267,7 @@ public class EDMExportXMLItem extends EDMExportXML
 			String authority;
 			//  comprobamos si tiene autoridad
 			if (dcv.authority != null && !dcv.authority.isEmpty()) {
+				logger.debug("EDMExportXML.processSkosConcept " + dcv.element + "," + dcv.authority);
 				// si no es una url válida, o es un handle del dspace o se descarta
 				if (!isValidURI(dcv.authority)) {
                     try {
@@ -282,6 +283,7 @@ public class EDMExportXMLItem extends EDMExportXML
                     }
                     // es una url válida
                 } else authority = dcv.authority;
+				logger.debug("EDMExportXML.processSkosConcept " + authority);
 				
 				// creamos el elemento Concept para la autoridad
 				Element skosConcept = null;
