@@ -3,6 +3,7 @@ package org.dspace.EDMExport.service;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.dspace.EDMExport.bo.EDMExportBOFormEDMData;
 import org.dspace.EDMExport.bo.EDMExportBOItem;
+import org.dspace.app.util.MetadataExposure;
 import org.dspace.content.DCValue;
 import org.dspace.content.Item;
 import org.jdom.Document;
@@ -196,6 +198,12 @@ public abstract class EDMExportXML
 	 */
 	protected void createElementDC(Item item, String elementEDM, Namespace nameSpace, String elementDC, String qualifier, Element ProvidedCHO, boolean repeat)
 	{
+		try {
+			if (MetadataExposure.isHidden(null, DC.getPrefix(), elementDC, qualifier)) return;
+		} catch (SQLException e) {
+			logger.debug("EDMExportXML.createElementDC", e);
+			return;
+		}
 		DCValue[] elements = item.getDC(elementDC, qualifier, Item.ANY);
 		if (elements.length > 0) {
 			checkElementFilled(elementEDM, nameSpace);
