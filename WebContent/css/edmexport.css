@@ -459,6 +459,10 @@ textarea#EDMXml {
 	margin: 0 0 10px;
 }
 
+form#form_edm_data #ul_viewxml_form input[type="text"] {
+    border: 1px solid #ccc;
+}
+
 #li_selecteditems_help {
 	color: #AAA;
     font-size: 0.9em;

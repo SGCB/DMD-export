@@ -45,7 +45,7 @@
             ul.prepend(li);
             
             jQuery("#btn_viewxml_search").click(function() {
-            	var term = jQuery("#term").val();
+            	var term = removeDiacratics(jQuery("#term").val()).toLowerCase();
             	if (term == "") {
             		try {
             			jQuery.spro.jpopit("<spring:message code='edmexport.viewxml.label.search.term.error' htmlEscape='false' javaScriptEscape='true' />"
@@ -57,7 +57,7 @@
             		posSearchArray.length = 0;
             		jQuery("#li_viewxml_next").remove();
             		jQuery("#li_viewxml_prev").remove();
-            		var element = jQuery("#listElementsFilled").val();
+            		var element = jQuery("#listElementsFilled").val().toLowerCase();
             		var pos = searchTermElement(term, element, 'EDMXml', 0);
             		if (pos < 0) {
             			try {
@@ -69,6 +69,14 @@
             		}
             		renderNext(pos, term, 'EDMXml', element);
             	}
+            });
+            
+            jQuery("#term").bind('keypress keydown keyup', function(ev){
+            	var keycode = ev.keyCode ? ev.keyCode : ev.which;
+                if (keycode == '13') {
+                	ev.preventDefault();
+                	jQuery("#btn_viewxml_search").trigger("click");
+                }
             });
             
             var xml_size = jQuery('#EDMXml').val().length;
@@ -89,7 +97,7 @@
         function searchTermElement(term, element, id, offset)
         {
         	var pos = -1;
-        	var content = jQuery('#' + id).val();
+        	var content = removeDiacratics(jQuery('#' + id).val()).toLowerCase();
             if (element != "") {
             	var pos_element = -1;
             	do {
@@ -175,7 +183,7 @@
                 <spring:message code="edmexport.viewxml.title" htmlEscape='false' />
             </div>
             <div id="div_viewxml_form" class="div_viewxml_form">
-                <form action="getFile.htm" method="post" name="form_edm_data">
+                <form action="getFile.htm" method="post" name="form_edm_data" id="form_edm_data">
                     <ul id="ul_viewxml_form" class="ul_viewxml_form">
                         <li>
                             <h3><label for="EDMXml" id="EDMXml_label"><spring:message code="edmexport.viewxml.label" htmlEscape='false' /></label></h3>
