@@ -51,7 +51,7 @@ public abstract class EDMExportXML
 	protected static final String NAMESPACE_URI_DC = "http://purl.org/dc/elements/1.1/";
 	protected static final String NAMESPACE_URI_XSI = "http://www.w3.org/2001/XMLSchema-instance";
 	protected static final String NAMESPACE_URI_XML = "http://www.w3.org/XML/1998/namespace";
-	protected static final String NAMESPACE_URI_SCHEMALOCATION = "http://www.w3.org/1999/02/22-rdf-syntax-ns# EDM.xsd";
+	protected static final String NAMESPACE_URI_SCHEMALOCATION = "http://www.w3.org/1999/02/22-rdf-syntax-ns# http://www.europeana.eu/schemas/edm/EDM.xsd";
 	
 	/**
 	 * POJO {@link EDMExportServiceListItems} con la lista de los ítems con los que generar el EDM
