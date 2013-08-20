@@ -198,7 +198,7 @@ public class EDMExportXMLItem extends EDMExportXML
         ProvidedCHO.addContent(new Element("currentLocation", EDM).setText(currentLocation));
 		checkElementFilled("currentLocation", EDM);
 		
-		ProvidedCHO.addContent(new Element("type", EDM).setText(processEDMType(item)));
+		ProvidedCHO.addContent(new Element("type", EDM).setText(processEDMType(item, false)));
 		
 		return ProvidedCHO;
 	}

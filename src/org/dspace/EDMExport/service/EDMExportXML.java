@@ -265,9 +265,10 @@ public abstract class EDMExportXML
 	 * los tipos asociados.
 	 * 
 	 * @param item objeto item de dspace {@link Item}
+	 * @param booleano para recoger más de un valor
 	 * @return cadena con los tipos encontrados
 	 */
-	protected String processEDMType(Item item)
+	protected String processEDMType(Item item, boolean multiValued)
 	{
 		String edmTypeElement = null;
         try {
@@ -288,7 +289,8 @@ public abstract class EDMExportXML
 					logger.debug("dc.type patterns: " + Arrays.toString(typePatternArr));
 					for (int i=1; i < typePatternArr.length; i++) {
 						if (value.toLowerCase().indexOf(typePatternArr[i].toLowerCase()) >= 0 && edmType.toString().toLowerCase().indexOf(typePatternArr[0].toLowerCase()) < 0) {
-							edmType.append(typePatternArr[0]).append(',');
+							if (multiValued) edmType.append(typePatternArr[0]).append(',');
+							else return typePatternArr[0];
 						}
 					}
 				}
