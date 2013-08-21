@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.dspace.EDMExport.bo.EDMExportBOFormEDMData;
@@ -76,6 +78,16 @@ public abstract class EDMExportXML
 	protected Set<String> setElementsFilled = new HashSet<String>();
 	
 	/**
+	 * Cadena con la url del handle
+	 */
+	protected String handleUrl;
+	
+	/**
+	 * Cadena con el prefijo de los handle
+	 */
+	protected String handlePrefix;
+	
+	/**
 	 * Namespace necesarios para el esquema EDM
 	 */
 	protected Namespace DCTERMS = Namespace.getNamespace("dcterms", NAMESPACE_URI_DCTERMS);
@@ -92,6 +104,11 @@ public abstract class EDMExportXML
 	protected Namespace XML = Namespace.getNamespace("xml", NAMESPACE_URI_XML);
 	
 	/**
+	 * Prefijo para los handle por defecto
+	 */
+	private String handlePrefixDefault = "123456789";
+	
+	/**
 	 * Constructor vacío
 	 */
 	public EDMExportXML()
@@ -106,6 +123,7 @@ public abstract class EDMExportXML
 	public EDMExportXML(EDMExportServiceListItems edmExportServiceListItems)
 	{
 		this.edmExportServiceListItems = edmExportServiceListItems;
+		checkHandleUrl();
 	}
 	
 	/**
@@ -116,6 +134,20 @@ public abstract class EDMExportXML
 	public void setEdmExportServiceListItems(EDMExportServiceListItems edmExportServiceListItems)
 	{
 		this.edmExportServiceListItems = edmExportServiceListItems;
+		checkHandleUrl();
+	}
+	
+	/**
+	 * Se comprueba la url de los handle
+	 */
+	private void checkHandleUrl()
+	{
+		handleUrl = null;
+		handlePrefix = edmExportServiceListItems.getEDMExportServiceBase().getHandlePrefix();
+		if (!handlePrefix.equals(handlePrefixDefault)) {
+			String handleCanonicalPrefix = edmExportServiceListItems.getEDMExportServiceBase().getHandleCanonicalPrefix();
+			if (isValidURI(handleCanonicalPrefix)) handleUrl = handleCanonicalPrefix + ((!handleCanonicalPrefix.endsWith("/"))?"/":"");
+		}
 	}
 	
 	/**
@@ -128,6 +160,9 @@ public abstract class EDMExportXML
 	public String showEDMXML(EDMExportBOFormEDMData edmExportBOFormEDMData)
 	{
 		this.edmExportBOFormEDMData = edmExportBOFormEDMData;
+		
+		if (handleUrl == null)
+			handleUrl = this.edmExportBOFormEDMData.getUrlBase() + ((!this.edmExportBOFormEDMData.getUrlBase().endsWith("/"))?"/handle/":"handle/");
 		
 		//Element rdf_RDF = new Element("RDF", "rdf");
 		Element rdf_RDF = new Element("RDF", RDF);
@@ -184,6 +219,7 @@ public abstract class EDMExportXML
 	 */
 	protected abstract List<Element> processItemElement(EDMExportBOItem boItem);
 	
+	
 	/**
 	 * Creación de un elemento dc para añadir a la clase EDM ProvidedCHO
 	 * <p>Actúa en las clases que heradena de ésta</p>
@@ -195,23 +231,108 @@ public abstract class EDMExportXML
 	 * @param qualifier calificador del elemento DC del que se sacarán los datos
 	 * @param ProvidedCHO elemento jdom con la clase EDM ProvidedCHO
 	 * @param repeat indica si se ha de buscar más elementos DC con ese nombre y calificador en el ítem
+	 * @param resource indica si la autoridad se ha de añadir como resource
 	 */
-	protected void createElementDC(Item item, String elementEDM, Namespace nameSpace, String elementDC, String qualifier, Element ProvidedCHO, boolean repeat)
+	protected Object[] createElementDC(Item item, String elementEDM, Namespace nameSpace, String elementDC, String qualifier
+			, Element ProvidedCHO, boolean repeat, boolean resource)
+	{
+		if (qualifier != null && qualifier.equals(Item.ANY)) return null;
+		Object[] elementsDom = createElementDC(item, elementEDM, nameSpace, elementDC, qualifier, ProvidedCHO, repeat);
+		if (resource && elementsDom != null && elementsDom.length > 0) {
+			for (int i=0; i < elementsDom.length; i+=2) {
+				Element elementDom = (Element) elementsDom[i];
+				DCValue elementDCV = (DCValue) elementsDom[i + 1];
+				if (elementDCV.authority != null && !elementDCV.authority.isEmpty()) {
+					String authority = checkAuthority(elementDCV.authority);
+					if (authority == null) continue;
+					elementDom.setAttribute("resource", authority, RDF);
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Creación de un elemento dc para añadir a la clase EDM ProvidedCHO
+	 * <p>Actúa en las clases que heradena de ésta</p>
+	 * 
+	 * @param item objeto Item de dspace {@link Item} para obtener sus elementos dc
+	 * @param elementEDM elemento EDM al que irán los datos
+	 * @param nameSpace namespace del nuevo elemento EDM
+	 * @param elementDC elemento DC del que se sacarán los datos
+	 * @param qualifier calificador del elemento DC del que se sacarán los datos
+	 * @param ProvidedCHO elemento jdom con la clase EDM ProvidedCHO
+	 * @param repeat indica si se ha de buscar más elementos DC con ese nombre y calificador en el ítem
+	 * 
+	 * @return array con pares de elementos Dom y DCValue
+	 */
+	protected Object[] createElementDC(Item item, String elementEDM, Namespace nameSpace, String elementDC, String qualifier
+			, Element ProvidedCHO, boolean repeat)
 	{
 		try {
-			if (MetadataExposure.isHidden(null, DC.getPrefix(), elementDC, qualifier)) return;
+			if (MetadataExposure.isHidden(null, DC.getPrefix(), elementDC, qualifier)) return null;
 		} catch (SQLException e) {
 			logger.debug("EDMExportXML.createElementDC", e);
-			return;
+			return null;
 		}
+		ArrayList<Object> elementsDom = null;
 		DCValue[] elements = item.getDC(elementDC, qualifier, Item.ANY);
 		if (elements.length > 0) {
+			elementsDom = new ArrayList<Object>();
 			checkElementFilled(elementEDM, nameSpace);
 			for (DCValue element : elements) {
-				ProvidedCHO.addContent(new Element(elementEDM, nameSpace).setText(element.value));
+				if (qualifier != null && qualifier.equals(Item.ANY)) {
+					try {
+						if (MetadataExposure.isHidden(null, DC.getPrefix(), element.element, element.qualifier)) continue;
+					} catch (SQLException e) {
+						logger.debug("EDMExportXML.createElementDC", e);
+						continue;
+					}
+				}
+				Element elementDom = new Element(elementEDM, nameSpace).setText(element.value);
+				ProvidedCHO.addContent(elementDom);
+				elementsDom.add(elementDom);
+				elementsDom.add(element);
 				if (!repeat) break;
 			}
 		}
+		return (elementsDom != null)?elementsDom.toArray(new Object[elementsDom.size()]):null;
+	}
+	
+	/**
+	 * Creación de un elemento dc para añadir a la clase EDM ProvidedCHO
+	 * <p>Actúa en las clases que heradena de ésta</p>
+	 * 
+	 * @param item objeto Item de dspace {@link Item} para obtener sus elementos dc
+	 * @param elementEDM elemento EDM al que irán los datos
+	 * @param nameSpace namespace del nuevo elemento EDM
+	 * @param elementDC elemento DC del que se sacarán los datos
+	 * @param noQualifier calificadores del elemento DC del que no se sacarán los datos
+	 * @param ProvidedCHO elemento jdom con la clase EDM ProvidedCHO
+	 * @param repeat indica si se ha de buscar más elementos DC con ese nombre y calificador en el ítem
+	 * 
+	 * @return eúltimo elemento Dom creado
+	 */
+	protected Element createElementDCExclusion(Item item, String elementEDM, Namespace nameSpace, String elementDC, Set<String> noQualifier, Element ProvidedCHO, boolean repeat)
+	{
+		Element elementDom = null;
+		DCValue[] elements = item.getDC(elementDC, Item.ANY, Item.ANY);
+		if (elements.length > 0) {
+			checkElementFilled(elementEDM, nameSpace);
+			for (DCValue element : elements) {
+				if (noQualifier.contains(element.qualifier)) continue;
+				try {
+					if (MetadataExposure.isHidden(null, DC.getPrefix(), element.element, element.qualifier)) continue;
+				} catch (SQLException e) {
+					logger.debug("EDMExportXML.createElementDCExclusion", e);
+					continue;
+				}
+				elementDom = new Element(elementEDM, nameSpace).setText(element.value);
+				ProvidedCHO.addContent(elementDom);
+				if (!repeat) break;
+			}
+		}
+		return elementDom;
 	}
 	
 	/**
@@ -299,6 +420,35 @@ public abstract class EDMExportXML
 		return (edmType.length() > 0)?edmType.toString().substring(0, edmType.length() - 1):edmType.toString();
 	}
 	
+	
+	/**
+	 * Comprueba si una autoridad es válida: o es una url correcta o un handle existente y se construye la url
+	 * 
+	 * @param authority la autoridad a comprobar
+	 * @return la autoridad válida o un null
+	 */
+	protected String checkAuthority(String authority)
+	{
+		final String REGEX_HANDLE_PATTERN = "^\\d+/\\d+$";
+		final String REGEX_HANDLE_VOCAB_PATTERN = "^.+_(\\d+_\\d+)$";
+        Pattern patternHandleVocab = Pattern.compile(REGEX_HANDLE_VOCAB_PATTERN);
+
+        if (!isValidURI(authority)) {
+            try {
+            	Matcher matcherHandleVocab = patternHandleVocab.matcher(authority);
+                if (matcherHandleVocab.find()) authority = ((String) matcherHandleVocab.group(1)).replace('_', '/');
+            	// comprobamos que es un handle y que existe en nuestro dspace
+                if (authority.matches(REGEX_HANDLE_PATTERN) && edmExportServiceListItems.checkHandleItemDataBase(authority)) {
+                    authority = handleUrl + authority;
+                    return authority;
+                } else return null;
+            } catch (Exception e) {
+            	logger.debug("EDMExportXML.checkAuthority authority", e);
+            	return null;
+            }
+            // es una url válida
+        } else return authority;
+	}
 	
 	/**
 	 * Comprueba que una cadena sea un URL válido

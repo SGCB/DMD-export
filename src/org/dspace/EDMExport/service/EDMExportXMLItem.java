@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,7 +80,7 @@ public class EDMExportXMLItem extends EDMExportXML
 		listElements.add(ProvidedCHO);
 		
 		// generamos SkosConcept
-		List<Element> listSkosConcept = processSkosConcept(itemDC); 
+		List<Element> listSkosConcept = processSkosConcept(item, itemDC); 
 		if (listSkosConcept != null && listSkosConcept.size() > 0) {
 			for (Element skosConceptElement : listSkosConcept)
 				listElements.add(skosConceptElement);
@@ -117,14 +118,17 @@ public class EDMExportXMLItem extends EDMExportXML
 	{
 		Element ProvidedCHO = new Element("ProvidedCHO", EDM);
 		
+		String urlH = handleUrl + item.getHandle();
 		DCValue[] identifiers = item.getDC("identifier", "uri", null);
 		if (identifiers.length > 0) ProvidedCHO.setAttribute(new Attribute("about", identifiers[0].value, RDF));
+		else ProvidedCHO.setAttribute(new Attribute("about", urlH, RDF));
 
-		createElementDC(item, "contributor", DC, "contributor", Item.ANY, ProvidedCHO, true);
+		createElementDCExclusion(item, "contributor", DC, "contributor", new HashSet<String>(Arrays.asList("author")), ProvidedCHO, true);
 		
 		createElementDC(item, "coverage", DC, "coverage", null, ProvidedCHO, true);
 		
-		createElementDC(item, "creator", DC, "creator", null, ProvidedCHO, true);
+		createElementDC(item, "creator", DC, "creator", null, ProvidedCHO, true, true);
+		createElementDC(item, "creator", DC, "contributor", "author", ProvidedCHO, true, true);
 		
 		createElementDC(item, "date", DC, "date", null, ProvidedCHO, true);
 		
@@ -132,14 +136,14 @@ public class EDMExportXMLItem extends EDMExportXML
 		
 		createElementDC(item, "format", DC, "format", Item.ANY, ProvidedCHO, true);
 		
-		createElementDC(item, "identifier", DC, "identifier", Item.ANY, ProvidedCHO, true);
+		// createElementDC(item, "identifier", DC, "identifier", Item.ANY, ProvidedCHO, true);
 		
 		createElementDC(item, "language", DC, "language", "iso", ProvidedCHO, true);
 		createElementDC(item, "language", DC, "language", null, ProvidedCHO, true);
 		
 		createElementDC(item, "publisher", DC, "publisher", null, ProvidedCHO, false);
 		
-		createElementDC(item, "relation", DC, "relation", null, ProvidedCHO, false);
+		// createElementDC(item, "relation", DC, "relation", null, ProvidedCHO, false);
 		
 		createElementDC(item, "rights", DC, "rights", "holder", ProvidedCHO, true);
 		createElementDC(item, "rights", DC, "rights", "uri", ProvidedCHO, true);
@@ -157,31 +161,43 @@ public class EDMExportXMLItem extends EDMExportXML
 		createElementDC(item, "created", DCTERMS, "date", "created", ProvidedCHO, true);
 		
 		createElementDC(item, "extent", DCTERMS, "format", "extent", ProvidedCHO, true);
-		
-		createElementDC(item, "hasFormat", DCTERMS, "relation", "hasformatof", ProvidedCHO, true);
-		
-		createElementDC(item, "hasPart", DCTERMS, "relation", "haspart", ProvidedCHO, true);
-		
-		createElementDC(item, "hasVersion", DCTERMS, "relation", "hasversion", ProvidedCHO, true);
-		
-		createElementDC(item, "isPartOf", DCTERMS, "relation", "ispartof", ProvidedCHO, true);
-		createElementDC(item, "isPartOf", DCTERMS, "relation", "ispartofseries", ProvidedCHO, true);
-		
-		createElementDC(item, "isReferencedBy", DCTERMS, "relation", "isreferencedby", ProvidedCHO, true);
-		
-		createElementDC(item, "isReplacedBy", DCTERMS, "relation", "isreplacedby", ProvidedCHO, true);
-		
+
 		createElementDC(item, "issued", DCTERMS, "date", "issued", ProvidedCHO, true);
-		
-		createElementDC(item, "isVersionOf", DCTERMS, "relation", "isversionof", ProvidedCHO, true);
 		
 		createElementDC(item, "medium", DCTERMS, "format", "medium", ProvidedCHO, true);
 		
 		createElementDC(item, "provenance", DCTERMS, "description", "provenance", ProvidedCHO, true);
 		
+		createElementDC(item, "isPartOf", DCTERMS, "relation", "isPartOf", ProvidedCHO, true);
+		
+		createElementDC(item, "isPartOf", DCTERMS, "relation", "ispartofseries", ProvidedCHO, true);
+		
+		createElementDC(item, "hasPart", DCTERMS, "relation", "hasPart", ProvidedCHO, true);
+		
+		createElementDC(item, "isRequiredBy", DCTERMS, "relation", "isRequiredBy", ProvidedCHO, true);
+		
+		createElementDC(item, "isReplacedBy", DCTERMS, "relation", "isReplacedBy", ProvidedCHO, true);
+		
+		createElementDC(item, "isVersionOf", DCTERMS, "relation", "isVersionOf", ProvidedCHO, true);
+		
+		createElementDC(item, "hasVersion", DCTERMS, "relation", "hasVersion", ProvidedCHO, true);
+		
+		createElementDC(item, "isFormatOf", DCTERMS, "relation", "isFormatOf", ProvidedCHO, true);
+		
+		createElementDC(item, "hasFormat", DCTERMS, "relation", "hasFormat", ProvidedCHO, true);
+		
+		createElementDC(item, "isReferencedBy", DCTERMS, "relation", "isReferencedBy", ProvidedCHO, true);
+		
+		createElementDC(item, "conformsTo", DCTERMS, "relation", "conformsTo", ProvidedCHO, true);
+		
 		createElementDC(item, "replaces", DCTERMS, "relation", "replaces", ProvidedCHO, true);
 		
 		createElementDC(item, "requires", DCTERMS, "relation", "requires", ProvidedCHO, true);
+		
+		createElementDCExclusion(item, "references", DCTERMS, "relation", 
+				new HashSet<String>(Arrays.asList("isPartOf", "ispartofseries", "hasPart", "isRequiredBy", "isReplacedBy"
+						, "isVersionOf", "hasVersion", "isFormatOf", "hasFormat", "isReferencedBy", "conformsTo"
+						, "replaces", "requires")), ProvidedCHO, true);
 		
 		createElementDC(item, "spatial", DCTERMS, "coverage", "spatial", ProvidedCHO, true);
 		
@@ -191,14 +207,17 @@ public class EDMExportXMLItem extends EDMExportXML
 		
 		createElementDC(item, "temporal", DCTERMS, "coverage", "temporal", ProvidedCHO, true);
 		
+		/*
 		String currentLocation = null;
         try {
             currentLocation = item.getMetadata("edm", "currentLocation", null, Item.ANY)[0].value;
         } catch (Exception e) {
         }
-        if (currentLocation == null || currentLocation.isEmpty()) currentLocation = this.edmExportBOFormEDMData.getUrlBase() + "/" + item.getHandle();
+        if (currentLocation == null || currentLocation.isEmpty())
+        	currentLocation = handleUrl + item.getHandle();
         ProvidedCHO.addContent(new Element("currentLocation", EDM).setText(currentLocation));
 		checkElementFilled("currentLocation", EDM);
+		*/
 		
 		ProvidedCHO.addContent(new Element("type", EDM).setText(processEDMType(item, false)));
 		
@@ -223,13 +242,19 @@ public class EDMExportXMLItem extends EDMExportXML
 			WebResource = new Element("WebResource", EDM);
 			
 			// url del primer recurso
-			String url = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
+			String url = edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
 			+ item.getHandle() + "/" + bitstream.getSequenceID() + "/" + Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
 			
 			WebResource.setAttribute(new Attribute("about", url, RDF));
 			
 			// creamos el elemento dc.rights
 			createElementDC(item, "rights", DC, "rights", null, WebResource, true);
+			
+			createElementDC(item, "format", DC, "format", "mimetype", WebResource, true);
+			
+			createElementDC(item, "extend", DCTERMS, "format", "extend", WebResource, true);
+			
+			createElementDC(item, "issued", DCTERMS, "date", "available", WebResource, true);
 			
 			// creamos el elemento edm.rights, buscamos si existe un edm.rights, si no lo cogemos del formulario EDM
 			String edmRights = null;
@@ -253,16 +278,13 @@ public class EDMExportXMLItem extends EDMExportXML
 	 * <p>Las autoridades han de ser una URL bien formada o un handle que exista en la base de datos de dspace y a partir de
 	 * cual se creará la URL desde la que se puede acceder en nuestro dspace</p>
 	 * 
+	 * @param item pojo dspace Item
 	 * @param itemDC array con los elementos DC del ítem
 	 * @return lista de elementos jdom con los Concept de Skos
 	 */
-	private List<Element> processSkosConcept(DCValue[] itemDC)
+	private List<Element> processSkosConcept(Item item, DCValue[] itemDC)
 	{
 		List<Element> listElementsSkosConcept = new ArrayList<Element>();
-		final String REGEX_HANDLE_PATTERN = "^\\d+/\\d+$";
-		final String REGEX_HANDLE_VOCAB_PATTERN = "^.+_(\\d+_\\d+)$";
-        Pattern patternHandleVocab = Pattern.compile(REGEX_HANDLE_VOCAB_PATTERN);
-        String prefixUrl = this.edmExportBOFormEDMData.getUrlBase() + "/handle/";
 		
         // recorremos los elementos DC
 		for (DCValue dcv : itemDC) {
@@ -271,31 +293,49 @@ public class EDMExportXMLItem extends EDMExportXML
 			if (dcv.authority != null && !dcv.authority.isEmpty()) {
 				logger.debug("EDMExportXML.processSkosConcept " + dcv.element + "," + dcv.authority);
 				// si no es una url válida, o es un handle del dspace o se descarta
-				if (!isValidURI(dcv.authority)) {
-                    try {
-                    	Matcher matcherHandleVocab = patternHandleVocab.matcher(dcv.authority);
-                        if (matcherHandleVocab.find()) dcv.authority = ((String) matcherHandleVocab.group(1)).replace('_', '/');
-                    	// comprobamos que es un handle y que existe en nuestro dspace
-                        if (dcv.authority.matches(REGEX_HANDLE_PATTERN) && edmExportServiceListItems.checkHandleItemDataBase(dcv.authority)) {
-                            authority = prefixUrl + dcv.authority;
-                        } else continue;
-                    } catch (Exception e) {
-                    	logger.debug("EDMExportXML.processSkosConcept authority", e);
-                        continue;
-                    }
-                    // es una url válida
-                } else authority = dcv.authority;
+				authority = checkAuthority(dcv.authority);
+				if (authority == null) continue;
 				logger.debug("EDMExportXML.processSkosConcept " + authority);
 				
 				// creamos el elemento Concept para la autoridad
 				Element skosConcept = null;
 				try {
-					skosConcept = new Element("Concept", SKOS);
+					skosConcept = ((dcv.element.equals("creator") && dcv.qualifier == null) || (dcv.element.equals("contributor") && dcv.qualifier.equals("author")))?new Element("Agent", EDM):new Element("Concept", SKOS);
 					skosConcept.setAttribute(new Attribute("about", authority, RDF));
 					Element prefLabel = new Element("prefLabel", SKOS);
 					if (dcv.language != null) prefLabel.setAttribute(new Attribute("lang", dcv.language, XML));
 					prefLabel.setText(dcv.value);
 					skosConcept.addContent(prefLabel);
+					DCValue[] elementsTitle = item.getDC("title", null, dcv.language);
+					if (elementsTitle.length > 0) {
+						for (DCValue elementDCV : elementsTitle) {
+							if (dcv.value.equalsIgnoreCase(elementDCV.value)) continue;
+							prefLabel = new Element("prefLabel", SKOS);
+							prefLabel.setAttribute(new Attribute("lang", elementDCV.language, XML));
+							prefLabel.setText(elementDCV.value);
+							skosConcept.addContent(prefLabel);
+						}
+					}
+					DCValue[] elementsTitleAlt = item.getDC("title", "alternative", dcv.language);
+					if (elementsTitleAlt.length > 0) {
+						Element altLabel;
+						for (DCValue elementDCV : elementsTitleAlt) {
+							altLabel = new Element("altLabel", SKOS);
+							altLabel.setAttribute(new Attribute("lang", elementDCV.language, XML));
+							altLabel.setText(elementDCV.value);
+							skosConcept.addContent(altLabel);
+						}
+					}
+					DCValue[] elementsDesc = item.getDC("description", null, dcv.language);
+					if (elementsDesc.length > 0) {
+						Element note;
+						for (DCValue elementDCV : elementsDesc) {
+							note = new Element("note", SKOS);
+							note.setAttribute(new Attribute("lang", elementDCV.language, XML));
+							note.setText(elementDCV.value);
+							skosConcept.addContent(note);
+						}
+					}
 					listElementsSkosConcept.add(skosConcept);
 					checkElementFilled("Concept", SKOS);
 				} catch (Exception e) {
@@ -332,11 +372,14 @@ public class EDMExportXMLItem extends EDMExportXML
 			oreAggregation = new Element("Aggregation", ORE);
 			
 			// creamos la url de nuestro item
-			String url = this.edmExportBOFormEDMData.getUrlBase() + "/handle/" + item.getHandle();
-			oreAggregation.setAttribute(new Attribute("about", url, RDF));
+			String url = handleUrl + item.getHandle();
+			oreAggregation.setAttribute(new Attribute("about", url + "#aggregation", RDF));
 			
 			// creamos el elemento aggregatedCHO
-			createElementDC(item, "aggregatedCHO", EDM, "identifier", null, oreAggregation, false);
+			//createElementDC(item, "aggregatedCHO", EDM, "identifier", null, oreAggregation, false);
+			Element aggregatedCHO = new Element("aggregatedCHO", EDM);
+			aggregatedCHO.setAttribute("resource", url, RDF);
+			oreAggregation.addContent(aggregatedCHO);
 			
 			// creamos el elemento dataProvider
 			oreAggregation.addContent(new Element("dataProvider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));

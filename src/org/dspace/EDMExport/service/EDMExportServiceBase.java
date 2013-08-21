@@ -91,5 +91,25 @@ public class EDMExportServiceBase
 		return ConfigurationManager.getProperty("dspace.baseUrl");
 	}
 	
+	/**
+	 * Obtenemos la propiedad de dspace: "handle.prefix"
+	 * 
+	 * @return el prefijo para los handle
+	 */
+	public String getHandlePrefix()
+	{
+		return ConfigurationManager.getProperty("handle.prefix");
+	}
+	
+	/**
+	 * Obtenemos la propiedad de dspace: "handle.canonical.prefix"
+	 * 
+	 * @return la url de los handle
+	 */
+	public String getHandleCanonicalPrefix()
+	{
+		return ConfigurationManager.getProperty("handle.canonical.prefix");
+	}
+	
 
 }
