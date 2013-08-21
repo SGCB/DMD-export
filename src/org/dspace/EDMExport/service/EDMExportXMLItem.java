@@ -63,7 +63,12 @@ public class EDMExportXMLItem extends EDMExportXML
 		// obtenemos el objeto de dspace del ítem a partir del POJO
 		Item item = edmExportServiceListItems.getDSPaceItem(boItem);
 		
-		// recogemos otods los elementos DC
+		// sólo se quieren items con contenido digital
+		// recogemos los recursos electrónicos del tipo "original" del ítem
+		Bundle[] origBundles = edmExportServiceListItems.getDSPaceBundleItem(item, "ORIGINAL");
+		if (origBundles.length == 0) return listElements;
+		
+		// recogemos todos los elementos DC
 		DCValue[] itemDC = item.getDC(Item.ANY, Item.ANY, Item.ANY);
 		for (DCValue dcv : itemDC) {
 			logger.debug(dcv.schema+"."+dcv.element+"."+dcv.qualifier+" = "+dcv.value);
@@ -79,9 +84,6 @@ public class EDMExportXMLItem extends EDMExportXML
 			for (Element skosConceptElement : listSkosConcept)
 				listElements.add(skosConceptElement);
 		}
-		
-		// recogemos los recursos electrónicos del tipo "original" del ítem
-		Bundle[] origBundles = edmExportServiceListItems.getDSPaceBundleItem(item, "ORIGINAL");
 		
 		if (origBundles.length > 0) {
 			// recogemos los recursos electrónicos del tipo "thumbnail" del ítem

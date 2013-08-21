@@ -112,7 +112,7 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 	{
 		logger.debug("EDMExportDAODspaceListItems.getDSPaceBundleItem");
 		try {
-			return item.getBundles(type);
+			return (type == null)?item.getBundles():item.getBundles(type);
 		} catch (SQLException e) {
 			logger.debug("EDMExportBOListCollections.getDSPaceBundleItem", e);
 		}
