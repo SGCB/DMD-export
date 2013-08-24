@@ -394,12 +394,12 @@ li.li_linefeed {
 	color: #D61921;
 }
 
-#ul_selecteditems_form {
+.ul_selecteditems_form {
 	padding: 0;
 	margin: 0;
 }
 
-#ul_selecteditems_form input[type=text] {
+.ul_selecteditems_form input[type=text] {
 	border: 1px solid #ddd;
 }
 

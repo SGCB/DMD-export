@@ -28,6 +28,19 @@
         		}
         	});
         	
+            switch(jQuery("#xmlFormat option:selected").val()) {
+                case "EDM":
+                case "ESE":
+                    if (jQuery("#ul_selecteditems_form_edm_ese").css('display') == 'none') jQuery("#ul_selecteditems_form_edm_ese").show();
+                    break;
+                default:
+                    if (jQuery("#ul_selecteditems_form_edm_ese").css('display') != 'none') jQuery("#ul_selecteditems_form_edm_ese").hide();
+            }
+            
+            if (jQuery("#edmRights").val() === "") {
+            	jQuery("#edmRights").val("http://creativecommons.org/publicdomain/mark/1.0/");
+            }
+        	
         });
         
         
@@ -73,6 +86,18 @@
             return message;
         }
         
+        
+        jQuery("#xmlFormat").change(function() {
+        	switch(jQuery("#xmlFormat option:selected").val()) {
+        		case "EDM":
+        		case "ESE":
+        			if (jQuery("#ul_selecteditems_form_edm_ese").css('display') == 'none') jQuery("#ul_selecteditems_form_edm_ese").show('slow');
+        			break;
+        		default:
+        			if (jQuery("#ul_selecteditems_form_edm_ese").css('display') != 'none') jQuery("#ul_selecteditems_form_edm_ese").hide('slow');
+       		}
+        });
+        
         //-->
         </script>
 
@@ -95,7 +120,29 @@
                     <form:errors path="*" cssClass="errorblock" element="div" htmlEscape='false' />
                     <form:hidden path="pageAction" /> 
                     <ul id="ul_selecteditems_form" class="ul_selecteditems_form">
-                        <li><h3><spring:message code="edmexport.selecteditems.form.title" htmlEscape='false' /></h3></li>
+                        <li>&nbsp;</li>
+                        <li id="li_selecteditems_help">
+                           <spring:message code="edmexport.selecteditems.xmlFormats.title" htmlEscape='false' />
+                        </li>
+                        <li>
+                        <c:if test="${!empty FormEDMData.listXmlFormats}">
+                            <form:hidden path="listXmlFormats" /> 
+                           <div id="div_selecteditems_xmlFormats" class="div_selecteditems_xmlFormats">
+                           <spring:message code="edmexport.selecteditems.xmlFormats" htmlEscape='false' />
+                           <form:select path="xmlFormat">
+                           <c:forEach items="${FormEDMData.listXmlFormats}" var="xmlFormat">
+                                <option value="${xmlFormat}">${xmlFormat}</option>
+                           </c:forEach>
+                           </form:select>
+                           </div>
+                        </c:if>
+                        </li>
+                    </ul>
+                    <ul id="ul_selecteditems_form_edm_ese" class="ul_selecteditems_form" style="display: none;">
+                        <li>&nbsp;</li>
+                        <li>&nbsp;</li>
+                        <li>&nbsp;</li>
+                        <li><h3><spring:message code="edmexport.selecteditems.form.title" htmlEscape='false' /> EDM/ESE</h3></li>
                         <li>&nbsp;</li>
                         <li id="li_selecteditems_help">
                            <spring:message code="edmexport.selecteditems.title.help" htmlEscape='false' />

@@ -21,6 +21,12 @@ public class EDMExportBOFormEDMData
 	private List<String> listTypes;
 	
 	@NotEmpty
+	private List<String> listXmlFormats;
+	
+	@NotEmpty
+	private String xmlFormat;
+	
+	@NotEmpty
 	private String title;
 	
 	@URL
@@ -34,8 +40,9 @@ public class EDMExportBOFormEDMData
 	{
 	}
 	
-	public EDMExportBOFormEDMData(String[] listTypes, String title, String edmRights, String urlBase, String pageAction)
+	public EDMExportBOFormEDMData(String[] listXmlFormats, String[] listTypes, String title, String edmRights, String urlBase, String pageAction)
 	{
+		this.listXmlFormats = Arrays.asList(listXmlFormats);
 		this.listTypes = Arrays.asList(listTypes);
 		this.title = title;
 		this.pageAction = pageAction;
@@ -43,9 +50,10 @@ public class EDMExportBOFormEDMData
 		this.urlBase = urlBase;
 	}
 	
-	public EDMExportBOFormEDMData(List<String> listTypes, String title, String edmRights, String urlBase, String pageAction)
+	public EDMExportBOFormEDMData(List<String> listXmlFormats, List<String> listTypes, String title, String edmRights, String urlBase, String pageAction)
 	{
 		this.listTypes = listTypes;
+		this.listXmlFormats = listXmlFormats;
 		this.title = title;
 		this.pageAction = pageAction;
 		this.edmRights = edmRights;
@@ -57,9 +65,19 @@ public class EDMExportBOFormEDMData
 		return this.listTypes;
 	}
 	
+	public List<String> getListXmlFormats()
+	{
+		return this.listXmlFormats;
+	}
+	
 	public String getTitle()
 	{
 		return this.title;
+	}
+	
+	public String getXmlFormat()
+	{
+		return this.xmlFormat;
 	}
 	
 	public String getPageAction()
@@ -82,9 +100,19 @@ public class EDMExportBOFormEDMData
 		this.listTypes = listTypes;
 	}
 	
+	public void setListXmlFormats(List<String> listXmlFormats)
+	{
+		this.listXmlFormats = listXmlFormats;
+	}
+	
 	public void setTitle(String title)
 	{
 		this.title = title;
+	}
+	
+	public void setXmlFormat(String xmlFormat)
+	{
+		this.xmlFormat = xmlFormat;
 	}
 	
 	public void setPageAction(String pageAction)

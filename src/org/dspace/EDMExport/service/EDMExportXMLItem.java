@@ -6,10 +6,13 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.dspace.EDMExport.bo.EDMExportBOFormEDMData;
 import org.dspace.EDMExport.bo.EDMExportBOItem;
 import org.dspace.app.util.Util;
 import org.dspace.constants.Constants;
@@ -18,7 +21,11 @@ import org.dspace.content.Bundle;
 import org.dspace.content.DCValue;
 import org.dspace.content.Item;
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 
 /**
  * 
@@ -30,6 +37,35 @@ import org.jdom.Element;
 @SuppressWarnings("deprecation")
 public class EDMExportXMLItem extends EDMExportXML
 {
+	
+	/**
+	 * Url de los namespace necesarios para el esquema EDM
+	 */
+	protected static final String NAMESPACE_URI_DCTERMS = "http://purl.org/dc/terms/";
+	protected static final String NAMESPACE_URI_EDM = "http://www.europeana.eu/schemas/edm/";
+	protected static final String NAMESPACE_URI_ENRICHMENT = "http://www.europeana.eu/schemas/edm/enrichment/";
+	protected static final String NAMESPACE_URI_OWL = "http://www.w3.org/2002/07/owl#";
+	protected static final String NAMESPACE_URI_WGS84 = "http://www.w3.org/2003/01/geo/wgs84_pos#";
+	protected static final String NAMESPACE_URI_SKOS = "http://www.w3.org/2004/02/skos/core#";
+	protected static final String NAMESPACE_URI_ORE = "http://www.openarchives.org/ore/terms/";
+	protected static final String NAMESPACE_URI_OAI = "http://www.openarchives.org/OAI/2.0/";
+	protected static final String NAMESPACE_URI_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	protected static final String NAMESPACE_URI_SCHEMALOCATION = "http://www.w3.org/1999/02/22-rdf-syntax-ns# http://www.europeana.eu/schemas/edm/EDM.xsd";
+
+	
+	/**
+	 * Namespace necesarios para el esquema EDM
+	 */
+	protected Namespace DCTERMS = Namespace.getNamespace("dcterms", NAMESPACE_URI_DCTERMS);
+	protected Namespace EDM = Namespace.getNamespace("edm", NAMESPACE_URI_EDM);
+	protected Namespace ENRICHMENT = Namespace.getNamespace("enrichment", NAMESPACE_URI_ENRICHMENT);
+	protected Namespace OWL = Namespace.getNamespace("owl", NAMESPACE_URI_OWL);
+	protected Namespace WGS84 = Namespace.getNamespace("wgs84", NAMESPACE_URI_WGS84);
+	protected Namespace SKOS = Namespace.getNamespace("skos", NAMESPACE_URI_SKOS);
+	protected Namespace ORE = Namespace.getNamespace("ore", NAMESPACE_URI_ORE);
+	protected Namespace OAI = Namespace.getNamespace("oai", NAMESPACE_URI_OAI);
+	protected Namespace RDF = Namespace.getNamespace("rdf", NAMESPACE_URI_RDF);
+
 
 	/**
 	 * Constructor vacío
@@ -39,8 +75,7 @@ public class EDMExportXMLItem extends EDMExportXML
 	}
 	
 	/**
-	 * Constructor que inyecta el servicio del lista de ítems {@link EDMExportServiceListItems}
-	 * <p>Llama al constructor de la clase padre</p>
+	 * Constructor con el servicio {@link EDMExportServiceListItems} inyectado
 	 * 
 	 * @param edmExportServiceListItems {@link EDMExportServiceListItems}
 	 */
@@ -48,6 +83,58 @@ public class EDMExportXMLItem extends EDMExportXML
 	{
 		super(edmExportServiceListItems);
 	}
+	
+	
+	/**
+	 * Creación del esquema EDM con la lista de los ítems seleccionados
+	 * <p>Se usa jdom para crear el documento xml</p>
+	 * 
+	 * @param edmExportBOFormEDMData POJO {@link EDMExportBOFormEDMData} con los datos del formulario
+	 * @return element jdom con el root
+	 */
+	public Element processXML()
+	{		
+		//Element rdf_RDF = new Element("RDF", "rdf");
+		Element rdf_RDF = new Element("RDF", RDF);
+		
+		rdf_RDF.addNamespaceDeclaration(DCTERMS);
+		
+		rdf_RDF.addNamespaceDeclaration(EDM);
+		
+		rdf_RDF.addNamespaceDeclaration(ENRICHMENT);
+		
+		rdf_RDF.addNamespaceDeclaration(OWL);
+		
+		rdf_RDF.addNamespaceDeclaration(WGS84);
+		
+		rdf_RDF.addNamespaceDeclaration(SKOS);
+		
+		rdf_RDF.addNamespaceDeclaration(ORE);
+		
+		rdf_RDF.addNamespaceDeclaration(OAI);
+		
+		rdf_RDF.addNamespaceDeclaration(RDF);
+		
+		rdf_RDF.addNamespaceDeclaration(DC);
+		
+		rdf_RDF.addNamespaceDeclaration(XSI);
+		rdf_RDF.setAttribute("schemaLocation", NAMESPACE_URI_SCHEMALOCATION, XSI);
+		
+		Map<Integer, EDMExportBOItem> mapItemsSubmit = edmExportServiceListItems.getMapItemsSubmit();
+		logger.debug("Num items: " + mapItemsSubmit.size());
+		Iterator<Integer> it1 = mapItemsSubmit.keySet().iterator();
+		while(it1.hasNext()) {
+			int id = it1.next();
+			EDMExportBOItem item = mapItemsSubmit.get(id);
+			List<Element> listElements = processItemElement(item, rdf_RDF);
+			for (Element element : listElements) {
+				rdf_RDF.addContent(element);
+			}
+		}
+		return rdf_RDF;
+	}
+	
+
 
 	/**
 	 * Procesa los datos del ítem para generar los hijos del element rdf del esquema EDM:
@@ -57,7 +144,7 @@ public class EDMExportXMLItem extends EDMExportXML
 	 * @return lista de elementos jdom con las clases de EDM ProvidedCHO, WebResource, SkosConcept y oreAggregation
 	 */
 	@Override
-	protected List<Element> processItemElement(EDMExportBOItem boItem)
+	protected List<Element> processItemElement(EDMExportBOItem boItem, Element parentElement)
 	{
 		List<Element> listElements = new ArrayList<Element>();
 		
@@ -127,8 +214,8 @@ public class EDMExportXMLItem extends EDMExportXML
 		
 		createElementDC(item, "coverage", DC, "coverage", null, ProvidedCHO, true);
 		
-		createElementDC(item, "creator", DC, "creator", null, ProvidedCHO, true, true);
-		createElementDC(item, "creator", DC, "contributor", "author", ProvidedCHO, true, true);
+		createElementDC(item, "creator", DC, "creator", null, ProvidedCHO, true, RDF);
+		createElementDC(item, "creator", DC, "contributor", "author", ProvidedCHO, true, RDF);
 		
 		createElementDC(item, "date", DC, "date", null, ProvidedCHO, true);
 		
@@ -380,6 +467,7 @@ public class EDMExportXMLItem extends EDMExportXML
 			Element aggregatedCHO = new Element("aggregatedCHO", EDM);
 			aggregatedCHO.setAttribute("resource", url, RDF);
 			oreAggregation.addContent(aggregatedCHO);
+			checkElementFilled("aggregatedCHO", EDM);
 			
 			// creamos el elemento dataProvider
 			oreAggregation.addContent(new Element("dataProvider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
@@ -460,6 +548,49 @@ public class EDMExportXMLItem extends EDMExportXML
 		
 		return oreAggregation;
 	}
+	
+	
+	
+	/**
+	 * Para generar los tipos (sólo permitidos TEXT, VIDEO, IMAGE, SOUND, 3D) en el formulario de EDM se asignaron
+	 * las palabras que se asociarían a estos tipos, para poder buscarlas en el elemento dc.type y sustituirlas por
+	 * los tipos asociados.
+	 * 
+	 * @param item objeto item de dspace {@link Item}
+	 * @param booleano para recoger más de un valor
+	 * @return cadena con los tipos encontrados
+	 */
+	protected String processEDMType(Item item, boolean multiValued)
+	{
+		String edmTypeElement = null;
+        try {
+            edmTypeElement = item.getMetadata("edm", "type", null, Item.ANY)[0].value;
+        } catch (Exception e) {
+        }
+        if (edmTypeElement != null && !edmTypeElement.isEmpty()) return edmTypeElement;
+        
+		StringBuilder edmType = new StringBuilder();
+		DCValue[] elements = item.getDC("type", null, Item.ANY);
+		if (elements.length > 0) {
+			checkElementFilled("type", EDM);
+			for (DCValue element : elements) {
+				String value = element.value;
+				//logger.debug("dc.type: " + value);
+				for (String typeListPatterns : edmExportBOFormEDMData.getListTypes()) {
+					String[] typePatternArr = typeListPatterns.split(",");
+					logger.debug("dc.type patterns: " + Arrays.toString(typePatternArr));
+					for (int i=1; i < typePatternArr.length; i++) {
+						if (value.toLowerCase().indexOf(typePatternArr[i].toLowerCase()) >= 0 && edmType.toString().toLowerCase().indexOf(typePatternArr[0].toLowerCase()) < 0) {
+							if (multiValued) edmType.append(typePatternArr[0]).append(',');
+							else return typePatternArr[0];
+						}
+					}
+				}
+			}
+		}
+		return (edmType.length() > 0)?edmType.toString().substring(0, edmType.length() - 1):edmType.toString();
+	}
+
 	
 	/*
 	private List<Element> processOreAgreggation(Item item, Bundle[] origBundles, Bundle[] thumbBundles)

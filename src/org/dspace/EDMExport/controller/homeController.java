@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -52,6 +53,7 @@ import org.dspace.EDMExport.bo.EDMExportBOUser;
 import org.dspace.EDMExport.service.EDMExportServiceListCollections;
 import org.dspace.EDMExport.service.EDMExportServiceListItems;
 import org.dspace.EDMExport.service.EDMExportServiceSearch;
+import org.dspace.EDMExport.service.EDMExportServiceXML;
 import org.dspace.EDMExport.service.EDMExportXML;
 
 
@@ -85,6 +87,9 @@ public class homeController
 	
 	@Value("${selectedItems.Edmtype}")
 	private String edmTypes;
+	
+	@Value("${xmlFormats}")
+	private String xmlFormats;
 		
 	/**
 	 * Listado de colecciones {@link EDMExportServiceListCollections}
@@ -102,9 +107,9 @@ public class homeController
 	private EDMExportServiceListItems edmExportServiceListItems;
 	
 	/**
-	 * Edm xml {@link EDMExportXML}
+	 * Service Export xml {@link EDMExportServiceXML}
 	 */
-	private EDMExportXML edmExportXml;
+	private EDMExportServiceXML edmExportServiceXML;
 	
 	
 	/**
@@ -121,6 +126,9 @@ public class homeController
 	 * número de ítems por página
 	 */
 	private int listItemsPageInt;
+	
+	@Autowired
+    ServletContext servletContext;
 	
 	/**
 	 * Objeto de datos de usuario inyectado {@link EDMExportBOUser}
@@ -167,12 +175,12 @@ public class homeController
 	/**
 	 * Objeto de lógica de exportar a xml inyectado
 	 * 
-	 * @param edmExportXml lógica de EDM en xml {@link EDMExportXML}
+	 * @param EDMExportServiceXML lógica de EDM en xml {@link EDMExportServiceXML}
 	 */
 	@Autowired
-	public void setEDMExportXML(EDMExportXML edmExportXml)
+	public void setEDMExportServiceXML(EDMExportServiceXML edmExportServiceXML)
 	{
-		this.edmExportXml = edmExportXml;
+		this.edmExportServiceXML = edmExportServiceXML;
 
 	}
 	
@@ -228,7 +236,8 @@ public class homeController
 	 */
 	@RequestMapping(value = "/home.htm", method = RequestMethod.GET, params={"referer","checked","nochecked"})
 	public @ResponseBody Integer getItemsCheck(@RequestParam(value="referer", required=true) String referer, 
-		@RequestParam(value="checked", required=true) String checkedStr, @RequestParam(value="nochecked", required=true) String nocheckedStr, Model model)
+		@RequestParam(value="checked", required=true) String checkedStr, @RequestParam(value="nochecked", required=true) String nocheckedStr,
+		Model model)
 	{
 		logger.debug("homeController.getItemsCheck");
 		ObjectMapper mapper = new ObjectMapper();
@@ -266,7 +275,8 @@ public class homeController
 	 * @return cadena con la vista a renderizar y mostrar
 	 */
 	@RequestMapping(value = "/home.htm", method = RequestMethod.GET, params={"referer","page"})
-	public String getItemsPage(@RequestParam(value="referer", required=true) String referer, @RequestParam(value="page", required=true) String page, Model model)
+	public String getItemsPage(@RequestParam(value="referer", required=true) String referer, 
+			@RequestParam(value="page", required=true) String page, Model model)
 	{
 		logger.debug("homeController.getItemsPage");
 		int pageInt = Integer.parseInt(page);
@@ -378,7 +388,11 @@ public class homeController
 	{
 		logger.debug("homeController.getXML");
 		String[] edmTypesArr = edmTypes.split(",");
-		EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()
+		String realPath = servletContext.getRealPath("");
+		logger.debug("realPath: " + realPath);
+		String[] xmlFormatsArr = edmExportServiceXML.getFormatsXml(xmlFormats, realPath);
+		EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(xmlFormatsArr, edmTypesArr, 
+				edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()
 				, "", edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl(), "xml");
 		List<String> listCollections = edmExportServiceListItems.getListCollections();
 		model.addAttribute("FormEDMData", edmExportBOFormEDMData);
@@ -414,8 +428,8 @@ public class homeController
 			logErrorValid(result);
 			return "redirect:selectedItems.htm";
 		} else {
-			edmExportXml.setEdmExportServiceListItems(edmExportServiceListItems);
-			String edmXML = edmExportXml.showEDMXML(edmExportBOFormEDMData);
+			edmExportServiceXML.setEdmExportServiceListItems(edmExportServiceListItems);
+			String edmXML = edmExportServiceXML.showEDMXML(edmExportBOFormEDMData, servletContext.getRealPath(""));
 			logger.debug(edmXML);
 			String edmXMLEncoded = "";
 			String encoding = request.getHeader("Content-Encoding");
@@ -445,7 +459,7 @@ public class homeController
 			logger.debug(edmXMLEncoded);
 			model.addAttribute("edmXML", edmXML);
 			model.addAttribute("edmXMLEncoded", edmXMLEncoded);
-			model.addAttribute("listElementsFilled", edmExportXml.getListElementsFilled());
+			model.addAttribute("listElementsFilled", edmExportServiceXML.getListElementsFilled());
 			return returnView("viewXml", model);
 		}
 	}
@@ -496,7 +510,8 @@ public class homeController
 	 */
 	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params={"referer","checked","nochecked"})
 	public @ResponseBody Integer getItemsCheckPost(@RequestParam(value="referer", required=true) String referer, 
-		@RequestParam(value="checked", required=true) String checkedStr, @RequestParam(value="nochecked", required=true) String nocheckedStr, Model model)
+		@RequestParam(value="checked", required=true) String checkedStr, @RequestParam(value="nochecked", required=true) String nocheckedStr,
+		Model model)
 	{
 		logger.debug("homeController.getItemsCheckPost");
 		ObjectMapper mapper = new ObjectMapper();
@@ -540,8 +555,8 @@ public class homeController
 			if (result.hasErrors()) {
 				logErrorValid(result);
 			} else {
-				edmExportXml.setEdmExportServiceListItems(edmExportServiceListItems);
-				String EDMXml = edmExportXml.showEDMXML(edmExportBOFormEDMData);
+				edmExportServiceXML.setEdmExportServiceListItems(edmExportServiceListItems);
+				String EDMXml = edmExportServiceXML.showEDMXML(edmExportBOFormEDMData, servletContext.getRealPath(""));
 				if (EDMXml != null && !EDMXml.isEmpty()) {
 					return getHttpEntityFromXml(EDMXml);
 				}
@@ -625,7 +640,7 @@ public class homeController
 				model.addAttribute("selectedItemsCount", edmExportServiceListItems.getMapItemsSubmit().size());
 				return returnView("selectedItems", model);
 			}
-			edmExportXml.clear();
+			edmExportServiceXML.clear();
 			return "redirect:viewXml.htm";
 		}
 	}
@@ -641,7 +656,8 @@ public class homeController
 	 * @return cadena con la vista a renderizar y mostrar
 	 */
 	@RequestMapping(value = "/selectedItems.htm", method = RequestMethod.POST, params="referer")
-	public String postListItems(@ModelAttribute(value="listItems") EDMExportBOListItems boListItems, BindingResult result, Model model)
+	public String postListItems(@ModelAttribute(value="listItems") EDMExportBOListItems boListItems, 
+			BindingResult result, Model model)
 	{
 		logger.debug("homeController.postListItems");
 		if (result.hasErrors()) {
@@ -649,7 +665,11 @@ public class homeController
 			return "redirect:home.htm";
 		} else {
 			String[] edmTypesArr = edmTypes.split(",");
-			EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(edmTypesArr, edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()
+			String realPath = servletContext.getRealPath("");
+			logger.debug("realPath: " + realPath);
+			String[] xmlFormatsArr = edmExportServiceXML.getFormatsXml(xmlFormats, realPath);
+			EDMExportBOFormEDMData edmExportBOFormEDMData = new EDMExportBOFormEDMData(xmlFormatsArr, edmTypesArr, 
+					edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()
 					, "", edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl(), "xml");
 			edmExportServiceListItems.processEDMExportBOListItems(boListItems);
 			List<String> listCollections = edmExportServiceListItems.getListCollections();
@@ -692,7 +712,8 @@ public class homeController
 	 * @return cadena con la vista a renderizar y mostrar
 	 */
 	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="pageAction=listColls")
-	public String postListCollections(@ModelAttribute(value="listCollections") @Valid EDMExportBOListCollections listCollectionsBO, BindingResult result, Model model)
+	public String postListCollections(@ModelAttribute(value="listCollections") @Valid EDMExportBOListCollections listCollectionsBO, 
+			BindingResult result, Model model)
 	{
 		logger.debug("homeController.postListCollections");
 		if (result.hasErrors()) {
@@ -733,7 +754,8 @@ public class homeController
 	 * @return cadena con la vista a renderizar y mostrar
 	 */
 	@RequestMapping(value = "/home.htm", method = RequestMethod.POST, params="pageAction=searchItems")
-	public String postSearch(@ModelAttribute(value="search") @Valid EDMExportBOSearch searchBO, BindingResult result, Model model)
+	public String postSearch(@ModelAttribute(value="search") @Valid EDMExportBOSearch searchBO, BindingResult result,
+			Model model)
 	{
 		logger.debug("homeController.postSearch");
 		if (result.hasErrors()) {
