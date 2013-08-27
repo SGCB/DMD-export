@@ -196,6 +196,16 @@
                             <form:input path="edmRights" size="80" required="required" />
                             <form:errors path="edmRights" cssClass="error" htmlEscape='false' />
                         </li>
+                        <li>&nbsp;</li>
+                        <li id="li_selecteditems_help">
+                            <spring:message code="edmexport.selecteditems.edmUgc.help" htmlEscape='false' />
+                        </li>
+                        <li>
+                             <form:label path="edmUgc"><span title="<spring:message code='edmexport.selecteditems.edmUgc' htmlEscape='false' />">
+                                <spring:message code="edmexport.selecteditems.edmUgc" htmlEscape='false' /></span></form:label>
+                            
+                            <form:checkbox path="edmUgc" />
+                        </li>
                     </ul>
                     <div id="div_selecteditems_actions" class="div_selecteditems_actions">
                         <ul>

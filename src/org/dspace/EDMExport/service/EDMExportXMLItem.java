@@ -469,6 +469,11 @@ public class EDMExportXMLItem extends EDMExportXML
 			oreAggregation.addContent(aggregatedCHO);
 			checkElementFilled("aggregatedCHO", EDM);
 			
+			if (edmExportBOFormEDMData.isEdmUgc()) {
+				oreAggregation.addContent(new Element("ugc", EDM).setText("true"));
+				checkElementFilled("ugc", EDM);
+			}
+			
 			// creamos el elemento dataProvider
 			oreAggregation.addContent(new Element("dataProvider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
 			checkElementFilled("dataProvider", EDM);

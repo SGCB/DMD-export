@@ -3,6 +3,8 @@ package org.dspace.EDMExport.bo;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 
@@ -34,6 +36,9 @@ public class EDMExportBOFormEDMData
 	
 	@URL
 	private String urlBase;
+	
+	@NotNull
+	private boolean edmUgc = false;
 	
 	
 	public EDMExportBOFormEDMData()
@@ -94,6 +99,11 @@ public class EDMExportBOFormEDMData
 	{
 		return this.urlBase;
 	}
+
+	public boolean isEdmUgc()
+	{
+		return this.edmUgc;
+	}
 	
 	public void setListTypes(List<String> listTypes)
 	{
@@ -128,6 +138,11 @@ public class EDMExportBOFormEDMData
 	public void setUrlBase(String urlBase)
 	{
 		this.urlBase = urlBase;
+	}
+	
+	public void setEdmUgc(boolean edmUgc)
+	{
+		this.edmUgc = edmUgc;
 	}
 	
 	public void paddingTypes(String[] edmTypesArr)
