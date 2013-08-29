@@ -180,8 +180,11 @@ public class EDMExportXMLItem extends EDMExportXML
 			if (bitstreams.length > 0) {
 				
 				// generamos WebResource
-				Element WebResource = processWebResource(item, bitstreams[0]); 
-				if (WebResource != null) listElements.add(WebResource);
+				Element[] WebResources = processWebResource(item, origBundles); 
+				if (WebResources != null && WebResources.length > 0) {
+					for (Element element : WebResources)
+						listElements.add(element);
+				}
 				
 				// generamos oreAggregation
 				Element oreAggregation = processOreAgreggation(item, origBundles, thumbBundles, bitstreams[0]); 
@@ -313,50 +316,60 @@ public class EDMExportXMLItem extends EDMExportXML
 	
 	
 	/**
-	 * Genera todos los elementos EDM de la clase WebResource que se pueden mapear desde DC y el primer recurso electrónico
+	 * Genera todos los elementos EDM de la clase WebResource que se pueden mapear desde DC y los recursos electrónicos
 	 * <p>el elemento edm.rights, buscamos si existe un edm.rights, si no lo cogemos del formulario EDM</p>
 	 * 
 	 * @param item objeto Item de dspace {@link Item}
-	 * @param bitstream objeto bitstream de dspace {@link Bitstream} con el primer recurso electrónico de tipo "original"
-	 * @return elemento jdom con la clase WebResource
+	 * @param bundles array objetos bundle de dspace {@link Bundle} con los recursos electrónicos de tipo "original"
+	 * @return array elementos jdom con la clase WebResource
 	 */
-	private Element processWebResource(Item item, Bitstream bitstream)
+	private Element[] processWebResource(Item item, Bundle[] bundles)
 	{
+		List<Element> listWebResources = new ArrayList<Element>();
+
 		Element WebResource = null;
 		
 		try {
-			// creamos el elemento Aggregation
-			WebResource = new Element("WebResource", EDM);
 			
-			// url del primer recurso
-			String url = edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
-			+ item.getHandle() + "/" + bitstream.getSequenceID() + "/" + Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
-			
-			WebResource.setAttribute(new Attribute("about", url, RDF));
-			
-			// creamos el elemento dc.rights
-			createElementDC(item, "rights", DC, "rights", null, WebResource, true);
-			
-			createElementDC(item, "format", DC, "format", "mimetype", WebResource, true);
-			
-			createElementDC(item, "extend", DCTERMS, "format", "extend", WebResource, true);
-			
-			createElementDC(item, "issued", DCTERMS, "date", "available", WebResource, true);
-			
-			// creamos el elemento edm.rights, buscamos si existe un edm.rights, si no lo cogemos del formulario EDM
-			String edmRights = null;
-            try {
-                edmRights = item.getMetadata("edm", "rights", null, Item.ANY)[0].value;
-            } catch (Exception e) {
-            }
-            if (edmRights == null || edmRights.isEmpty()) edmRights = this.edmExportBOFormEDMData.getEdmRights();
-            WebResource.addContent(new Element("rights", EDM).setText(edmRights));
-			checkElementFilled("rights", EDM);
+			for (Bundle bundle: bundles) {
+				Bitstream[] bitstreams = bundle.getBitstreams();
+				for (Bitstream bitstream: bitstreams) {
+					// creamos el elemento WebResource
+					WebResource = new Element("WebResource", EDM);
+					
+					// url del recurso
+					String url = edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
+					+ item.getHandle() + "/" + bitstream.getSequenceID() + "/" +
+							Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
+					
+					WebResource.setAttribute(new Attribute("about", url, RDF));
+					
+					// creamos el elemento dc.rights
+					createElementDC(item, "rights", DC, "rights", null, WebResource, true);
+					
+					createElementDC(item, "format", DC, "format", "mimetype", WebResource, true);
+					
+					createElementDC(item, "extend", DCTERMS, "format", "extend", WebResource, true);
+					
+					createElementDC(item, "issued", DCTERMS, "date", "available", WebResource, true);
+					
+					// creamos el elemento edm.rights, buscamos si existe un edm.rights, si no lo cogemos del formulario EDM
+					String edmRights = null;
+		            try {
+		                edmRights = item.getMetadata("edm", "rights", null, Item.ANY)[0].value;
+		            } catch (Exception e) {
+		            }
+		            if (edmRights == null || edmRights.isEmpty()) edmRights = this.edmExportBOFormEDMData.getEdmRights();
+		            WebResource.addContent(new Element("rights", EDM).setText(edmRights));
+					checkElementFilled("rights", EDM);
+					listWebResources.add(WebResource);
+				}
+			}
 		} catch (Exception e) {
 			logger.debug("EDMExportXML.processWebResource", e);
 		}
 		
-		return WebResource;
+		return listWebResources.toArray(new Element[listWebResources.size()]);
 	}
 	
 	
@@ -500,8 +513,10 @@ public class EDMExportXMLItem extends EDMExportXML
 			for (Bundle bundle : origBundles) {
 				try {
 					Bitstream[] bitstreamsOrig = bundle.getBitstreams();
+					/*
 					Bitstream[] bitstreamsThumb = null;
 					if (thumbBundles.length > i && thumbBundles[i] != null) bitstreamsThumb = thumbBundles[i].getBitstreams();
+					*/
 					for (Bitstream bitstream1 : bitstreamsOrig) {
 						// url del recurso
 						urlObject = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
@@ -509,6 +524,7 @@ public class EDMExportXMLItem extends EDMExportXML
 								+ Util.encodeBitstreamName(bitstream1.getName(), Constants.DEFAULT_ENCODING);
 						// comprobar que tiene thumbnail o nos quedamos con la original
 						String urlThumb = urlObject;
+						/*
 						if (bitstreamsThumb != null) {
 							for (Bitstream bitThumb : bitstreamsThumb) {
 								if (bitThumb.getSequenceID() == bitstream1.getSequenceID()) {
@@ -519,9 +535,10 @@ public class EDMExportXMLItem extends EDMExportXML
 								}
 							}
 						}
+						*/
 						
 						// creamos el elemento hasView
-						oreAggregation.addContent(new Element("hasView", EDM).setText(urlThumb));
+						oreAggregation.addContent(new Element("hasView", EDM).setAttribute("resource", urlThumb, RDF));
 						checkElementFilled("hasView", EDM);
 					}
 				} catch (Exception ex) {
