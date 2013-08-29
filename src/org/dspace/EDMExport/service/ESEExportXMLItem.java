@@ -99,6 +99,11 @@ public class ESEExportXMLItem extends EDMExportXML
 		// obtenemos el objeto de dspace del ítem a partir del POJO
 		Item item = edmExportServiceListItems.getDSPaceItem(boItem);
 		
+		// sólo se quieren items con contenido digital
+		// recogemos los recursos electrónicos del tipo "original" del ítem
+		Bundle[] origBundles = edmExportServiceListItems.getDSPaceBundleItem(item, "ORIGINAL");
+		if (origBundles.length == 0) return listElements;
+		
 		createElementDC(item, "title", DC, "title", Item.ANY, parentElement, true);
 		createElementDCExclusion(item, "contributor", DC, "contributor", new HashSet<String>(Arrays.asList("author")), parentElement, true);
 		createElementDC(item, "creator", DC, "contributor", "author", parentElement, true);
