@@ -390,10 +390,14 @@ function selectText(pos, term, id)
     }
     var EDMXmlJQ = jQuery('#' + id);
     var heightPX= EDMXml.scrollHeight;
-    var rowHeightPX = EDMXmlJQ.css('line-height').replace('px','');
+    console.debug(id + " , lh: " + EDMXmlJQ.css('line-height') + " , " + EDMXmlJQ.get(0).style.lineHeight);
+    var rowHeightPX = parseInt(EDMXmlJQ.css('line-height').replace('px',''), 10);
     var numLines = heightPX / rowHeightPX;
     var avgCharLine = EDMXmlJQ.val().length / numLines;
     var rowTerm = Math.floor(pos / avgCharLine);
+    console.debug("heightPX: " + heightPX + " , numLines: " + numLines + " , rowHeightPX: " + rowHeightPX + 
+    		"avgCharLine: " + avgCharLine + " , rowTerm: " + rowTerm + " , " + rowHeightPX * rowTerm);
+    if (rowTerm > 2) rowTerm -= 2;
     EDMXmlJQ.scrollTop(rowHeightPX * rowTerm);
 }
 

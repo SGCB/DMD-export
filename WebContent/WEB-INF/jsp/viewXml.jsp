@@ -20,7 +20,7 @@
             ul.prepend(li);
         	
         	li = jQuery("<li \/>");
-        	var label = jQuery("<label for='listElementsFilled'><spring:message code='edmexport.viewxml.label.select' htmlEscape='false' javaScriptEscape='true' /><\/label>");
+        	var label = jQuery("<label for='listElementsFilled'>${formatXML} <spring:message code='edmexport.viewxml.label.select' htmlEscape='false' javaScriptEscape='true' /><\/label>");
         	li.append(label);
         	var select = jQuery("<select name='listElementsFilled' id='listElementsFilled' \/>");
         	var option = jQuery("<option value=''><\/option>");
@@ -133,10 +133,10 @@
         		var prev_str = "<spring:message code='edmexport.viewxml.label.search.prev' htmlEscape='false' javaScriptEscape='true' />";
         		if (li_prev.html() == undefined) {
                     var btn = jQuery("#li_viewxml_btn");
-                    li_prev = jQuery("<li id='li_viewxml_prev'><a href='#' onclick='renderNext(" + pos_prev + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + prev_str + " &lt;&lt;<\/a><\/li>");
+                    li_prev = jQuery("<li id='li_viewxml_prev'><a href='javascript:void(0)' onclick='renderNext(" + pos_prev + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + prev_str + " &lt;&lt;<\/a><\/li>");
                     btn.after(li_prev);
                 } else {
-                	li_prev.html("<a href='#' onclick='renderNext(" + pos_prev + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + prev_str + " &lt;&lt;<\/a>");
+                	li_prev.html("<a href='javascript:void(0)' onclick='renderNext(" + pos_prev + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + prev_str + " &lt;&lt;<\/a>");
                 }
         	}
         	var pos_next = pos + term.length;
@@ -152,11 +152,11 @@
                 	var next_str = "<spring:message code='edmexport.viewxml.label.search.next' htmlEscape='false' javaScriptEscape='true' />";
                     if (li.html() == undefined) {
                         var btn = jQuery("#li_viewxml_btn");
-                        li = jQuery("<li id='li_viewxml_next'><a href='#' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + next_str + " &gt;&gt;<\/a><\/li>");
+                        li = jQuery("<li id='li_viewxml_next'><a href='javascript:void(0)' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + next_str + " &gt;&gt;<\/a><\/li>");
                         if (jQuery("#li_viewxml_prev").html() != undefined) jQuery("#li_viewxml_prev").after(li);
                         else btn.after(li);
                     } else {
-                    	li.html("<a href='#' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + next_str + " &gt;&gt;<\/a>");
+                    	li.html("<a href='javascript:void(0)' onclick='renderNext(" + pos + ", \"" + term + "\", \"" + id + "\", \"" + element + "\")'>" + next_str + " &gt;&gt;<\/a>");
                     }
                 } else {
                 	li.remove();
@@ -180,7 +180,7 @@
         <span id="edmexport_main_help" class="edmexport_main_help"><p><spring:message code="edmexport.viewxml.help" htmlEscape='false' /></p></span>
         <div id="div_viewxml" class="div_viewxml">
             <div id="div_viewxml_title" class="div_viewxml_title">
-                <spring:message code="edmexport.viewxml.title" htmlEscape='false' />
+                <b>${formatXML}</b> <spring:message code="edmexport.viewxml.title" htmlEscape='false' />
             </div>
             <div id="div_viewxml_form" class="div_viewxml_form">
                 <form action="getFile.htm" method="post" name="form_edm_data" id="form_edm_data">
@@ -189,7 +189,7 @@
                             <h3><label for="EDMXml" id="EDMXml_label"><spring:message code="edmexport.viewxml.label" htmlEscape='false' /></label></h3>
                         </li>
                         <li>
-                            <textarea name="EDMXml" id="EDMXml" cols="120" rows="30" required="required" readonly="readonly"><c:out value="${edmXML}" escapeXml="true" /></textarea>
+                            <textarea name="EDMXml" id="EDMXml" cols="120" rows="30" required="required" readonly="readonly" style="line-height: 15px;"><c:out value="${edmXML}" escapeXml="true" /></textarea>
                         </li>
                         <li><spring:message code="edmexport.viewxml.tamanyo" htmlEscape='false' /><span id="xml_size"></span></li>
                     </ul>

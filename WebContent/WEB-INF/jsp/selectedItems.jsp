@@ -28,6 +28,7 @@
         		}
         	});
         	
+        	changeBtnLiterals();
             switch(jQuery("#xmlFormat option:selected").val()) {
                 case "EDM":
                 case "ESE":
@@ -40,8 +41,46 @@
             if (jQuery("#edmRights").val() === "") {
             	jQuery("#edmRights").val("http://creativecommons.org/publicdomain/mark/1.0/");
             }
+            
+            jQuery("#xmlFormat").change(function() {
+                var value = jQuery("#xmlFormat option:selected").val();
+                changeBtnLiterals();
+                switch(value) {
+                    case "EDM":
+                    case "ESE":
+                        if (jQuery("#ul_selecteditems_form_edm_ese").css('display') == 'none') jQuery("#ul_selecteditems_form_edm_ese").show('slow');
+                        break;
+                    default:
+                        if (jQuery("#ul_selecteditems_form_edm_ese").css('display') != 'none') jQuery("#ul_selecteditems_form_edm_ese").hide('slow');
+                }
+            });
         	
         });
+        
+        
+        function changeBtnLiterals()
+        {
+        	var value = jQuery("#xmlFormat option:selected").val();
+            var btn_submit_value = jQuery("#btn_submit").val();
+            var btn_submit_title = jQuery("#btn_submit").attr("title");
+            var btn_export_value = jQuery("#btn_export").val();
+            var btn_export_title = jQuery("#btn_export").attr("title");
+            jQuery("#xmlFormat option").each(function() {
+                var value_option = jQuery(this).val();
+                if (btn_submit_value.indexOf(" " + value_option + " ") >= 0) {
+                    jQuery("#btn_submit").val(btn_submit_value.replace(value_option, value));
+                }
+                if (btn_submit_title.indexOf(" " + value_option + " ") >= 0) {
+                    jQuery("#btn_submit").attr("title", btn_submit_title.replace(value_option, value));
+                }
+                if (btn_export_value.indexOf(" " + value_option + " ") >= 0) {
+                    jQuery("#btn_export").val(btn_export_value.replace(value_option, value));
+                }
+                if (btn_export_title.indexOf(" " + value_option + " ") >= 0) {
+                    jQuery("#btn_export").attr("title", btn_export_title.replace(value_option, value));
+                }
+            });
+        }
         
         
         function valid_selectedItems(form)
@@ -86,17 +125,6 @@
             return message;
         }
         
-        
-        jQuery("#xmlFormat").change(function() {
-        	switch(jQuery("#xmlFormat option:selected").val()) {
-        		case "EDM":
-        		case "ESE":
-        			if (jQuery("#ul_selecteditems_form_edm_ese").css('display') == 'none') jQuery("#ul_selecteditems_form_edm_ese").show('slow');
-        			break;
-        		default:
-        			if (jQuery("#ul_selecteditems_form_edm_ese").css('display') != 'none') jQuery("#ul_selecteditems_form_edm_ese").hide('slow');
-       		}
-        });
         
         //-->
         </script>
@@ -209,7 +237,7 @@
                     </ul>
                     <div id="div_selecteditems_actions" class="div_selecteditems_actions">
                         <ul>
-		                    <li><input type="submit" title="<spring:message code='edmexport.selecteditems.visualize.help' htmlEscape='false' />" value="<spring:message code='edmexport.selecteditems.visualize' htmlEscape='false' />" /></li>
+		                    <li><input type="submit" title="<spring:message code='edmexport.selecteditems.visualize.help' htmlEscape='false' />" id="btn_submit" value="<spring:message code='edmexport.selecteditems.visualize' htmlEscape='false' />" /></li>
 		                    <li><input type="button" title="<spring:message code='edmexport.selecteditems.exportxml.help' htmlEscape='false' />" name="btn_export" id="btn_export" value="<spring:message code='edmexport.selecteditems.exportxml' htmlEscape='false' />" /></li>
 		                </ul>
 		            </div>

@@ -457,6 +457,7 @@ public class homeController
 				}
 			}
 			logger.debug(edmXMLEncoded);
+			model.addAttribute("formatXML", edmExportBOFormEDMData.getXmlFormat());
 			model.addAttribute("edmXML", edmXML);
 			model.addAttribute("edmXMLEncoded", edmXMLEncoded);
 			model.addAttribute("listElementsFilled", edmExportServiceXML.getListElementsFilled());
