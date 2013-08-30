@@ -240,7 +240,8 @@ public class EDMExportXMLItem extends EDMExportXML
 		
 		createElementDC(item, "source", DC, "source", null, ProvidedCHO, false);
 		
-		createElementDC(item, "subject", DC, "subject", Item.ANY, ProvidedCHO, true);
+		createElementDC(item, "subject", DC, "subject", null, ProvidedCHO, true, RDF);
+		createElementDC(item, "subject", DC, "subject", Item.ANY, ProvidedCHO, true, RDF);
 		
 		createElementDC(item, "title", DC, "title", null, ProvidedCHO, true);
 		
@@ -330,6 +331,10 @@ public class EDMExportXMLItem extends EDMExportXML
 		Element WebResource = null;
 		
 		try {
+			WebResource = new Element("WebResource", EDM);
+			WebResource.setAttribute(new Attribute("about", handleUrl + item.getHandle() + "#&lt;/edm:isShownAt&gt", RDF));
+			fillWebResource(item, WebResource);
+			listWebResources.add(WebResource);
 			
 			for (Bundle bundle: bundles) {
 				Bitstream[] bitstreams = bundle.getBitstreams();
@@ -343,25 +348,7 @@ public class EDMExportXMLItem extends EDMExportXML
 							Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
 					
 					WebResource.setAttribute(new Attribute("about", url, RDF));
-					
-					// creamos el elemento dc.rights
-					createElementDC(item, "rights", DC, "rights", null, WebResource, true);
-					
-					createElementDC(item, "format", DC, "format", "mimetype", WebResource, true);
-					
-					createElementDC(item, "extend", DCTERMS, "format", "extend", WebResource, true);
-					
-					createElementDC(item, "issued", DCTERMS, "date", "available", WebResource, true);
-					
-					// creamos el elemento edm.rights, buscamos si existe un edm.rights, si no lo cogemos del formulario EDM
-					String edmRights = null;
-		            try {
-		                edmRights = item.getMetadata("edm", "rights", null, Item.ANY)[0].value;
-		            } catch (Exception e) {
-		            }
-		            if (edmRights == null || edmRights.isEmpty()) edmRights = this.edmExportBOFormEDMData.getEdmRights();
-		            WebResource.addContent(new Element("rights", EDM).setText(edmRights));
-					checkElementFilled("rights", EDM);
+					fillWebResource(item, WebResource);
 					listWebResources.add(WebResource);
 				}
 			}
@@ -370,6 +357,35 @@ public class EDMExportXMLItem extends EDMExportXML
 		}
 		
 		return listWebResources.toArray(new Element[listWebResources.size()]);
+	}
+	
+	
+	/**
+	 * Rellenar con elementos dc y edm el WebResource
+	 * 
+	 * @param item objeto Item de Dspace
+	 * @param WebResource elemento jdom padre
+	 */
+	private void fillWebResource(Item item, Element WebResource)
+	{
+		// creamos el elemento dc.rights
+		createElementDC(item, "rights", DC, "rights", null, WebResource, true);
+		
+		createElementDC(item, "format", DC, "format", "mimetype", WebResource, true);
+		
+		createElementDC(item, "extend", DCTERMS, "format", "extend", WebResource, true);
+		
+		createElementDC(item, "issued", DCTERMS, "date", "available", WebResource, true);
+		
+		// creamos el elemento edm.rights, buscamos si existe un edm.rights, si no lo cogemos del formulario EDM
+		String edmRights = null;
+        try {
+            edmRights = item.getMetadata("edm", "rights", null, Item.ANY)[0].value;
+        } catch (Exception e) {
+        }
+        if (edmRights == null || edmRights.isEmpty()) edmRights = this.edmExportBOFormEDMData.getEdmRights();
+        WebResource.addContent(new Element("rights", EDM).setText(edmRights));
+		checkElementFilled("rights", EDM);
 	}
 	
 	
@@ -392,12 +408,12 @@ public class EDMExportXMLItem extends EDMExportXML
 			//  comprobamos si tiene autoridad
 			if (dcv.authority != null && !dcv.authority.isEmpty()) {
 				logger.debug("EDMExportXML.processSkosConcept " + dcv.element + "," + dcv.authority);
-				// si no es una url válida, o es un handle del dspace o se descarta
+				// si no es una url válida, o es un handle del dspace se descarta
 				authority = checkAuthority(dcv.authority);
 				if (authority == null) continue;
 				logger.debug("EDMExportXML.processSkosConcept " + authority);
 				
-				// creamos el elemento Concept para la autoridad
+				// creamos el elemento Concept o Agent para la autoridad
 				Element skosConcept = null;
 				try {
 					skosConcept = ((dcv.element.equals("creator") && dcv.qualifier == null) || (dcv.element.equals("contributor") && dcv.qualifier.equals("author")))?new Element("Agent", EDM):new Element("Concept", SKOS);
@@ -406,16 +422,6 @@ public class EDMExportXMLItem extends EDMExportXML
 					if (dcv.language != null) prefLabel.setAttribute(new Attribute("lang", dcv.language, XML));
 					prefLabel.setText(dcv.value);
 					skosConcept.addContent(prefLabel);
-					DCValue[] elementsTitle = item.getDC("title", null, dcv.language);
-					if (elementsTitle.length > 0) {
-						for (DCValue elementDCV : elementsTitle) {
-							if (dcv.value.equalsIgnoreCase(elementDCV.value)) continue;
-							prefLabel = new Element("prefLabel", SKOS);
-							prefLabel.setAttribute(new Attribute("lang", elementDCV.language, XML));
-							prefLabel.setText(elementDCV.value);
-							skosConcept.addContent(prefLabel);
-						}
-					}
 					DCValue[] elementsTitleAlt = item.getDC("title", "alternative", dcv.language);
 					if (elementsTitleAlt.length > 0) {
 						Element altLabel;
@@ -497,15 +503,15 @@ public class EDMExportXMLItem extends EDMExportXML
 					+ Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
 			
 			// creamos el elemento isShownAt
-			oreAggregation.addContent(new Element("isShownAt", EDM).setText(url));
+			oreAggregation.addContent(new Element("isShownAt", EDM).setAttribute("resource", url + "#&lt;/edm:isShownAt&gt", RDF));
 			checkElementFilled("isShownAt", EDM);
 			
 			// creamos el elemento isShownBy
-			oreAggregation.addContent(new Element("isShownBy", EDM).setText(urlObject));
+			oreAggregation.addContent(new Element("isShownBy", EDM).setAttribute("resource", urlObject, RDF));
 			checkElementFilled("isShownBy", EDM);
 			
 			// creamos el elemento object
-			oreAggregation.addContent(new Element("object", EDM).setText(urlObject));
+			oreAggregation.addContent(new Element("object", EDM).setAttribute("resource", urlObject, RDF));
 			checkElementFilled("object", EDM);
 			
 			// recorremos todos los recursos
@@ -513,32 +519,14 @@ public class EDMExportXMLItem extends EDMExportXML
 			for (Bundle bundle : origBundles) {
 				try {
 					Bitstream[] bitstreamsOrig = bundle.getBitstreams();
-					/*
-					Bitstream[] bitstreamsThumb = null;
-					if (thumbBundles.length > i && thumbBundles[i] != null) bitstreamsThumb = thumbBundles[i].getBitstreams();
-					*/
 					for (Bitstream bitstream1 : bitstreamsOrig) {
 						// url del recurso
 						urlObject = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
 								+ item.getHandle() + "/" + bitstream1.getSequenceID() + "/"
 								+ Util.encodeBitstreamName(bitstream1.getName(), Constants.DEFAULT_ENCODING);
-						// comprobar que tiene thumbnail o nos quedamos con la original
-						String urlThumb = urlObject;
-						/*
-						if (bitstreamsThumb != null) {
-							for (Bitstream bitThumb : bitstreamsThumb) {
-								if (bitThumb.getSequenceID() == bitstream1.getSequenceID()) {
-									urlThumb = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
-											+ item.getHandle() + "/" + bitThumb.getSequenceID() + "/"
-											+ Util.encodeBitstreamName(bitThumb.getName(), Constants.DEFAULT_ENCODING);
-									break;
-								}
-							}
-						}
-						*/
-						
+
 						// creamos el elemento hasView
-						oreAggregation.addContent(new Element("hasView", EDM).setAttribute("resource", urlThumb, RDF));
+						oreAggregation.addContent(new Element("hasView", EDM).setAttribute("resource", urlObject, RDF));
 						checkElementFilled("hasView", EDM);
 					}
 				} catch (Exception ex) {
@@ -591,6 +579,7 @@ public class EDMExportXMLItem extends EDMExportXML
         }
         if (edmTypeElement != null && !edmTypeElement.isEmpty()) return edmTypeElement;
         
+        boolean found = false;
 		StringBuilder edmType = new StringBuilder();
 		DCValue[] elements = item.getDC("type", null, Item.ANY);
 		if (elements.length > 0) {
@@ -603,97 +592,19 @@ public class EDMExportXMLItem extends EDMExportXML
 					logger.debug("dc.type patterns: " + Arrays.toString(typePatternArr));
 					for (int i=1; i < typePatternArr.length; i++) {
 						if (value.toLowerCase().indexOf(typePatternArr[i].toLowerCase()) >= 0 && edmType.toString().toLowerCase().indexOf(typePatternArr[0].toLowerCase()) < 0) {
-							if (multiValued) edmType.append(typePatternArr[0]).append(',');
+							if (multiValued) {
+								edmType.append(typePatternArr[0]).append(',');
+								found = true;
+							}
 							else return typePatternArr[0];
 						}
 					}
 				}
 			}
 		}
+		if (!found) return "TEXT";
 		return (edmType.length() > 0)?edmType.toString().substring(0, edmType.length() - 1):edmType.toString();
 	}
 
-	
-	/*
-	private List<Element> processOreAgreggation(Item item, Bundle[] origBundles, Bundle[] thumbBundles)
-	{
-		List<Element> listElementsOreAggregation = new ArrayList<Element>();
-		
-		int i = 0;
-		for (Bundle bundle : origBundles) {
-			Bitstream[] bitstreamsOrig = bundle.getBitstreams();
-			Bitstream[] bitstreamsThumb = null;
-			if (thumbBundles.length > i && thumbBundles[i] != null) bitstreamsThumb = thumbBundles[i].getBitstreams();
-			int j = 0;
-			for (Bitstream bitstream : bitstreamsOrig) {
-				Element elementOreAggregation = null;
-				if ((elementOreAggregation = processElementOreAgreggation(item, bundle, bitstream, bitstreamsThumb, j)) != null)
-					listElementsOreAggregation.add(elementOreAggregation);
-				j++;
-			}
-			i++;
-		}
-		
-		return listElementsOreAggregation;
-	}
-	
-	private Element processElementOreAgreggation(Item item, Bundle origBundle, Bitstream bitstream,
-			Bitstream[] bitstreamsThumb, int index)
-	{
-		Element oreAggregation = null;
-		
-		try {
-			oreAggregation = new Element("Aggregation", ORE);
-			
-			String url = this.edmExportBOFormEDMData.getUrlBase() + "/" + item.getHandle();
-			oreAggregation.setAttribute(new Attribute("about", url, RDF));
-			
-			createElementDC(item, "aggregatedCHO", EDM, "identifier", null, oreAggregation, false);
-			
-			oreAggregation.addContent(new Element("dataProvider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
-			
-			String urlObject = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstream/"
-					+ item.getHandle() + "/" + bitstream.getSequenceID() + "/"
-					+ Util.encodeBitstreamName(bitstream.getName(), Constants.DEFAULT_ENCODING);
-			
-			String urlThumb = urlObject;
-			if (bitstreamsThumb != null) {
-				for (Bitstream bitThumb : bitstreamsThumb) {
-					if (bitThumb.getSequenceID() == bitstream.getSequenceID()) {
-						urlThumb = this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceBaseUrl() + "/bitstream/"
-								+ item.getHandle() + "/" + bitThumb.getSequenceID() + "/"
-								+ Util.encodeBitstreamName(bitThumb.getName(), Constants.DEFAULT_ENCODING);
-						break;
-					}
-				}
-			}
-			
-			oreAggregation.addContent(new Element("hasView", EDM).setText(urlThumb));
-			checkElementFilled("hasView", EDM);
-			
-			oreAggregation.addContent(new Element("isShownAt", EDM).setText(url));
-			checkElementFilled("isShownAt", EDM);
-			
-			oreAggregation.addContent(new Element("isShownBy", EDM).setText(urlObject));
-			checkElementFilled("isShownBy", EDM);
-			
-			oreAggregation.addContent(new Element("object", EDM).setText(urlObject));
-			checkElementFilled("object", EDM);
-			
-			oreAggregation.addContent(new Element("provider", EDM).setText(this.edmExportServiceListItems.getEDMExportServiceBase().getDspaceName()));
-			checkElementFilled("provider", EDM);
-			
-			createElementDC(item, "rights", DC, "rights", null, oreAggregation, true);
-			
-			oreAggregation.addContent(new Element("rights", EDM).setText(this.edmExportBOFormEDMData.getEdmRights()));
-			checkElementFilled("rights", EDM);
-		} catch (Exception e) {
-			logger.debug("EDMExportXML.processOreAgreggation", e);
-		}
-		
-		return oreAggregation;
-	}
-	*/
-	
 	
 }

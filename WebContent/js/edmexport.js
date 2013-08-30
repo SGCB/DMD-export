@@ -397,6 +397,8 @@ function selectText(pos, term, id)
     var rowTerm = Math.floor(pos / avgCharLine);
     console.debug("heightPX: " + heightPX + " , numLines: " + numLines + " , rowHeightPX: " + rowHeightPX + 
     		"avgCharLine: " + avgCharLine + " , rowTerm: " + rowTerm + " , " + rowHeightPX * rowTerm);
+    if (rowTerm > 8) rowTerm -= 8;
+    if (rowTerm > 4) rowTerm -= 4;
     if (rowTerm > 2) rowTerm -= 2;
     EDMXmlJQ.scrollTop(rowHeightPX * rowTerm);
 }

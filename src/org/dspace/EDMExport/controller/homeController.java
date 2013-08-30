@@ -559,7 +559,7 @@ public class homeController
 				edmExportServiceXML.setEdmExportServiceListItems(edmExportServiceListItems);
 				String EDMXml = edmExportServiceXML.showEDMXML(edmExportBOFormEDMData, servletContext.getRealPath(""));
 				if (EDMXml != null && !EDMXml.isEmpty()) {
-					return getHttpEntityFromXml(EDMXml);
+					return getHttpEntityFromXml(EDMXml, edmExportBOFormEDMData.getXmlFormat());
 				}
 			}
 		} catch (Exception e) {
@@ -578,7 +578,8 @@ public class homeController
 	 * @return objeto HttpEntity {@link HttpEntity} con el array de bytes del document xml de EDM
 	 */
 	@RequestMapping(value = "/getFile.htm", method = RequestMethod.POST, params="pageAction=exportView")
-	public HttpEntity<byte[]> postExportView(@RequestParam("EDMXml") String EDMXml, @RequestParam("edmXMLEncoded") String edmXMLEncoded)
+	public HttpEntity<byte[]> postExportView(@RequestParam("EDMXml") String EDMXml, @RequestParam("edmXMLEncoded") String edmXMLEncoded,
+			@RequestParam("formatXML") String formatXML)
 	{
 		logger.debug("homeController.postExportView");
 		try {
@@ -596,7 +597,7 @@ public class homeController
 				}
 			}
 			if (EDMXml != null && !EDMXml.isEmpty()) {
-				return getHttpEntityFromXml(EDMXml);
+				return getHttpEntityFromXml(EDMXml, formatXML);
 			}
 		} catch (Exception e) {
 			logger.debug("homeController.postExportView", e);
@@ -690,13 +691,13 @@ public class homeController
 	 * @return objeto HttpEntity {@link HttpEntity}
 	 * @throws UnsupportedEncodingException
 	 */
-	private HttpEntity<byte[]> getHttpEntityFromXml(String xml) throws UnsupportedEncodingException
+	private HttpEntity<byte[]> getHttpEntityFromXml(String xml, String format) throws UnsupportedEncodingException
 	{
 		byte[] EDMXmlBytes;
 		EDMXmlBytes = xml.getBytes("UTF-8");
 		HttpHeaders header = new HttpHeaders();
 	    header.setContentType(new MediaType("text", "xml", Charset.forName("UTF-8")));
-	    header.set("Content-Disposition", "attachment; filename=EDMXml.xml");
+	    header.set("Content-Disposition", "attachment; filename=" + format + "Xml.xml");
 	    header.setContentLength(EDMXmlBytes.length);
 	    return new HttpEntity<byte[]>(EDMXmlBytes, header);
 	}

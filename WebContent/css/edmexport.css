@@ -122,11 +122,11 @@ body > script {
 }
 
 #edmexport_header h2 a {
-	background: url("../img/logo.gif") no-repeat;
+	background: url("../img/logo_DMD.png") no-repeat;
     display: block;
-    height: 100px;
+    height: 130px;
     text-indent: -9999px;
-    width: 120px;
+    width: 192px;
 }
 
 #edmexport_header h2 a:hover {

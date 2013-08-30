@@ -20,7 +20,7 @@
             ul.prepend(li);
         	
         	li = jQuery("<li \/>");
-        	var label = jQuery("<label for='listElementsFilled'>${formatXML} <spring:message code='edmexport.viewxml.label.select' htmlEscape='false' javaScriptEscape='true' /><\/label>");
+        	var label = jQuery("<label for='listElementsFilled'><spring:message code='edmexport.viewxml.label.select' htmlEscape='false' javaScriptEscape='true' /> ${formatXML}<\/label>");
         	li.append(label);
         	var select = jQuery("<select name='listElementsFilled' id='listElementsFilled' \/>");
         	var option = jQuery("<option value=''><\/option>");
@@ -41,7 +41,7 @@
         	li.append(input);
         	ul.prepend(li);
         	
-        	li = jQuery("<li><h3><spring:message code='edmexport.viewxml.label.search' htmlEscape='false' javaScriptEscape='true' /><\/h3><\/li>");
+        	li = jQuery("<li><h3><spring:message code='edmexport.viewxml.label.search' htmlEscape='false' javaScriptEscape='true' /> ${formatXML} XML<\/h3><\/li>");
             ul.prepend(li);
             
             jQuery("#btn_viewxml_search").click(function() {
@@ -180,13 +180,13 @@
         <span id="edmexport_main_help" class="edmexport_main_help"><p><spring:message code="edmexport.viewxml.help" htmlEscape='false' /></p></span>
         <div id="div_viewxml" class="div_viewxml">
             <div id="div_viewxml_title" class="div_viewxml_title">
-                <b>${formatXML}</b> <spring:message code="edmexport.viewxml.title" htmlEscape='false' />
+                <spring:message code="edmexport.viewxml.title" htmlEscape='false' /> <b>${formatXML}</b> XML
             </div>
             <div id="div_viewxml_form" class="div_viewxml_form">
                 <form action="getFile.htm" method="post" name="form_edm_data" id="form_edm_data">
                     <ul id="ul_viewxml_form" class="ul_viewxml_form">
                         <li>
-                            <h3><label for="EDMXml" id="EDMXml_label"><spring:message code="edmexport.viewxml.label" htmlEscape='false' /></label></h3>
+                            <h3><label for="EDMXml" id="EDMXml_label"><spring:message code="edmexport.viewxml.label" htmlEscape='false' /> ${formatXML} XML</label></h3>
                         </li>
                         <li>
                             <textarea name="EDMXml" id="EDMXml" cols="120" rows="30" required="required" readonly="readonly" style="line-height: 15px;"><c:out value="${edmXML}" escapeXml="true" /></textarea>
@@ -196,11 +196,12 @@
                 </form>
                 <form action="getFile.htm" method="post" name="form_edm_data_submit" onsubmit="return valid_edXML(this)">
                     <input type="hidden" name="pageAction" id="pageAction" value="exportView" />
+                    <input type="hidden" name="formatXML" id="formatXML" value="${formatXML}" />
                     <textarea name="EDMXml" cols="120" rows="30" required="required" readonly="readonly" style="display: none;"></textarea>
                     <textarea name="edmXMLEncoded" id="edmXMLEncoded" style="display: none;" readonly="readonly"><c:out value="${edmXMLEncoded}" /></textarea>
                     <div id="div_viewxml_actions" class="div_viewxml_actions">
                         <ul>
-                            <li><input type="submit" title="<spring:message code="edmexport.selecteditems.exportxml.help" htmlEscape='false' />" value="<spring:message code="edmexport.viewxml.export" htmlEscape='false' />" /></li>
+                            <li><input type="submit" title="<spring:message code="edmexport.viewxml.exportxml.help" htmlEscape='false' /> ${formatXML}" value="<spring:message code="edmexport.viewxml.export" htmlEscape='false' />" /></li>
                         </ul>
                     </div>
                 </form>
