@@ -33,7 +33,7 @@ public class ESEExportXMLItem extends EDMExportXML
 	
 	protected static final String NAMESPACE_URI_EUROPEANA = "http://www.europeana.eu/schemas/ese/";
 	protected static final String NAMESPACE_URI_DCTERMS = "http://purl.org/dc/terms/";
-	protected static final String NAMESPACE_URI_SCHEMALOCATION = "http://www.europeana.eu/schemas/ese/ http://www.europeana.eu/schemas/ese/ESE-V3.3.xsd";
+	protected static final String NAMESPACE_URI_SCHEMALOCATION = "http://www.europeana.eu/schemas/ese/ http://www.europeana.eu/schemas/ese/ESE-V3.4.xsd";
 
 	protected Namespace EUROPEANA = Namespace.getNamespace("europeana", NAMESPACE_URI_EUROPEANA);
 	protected Namespace DCTERMS = Namespace.getNamespace("dcterms", NAMESPACE_URI_DCTERMS);
