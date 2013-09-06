@@ -105,11 +105,11 @@ public class ESEExportXMLItem extends EDMExportXML
 		if (origBundles.length == 0) return listElements;
 		
 		createElementDC(item, "title", DC, "title", Item.ANY, parentElement, true);
-		createElementDCExclusion(item, "contributor", DC, "contributor", new HashSet<String>(Arrays.asList("author")), parentElement, true);
+		createElementDCExclusion(item, "contributor", DC, "contributor", new HashSet<String>(Arrays.asList("author")), parentElement, true, null);
 		createElementDC(item, "creator", DC, "contributor", "author", parentElement, true);
 		createElementDC(item, "creator", DC, "creator", Item.ANY, parentElement, true);
 		createElementDC(item, "subject", DC, "subject", Item.ANY, parentElement, true);
-		createElementDCExclusion(item, "description", DC, "description", new HashSet<String>(Arrays.asList("provenance")), parentElement, true);
+		createElementDCExclusion(item, "description", DC, "description", new HashSet<String>(Arrays.asList("provenance")), parentElement, true, null);
 		createElementDC(item, "publisher", DC, "publisher", Item.ANY, parentElement, true);
 		createElementDC(item, "date", DC, "date", Item.ANY, parentElement, true);
 		createElementDC(item, "format", DC, "format", Item.ANY, parentElement, true);

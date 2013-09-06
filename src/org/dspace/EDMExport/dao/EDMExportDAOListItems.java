@@ -49,4 +49,12 @@ public interface EDMExportDAOListItems
 	 * @return cierto si es un objeto Dspace
 	 */
 	public boolean checkHandleItemDataBase(String handle) throws SQLException;
+	
+	/**
+	 * Obtiene un objeto Dspace del ítem {@link Item} a partir de su handle
+	 * 
+	 * @param handle string con el handle del ítem
+	 * @return objeto Dspace del ítem {@link Item}
+	 */
+	public Item getDSPaceItem(String handle) throws IllegalStateException, SQLException;
 }

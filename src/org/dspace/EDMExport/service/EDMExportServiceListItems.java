@@ -1,5 +1,6 @@
 package org.dspace.EDMExport.service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import org.dspace.EDMExport.dao.EDMExportDAODspaceListItems;
 import org.dspace.EDMExport.dao.EDMExportDAOListItems;
 import org.dspace.content.Bundle;
 import org.dspace.content.Item;
+import org.dspace.handle.HandleManager;
 
 /**
  * 
@@ -255,6 +257,18 @@ public class EDMExportServiceListItems
 	public Item getDSPaceItem(EDMExportBOItem boItem)
 	{
 		return daoListItems.getDSPaceItem(boItem.getId());
+	}
+	
+	/**
+	 * Obtiene un objeto Dspace del ítem {@link Item} a partir de su handle
+	 * 
+	 * @param handle string con el handle del ítem
+	 * @return objeto Dspace del ítem {@link Item}
+	 * @throws Exception 
+	 */
+	public Item getDSPaceItem(String handle) throws Exception
+	{
+		return daoListItems.getDSPaceItem(handle);
 	}
 	
 	/**

@@ -131,5 +131,20 @@ public class EDMExportDAODspaceListItems implements EDMExportDAOListItems
 	{
 		return (HandleManager.resolveToObject(context, handle) != null);
 	}
+	
+	
+	/**
+	 * Obtiene un objeto Dspace del ítem {@link Item} a partir de su handle
+	 * 
+	 * @param handle string con el handle del ítem
+	 * @return objeto Dspace del ítem {@link Item}
+	 * @throws SQLException 
+	 * @throws IllegalStateException 
+	 */
+	@Override
+	public Item getDSPaceItem(String handle) throws IllegalStateException, SQLException
+	{
+		return (Item) HandleManager.resolveToObject(context, handle);
+	}
 
 }

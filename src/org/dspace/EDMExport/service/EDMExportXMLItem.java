@@ -213,7 +213,8 @@ public class EDMExportXMLItem extends EDMExportXML
 		if (identifiers.length > 0) ProvidedCHO.setAttribute(new Attribute("about", identifiers[0].value, RDF));
 		else ProvidedCHO.setAttribute(new Attribute("about", urlH, RDF));
 
-		createElementDCExclusion(item, "contributor", DC, "contributor", new HashSet<String>(Arrays.asList("author")), ProvidedCHO, true);
+		createElementDCExclusion(item, "contributor", DC, "contributor", new HashSet<String>(Arrays.asList("author")),
+				ProvidedCHO, true, RDF);
 		
 		createElementDC(item, "coverage", DC, "coverage", null, ProvidedCHO, true);
 		
@@ -288,7 +289,7 @@ public class EDMExportXMLItem extends EDMExportXML
 		createElementDCExclusion(item, "references", DCTERMS, "relation", 
 				new HashSet<String>(Arrays.asList("isPartOf", "ispartofseries", "hasPart", "isRequiredBy", "isReplacedBy"
 						, "isVersionOf", "hasVersion", "isFormatOf", "hasFormat", "isReferencedBy", "conformsTo"
-						, "replaces", "requires")), ProvidedCHO, true);
+						, "replaces", "requires")), ProvidedCHO, true, null);
 		
 		createElementDC(item, "spatial", DCTERMS, "coverage", "spatial", ProvidedCHO, true);
 		
@@ -413,6 +414,7 @@ public class EDMExportXMLItem extends EDMExportXML
 				if (authority == null) continue;
 				logger.debug("EDMExportXML.processSkosConcept " + authority);
 				
+				Item itemAuth = getItemFromAuthority(authority);
 				// creamos el elemento Concept o Agent para la autoridad
 				Element skosConcept = null;
 				try {
@@ -422,24 +424,27 @@ public class EDMExportXMLItem extends EDMExportXML
 					if (dcv.language != null) prefLabel.setAttribute(new Attribute("lang", dcv.language, XML));
 					prefLabel.setText(dcv.value);
 					skosConcept.addContent(prefLabel);
-					DCValue[] elementsTitleAlt = item.getDC("title", "alternative", dcv.language);
-					if (elementsTitleAlt.length > 0) {
-						Element altLabel;
-						for (DCValue elementDCV : elementsTitleAlt) {
-							altLabel = new Element("altLabel", SKOS);
-							altLabel.setAttribute(new Attribute("lang", elementDCV.language, XML));
-							altLabel.setText(elementDCV.value);
-							skosConcept.addContent(altLabel);
+					if (itemAuth != null) {
+						logger.debug("itemAuth handle: " + itemAuth.getHandle());
+						DCValue[] elementsTitleAlt = itemAuth.getDC("title", "alternative", dcv.language);
+						if (elementsTitleAlt.length > 0) {
+							Element altLabel;
+							for (DCValue elementDCV : elementsTitleAlt) {
+								altLabel = new Element("altLabel", SKOS);
+								altLabel.setAttribute(new Attribute("lang", elementDCV.language, XML));
+								altLabel.setText(elementDCV.value);
+								skosConcept.addContent(altLabel);
+							}
 						}
-					}
-					DCValue[] elementsDesc = item.getDC("description", null, dcv.language);
-					if (elementsDesc.length > 0) {
-						Element note;
-						for (DCValue elementDCV : elementsDesc) {
-							note = new Element("note", SKOS);
-							note.setAttribute(new Attribute("lang", elementDCV.language, XML));
-							note.setText(elementDCV.value);
-							skosConcept.addContent(note);
+						DCValue[] elementsDesc = itemAuth.getDC("description", null, dcv.language);
+						if (elementsDesc.length > 0) {
+							Element note;
+							for (DCValue elementDCV : elementsDesc) {
+								note = new Element("note", SKOS);
+								note.setAttribute(new Attribute("lang", elementDCV.language, XML));
+								note.setText(elementDCV.value);
+								skosConcept.addContent(note);
+							}
 						}
 					}
 					listElementsSkosConcept.add(skosConcept);
@@ -511,8 +516,17 @@ public class EDMExportXMLItem extends EDMExportXML
 			checkElementFilled("isShownBy", EDM);
 			
 			// creamos el elemento object
-			oreAggregation.addContent(new Element("object", EDM).setAttribute("resource", urlObject, RDF));
-			checkElementFilled("object", EDM);
+			if (thumbBundles != null && thumbBundles.length > 0) {
+                Bitstream[] bitstreamsThumb = thumbBundles[0].getBitstreams();
+                if (bitstreamsThumb != null && bitstreamsThumb.length > 0) {
+                    String urlObjectThumb = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
+                            + item.getHandle() + "/" + bitstreamsThumb[0].getSequenceID() + "/"
+                            + Util.encodeBitstreamName(bitstreamsThumb[0].getName(), Constants.DEFAULT_ENCODING);
+                    oreAggregation.addContent(new Element("object", EDM).setAttribute("resource", urlObjectThumb, RDF));
+                    checkElementFilled("object", EDM);
+                }
+            }
+			
 			
 			// recorremos todos los recursos
 			int i = 0;
@@ -520,6 +534,7 @@ public class EDMExportXMLItem extends EDMExportXML
 				try {
 					Bitstream[] bitstreamsOrig = bundle.getBitstreams();
 					for (Bitstream bitstream1 : bitstreamsOrig) {
+						if (i++ == 0) continue;
 						// url del recurso
 						urlObject = this.edmExportBOFormEDMData.getUrlBase() + "/bitstream/"
 								+ item.getHandle() + "/" + bitstream1.getSequenceID() + "/"
@@ -532,7 +547,6 @@ public class EDMExportXMLItem extends EDMExportXML
 				} catch (Exception ex) {
 					logger.debug("EDMExportXML.processOreAgreggation", ex);
 				}
-				i++;
 			}
 			
 			// creamos el elemento provider

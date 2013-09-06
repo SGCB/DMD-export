@@ -255,8 +255,7 @@ public abstract class EDMExportXML
 		}
 		return null;
 	}
-
-	
+		
 	/**
 	 * Creación de un elemento dc para añadir a la clase EDM ProvidedCHO
 	 * <p>Actúa en las clases que heradena de ésta</p>
@@ -271,7 +270,8 @@ public abstract class EDMExportXML
 	 * 
 	 * @return eúltimo elemento Dom creado
 	 */
-	protected Element createElementDCExclusion(Item item, String elementEDM, Namespace nameSpace, String elementDC, Set<String> noQualifier, Element ProvidedCHO, boolean repeat)
+	protected Element createElementDCExclusion(Item item, String elementEDM, Namespace nameSpace, String elementDC,
+			Set<String> noQualifier, Element ProvidedCHO, boolean repeat, Namespace resource)
 	{
 		Element elementDom = null;
 		DCValue[] elements = item.getDC(elementDC, Item.ANY, Item.ANY);
@@ -286,6 +286,13 @@ public abstract class EDMExportXML
 					continue;
 				}
 				elementDom = new Element(elementEDM, nameSpace).setText(element.value);
+				if (resource != null && elementDom != null) {
+					if (element.authority != null && !element.authority.isEmpty()) {
+						String authority = checkAuthority(element.authority);
+						if (authority != null)
+							elementDom.setAttribute("resource", authority, resource);
+					}
+				}
 				ProvidedCHO.addContent(elementDom);
 				if (!repeat) break;
 			}
@@ -367,6 +374,30 @@ public abstract class EDMExportXML
             }
             // es una url válida
         } else return authority;
+	}
+	
+	
+	/**
+	 * Devuelve el ítem a partir de la autoridad que es un handle o su url
+	 * @param authority cadena con el handle o su url
+	 * @return Item de dspace
+	 */
+	protected Item getItemFromAuthority(String authority)
+	{
+		final String REGEX_HANDLE_PATTERN = "^\\d+/\\d+$";
+		
+		logger.debug("EDMExportXML.getItemFromAuthority authority: " + authority);
+		if (authority.startsWith(handleUrl)) authority = authority.replaceFirst(handleUrl, "");
+		logger.debug("EDMExportXML.getItemFromAuthority authority: " + authority);
+		if (authority.matches(REGEX_HANDLE_PATTERN)) {
+			logger.debug("EDMExportXML.getItemFromAuthority authority: " + authority);
+			try {
+				return edmExportServiceListItems.getDSPaceItem(authority);
+			} catch (Exception e) {
+				logger.debug("EDMExportXML.getItemFromAuthority", e);
+			}
+		}
+		return null;
 	}
 	
 	/**
