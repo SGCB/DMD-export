@@ -3,6 +3,7 @@ package org.dspace.EDMExport.service;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 
 import org.dspace.EDMExport.bo.EDMExportBOFormEDMData;
 import org.dspace.EDMExport.bo.EDMExportBOItem;
+import org.dspace.app.util.MetadataExposure;
 import org.dspace.app.util.Util;
 import org.dspace.constants.Constants;
 import org.dspace.content.Bitstream;
@@ -41,30 +43,30 @@ public class EDMExportXMLItem extends EDMExportXML
 	/**
 	 * Url de los namespace necesarios para el esquema EDM
 	 */
-	protected static final String NAMESPACE_URI_DCTERMS = "http://purl.org/dc/terms/";
-	protected static final String NAMESPACE_URI_EDM = "http://www.europeana.eu/schemas/edm/";
-	protected static final String NAMESPACE_URI_ENRICHMENT = "http://www.europeana.eu/schemas/edm/enrichment/";
-	protected static final String NAMESPACE_URI_OWL = "http://www.w3.org/2002/07/owl#";
-	protected static final String NAMESPACE_URI_WGS84 = "http://www.w3.org/2003/01/geo/wgs84_pos#";
-	protected static final String NAMESPACE_URI_SKOS = "http://www.w3.org/2004/02/skos/core#";
-	protected static final String NAMESPACE_URI_ORE = "http://www.openarchives.org/ore/terms/";
-	protected static final String NAMESPACE_URI_OAI = "http://www.openarchives.org/OAI/2.0/";
-	protected static final String NAMESPACE_URI_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-	protected static final String NAMESPACE_URI_SCHEMALOCATION = "http://www.w3.org/1999/02/22-rdf-syntax-ns# http://www.europeana.eu/schemas/edm/EDM.xsd";
+	private static final String NAMESPACE_URI_DCTERMS = "http://purl.org/dc/terms/";
+	private static final String NAMESPACE_URI_EDM = "http://www.europeana.eu/schemas/edm/";
+	private static final String NAMESPACE_URI_ENRICHMENT = "http://www.europeana.eu/schemas/edm/enrichment/";
+	private static final String NAMESPACE_URI_OWL = "http://www.w3.org/2002/07/owl#";
+	private static final String NAMESPACE_URI_WGS84 = "http://www.w3.org/2003/01/geo/wgs84_pos#";
+	private static final String NAMESPACE_URI_SKOS = "http://www.w3.org/2004/02/skos/core#";
+	private static final String NAMESPACE_URI_ORE = "http://www.openarchives.org/ore/terms/";
+	private static final String NAMESPACE_URI_OAI = "http://www.openarchives.org/OAI/2.0/";
+	private static final String NAMESPACE_URI_RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	private static final String NAMESPACE_URI_SCHEMALOCATION = "http://www.w3.org/1999/02/22-rdf-syntax-ns# http://www.europeana.eu/schemas/edm/EDM.xsd";
 
 	
 	/**
 	 * Namespace necesarios para el esquema EDM
 	 */
-	protected Namespace DCTERMS = Namespace.getNamespace("dcterms", NAMESPACE_URI_DCTERMS);
-	protected Namespace EDM = Namespace.getNamespace("edm", NAMESPACE_URI_EDM);
-	protected Namespace ENRICHMENT = Namespace.getNamespace("enrichment", NAMESPACE_URI_ENRICHMENT);
-	protected Namespace OWL = Namespace.getNamespace("owl", NAMESPACE_URI_OWL);
-	protected Namespace WGS84 = Namespace.getNamespace("wgs84", NAMESPACE_URI_WGS84);
-	protected Namespace SKOS = Namespace.getNamespace("skos", NAMESPACE_URI_SKOS);
-	protected Namespace ORE = Namespace.getNamespace("ore", NAMESPACE_URI_ORE);
-	protected Namespace OAI = Namespace.getNamespace("oai", NAMESPACE_URI_OAI);
-	protected Namespace RDF = Namespace.getNamespace("rdf", NAMESPACE_URI_RDF);
+	private Namespace DCTERMS = Namespace.getNamespace("dcterms", NAMESPACE_URI_DCTERMS);
+	private Namespace EDM = Namespace.getNamespace("edm", NAMESPACE_URI_EDM);
+	private Namespace ENRICHMENT = Namespace.getNamespace("enrichment", NAMESPACE_URI_ENRICHMENT);
+	private Namespace OWL = Namespace.getNamespace("owl", NAMESPACE_URI_OWL);
+	private Namespace WGS84 = Namespace.getNamespace("wgs84", NAMESPACE_URI_WGS84);
+	private Namespace SKOS = Namespace.getNamespace("skos", NAMESPACE_URI_SKOS);
+	private Namespace ORE = Namespace.getNamespace("ore", NAMESPACE_URI_ORE);
+	private Namespace OAI = Namespace.getNamespace("oai", NAMESPACE_URI_OAI);
+	private Namespace RDF = Namespace.getNamespace("rdf", NAMESPACE_URI_RDF);
 
 
 	/**
@@ -313,6 +315,8 @@ public class EDMExportXMLItem extends EDMExportXML
 		
 		ProvidedCHO.addContent(new Element("type", EDM).setText(processEDMType(item, false)));
 		
+		getOwlSameAs(item, ProvidedCHO);
+		
 		return ProvidedCHO;
 	}
 	
@@ -446,6 +450,7 @@ public class EDMExportXMLItem extends EDMExportXML
 								skosConcept.addContent(note);
 							}
 						}
+						getOwlSameAs(itemAuth, skosConcept);
 					}
 					listElementsSkosConcept.add(skosConcept);
 					checkElementFilled("Concept", SKOS);
@@ -618,6 +623,31 @@ public class EDMExportXMLItem extends EDMExportXML
 		}
 		if (!found) return "TEXT";
 		return (edmType.length() > 0)?edmType.toString().substring(0, edmType.length() - 1):edmType.toString();
+	}
+	
+	
+	/**
+	 * Recoger elementos owl:sameAs del ítem y añadirlos al elemento DOM
+	 * 
+	 * @param item item objeto item de dspace {@link Item}
+	 * @param elementDOMParent elemento DOM al que añadir
+	 */
+	private void getOwlSameAs(Item item, Element elementDOMParent)
+	{
+		try {
+			if (MetadataExposure.isHidden(null, OWL.getPrefix(), "sameAs", null)) return;
+		} catch (SQLException e) {
+			logger.debug("EDMExportXML.getOwlSameAs", e);
+			return;
+		}
+		DCValue[] elements = item.getMetadata(OWL.getPrefix(), "sameAs", null, Item.ANY);
+		if (elements.length > 0) {
+			checkElementFilled("sameAs", OWL);
+			for (DCValue element : elements) {
+				Element elementDom = new Element("sameAs", OWL).setAttribute("resource", element.value, RDF);
+				if (elementDOMParent != null) elementDOMParent.addContent(elementDom);
+			}
+		}
 	}
 
 	
