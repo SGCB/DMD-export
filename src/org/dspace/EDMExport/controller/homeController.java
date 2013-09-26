@@ -433,8 +433,8 @@ public class homeController
 			logger.debug(edmXML);
 			String edmXMLEncoded = "";
 			String encoding = request.getHeader("Content-Encoding");
-			//while (edmXML.length() <= 2000000) edmXML += edmXML;
-			if (edmXML.length() > 2000000 && (encoding == null || (encoding != null && encoding.isEmpty()))) {
+			//while (edmXML.length() <= 1500000) edmXML += edmXML;
+			if (edmXML.length() > 1500000 && (encoding == null || (encoding != null && encoding.isEmpty()))) {
 				ByteArrayOutputStream output = null;
 				GZIPOutputStream gzOut = null;
 				try {
