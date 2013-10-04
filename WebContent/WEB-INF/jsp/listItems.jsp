@@ -165,6 +165,15 @@
                     }
                 });
             });
+       		
+       		jQuery("#list_items input[type=checkbox]").each(function() {
+                var prefix = jQuery(this).attr("name").substring(0, jQuery(this).attr("name").indexOf("."));
+                if (!jQuery(this).is(':checked')) {
+                    jQuery("#list_items input[name^='" + prefix + "']").each(function() {
+                        if (jQuery(this)[0].disabled) jQuery(this).removeAttr('disabled');
+                    });
+                }
+       		});
 
         });
         
@@ -195,8 +204,35 @@
                 	result = parseInt(data, 10);
                 }
             });
-            if (result > 0) return true;
-            else {
+            if (result > 0) {
+            	var i = 0;
+            	jQuery("#list_items input[type=checkbox]").each(function() {
+            		var prefix = jQuery(this).attr("name").substring(0, jQuery(this).attr("name").indexOf("."));
+                    if (!jQuery(this).is(':checked')) {
+                    	jQuery("#list_items input[name^='" + prefix + "']").each(function() {
+                    		jQuery(this).attr('disabled','disabled');
+                    	});
+                    } else {
+                    	//console.debug(i + " ; " + jQuery(this).attr('id'));
+                        if (jQuery(this).attr('id').indexOf("listItems" + i) < 0) {
+                            jQuery("#list_items input[name^='" + prefix + "']").each(function() {
+                                //console.debug(jQuery(this).attr('id'));
+                                jQuery(this).attr('id', 
+                                    jQuery(this).attr('id').replace(/^listItems\d+\./, "listItems" + i + ".")
+                                );
+                                //console.debug(jQuery(this).attr('id'));
+                                //console.debug(jQuery(this).attr('name'));
+                                jQuery(this).attr('name',
+                                    jQuery(this).attr('name').replace(/^listItems\[\d+\]\./, "listItems[" + i + "].")
+                                );
+                                //console.debug(jQuery(this).attr('name'));
+                            });
+                        }
+                        i++;
+                    }
+            	});
+            	return true;
+            } else {
             	try {
                     jQuery.spro.jpopit("<spring:message code='edmexport.listItems.json.submit.error' htmlEscape='false' javaScriptEscape='true' />"
                     , {fadeInTime: 200, fadeOutTime: 1000, delay: 10000}).css({"background-color":"#FFFFFF", "color":"#000000"});

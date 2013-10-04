@@ -196,6 +196,7 @@ public class homeController
 	{
 		logger.debug("homeController.initBinder size: " + dataBinder.getAutoGrowCollectionLimit());
 		int newSize = edmExportServiceListItems.getMapItemsSubmit().size() + 1;
+		logger.debug("homeController.initBinder ItemsSubmitsize: " + newSize);
 		if (dataBinder.getAutoGrowCollectionLimit() < newSize) {
 			dataBinder.setAutoGrowCollectionLimit(newSize);
 			logger.debug("homeController.resizeAutoGrowCollectionLimit new size: " + newSize);
