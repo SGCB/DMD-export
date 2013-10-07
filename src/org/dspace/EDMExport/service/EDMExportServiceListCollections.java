@@ -180,6 +180,7 @@ public class EDMExportServiceListCollections
 		if (offset > hitCount) offset = 0;
 		EDMExportBOListItems boListIemsPage = new EDMExportBOListItems();
 		if (limit > hitCount) limit = hitCount;
+		else if (limit + offset > hitCount) limit = hitCount - offset;
 		logger.debug("EDMExportServiceListCollections.getListItems Items from "+ offset + " qty " + limit);
 		// recogemos a partir del offset y hasta el límite
 		EDMExportBOItem[] listItemsPage = new EDMExportBOItem[limit];
